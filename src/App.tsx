@@ -1,34 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
+import { useRoutes } from 'react-router-dom'
 import './App.css'
+import './index.css'
+import { Suspense } from 'react'
+import { RemainingRoutes, StaticRoutes, DynamicRoutes } from './router'
+import GlobalConfig from './config/GlobalConfig'
+import { useStore } from './store'
+import { CoRouteObject } from './types/route'
+function mergeRouteByPath(to: CoRouteObject[], from: CoRouteObject[]) { 
+    for (let i = 0; i < from.length; i++) {
+      const fromItem = from[i];
+      const index = to.findIndex((toItem) => {
+        return toItem.path === fromItem.path
+      })
+      if (index > -1) {
+        const toItem = to[index]
+        if (!toItem.children) {
+          toItem.children = []
+        }
+        if (fromItem.children ) {
+          mergeRouteByPath(toItem.children, fromItem.children)
+        }
+      }else{
+        to.push(fromItem)
+      }
+
+      
+    }
+    if(from.length===0) return to
+}
+const routes = [...StaticRoutes, ...RemainingRoutes]
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { PermissionControl } = GlobalConfig
+  const { AuthStore, UserStore } = useStore();
+  const { isLogin } = AuthStore
+  const { userInfo: { roles } } = UserStore
+  console.log(roles)
+  //处理动态路由
+  if (isLogin) {
+    if (!PermissionControl || PermissionControl === 'fontend') {
+      console.log('前端控制路由')
+      mergeRouteByPath(routes, DynamicRoutes)
+    } else if (PermissionControl === 'backend') {
+      //根据角色信息从后端获取路由列表
+      //同一化处理
+      console.log('后端控制路由')
+    } else if (PermissionControl === 'both') {
+      console.log('协同控制路由')
+    }
+  }
+
+
+  console.log('app render')
+
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Suspense >{useRoutes(routes)}</Suspense>
   )
 }
 
