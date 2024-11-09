@@ -25,8 +25,9 @@
     @apply text-sm bg-transparent;
   }
 
-  /* 调整 placeholder 的颜色、透明度和字体大小 */
-  .login-input input::placeholder {
+  /* 调整所有输入框的 placeholder 样式 */
+  .login-input input::placeholder,
+  .ant-input::placeholder {
     @apply text-slate-300 opacity-70 text-xs;
   }
 
@@ -44,6 +45,16 @@
     @apply text-slate-300;
   }
 
+  /* 密码可见性图标样式 */
+  .login-input.ant-input-password .ant-input-password-icon {
+    @apply text-slate-300 hover:text-blue-400 transition-colors duration-200;
+  }
+
+  /* 密码框聚焦时图标样式 */
+  .login-input.ant-input-password.ant-input-affix-wrapper-focused .ant-input-password-icon {
+    @apply text-blue-400;
+  }
+
   .artistic-text {
     @apply text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 animate-gradient-x;
   }
@@ -55,5 +66,15 @@
   .typewriter-text::after {
     content: '|';
     @apply animate-cursor-blink ml-0.5;
+  }
+
+  /* 验证码输入框样式 */
+  .captcha-input {
+    @apply flex-1;
+  }
+
+  /* 验证码容器样式 */
+  .captcha-container {
+    @apply flex items-center space-x-2;
   }
 }

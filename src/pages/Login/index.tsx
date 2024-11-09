@@ -5,14 +5,16 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import Particles from "react-particles";
 import { loadSlim } from "tsparticles-slim";
 import type { Engine, IOptions, RecursivePartial } from "tsparticles-engine";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import logo from "../../assets/logo.svg";
 import GlobalConfig  from '../../config/GlobalConfig'
 import TypeWriter from '../../components/TypeWriter';
+import Captcha from '../../components/Captcha';
 
 interface LoginForm {
   username: string;
   password: string;
+  captcha: string;
   remember?: boolean;
 }
 const ParticlesOptions:RecursivePartial<IOptions> = {
@@ -85,7 +87,14 @@ const Login = observer(() => {
     await loadSlim(engine);
   }, []);
 
+  const [captchaCode, setCaptchaCode] = useState('');
+
   const onFinish = (values: LoginForm) => {
+    if (values.captcha.toLowerCase() !== captchaCode.toLowerCase()) {
+      message.error('验证码错误！');
+      return;
+    }
+    
     console.log('登录信息:', values);
     UserStore.setUserInfo({
       name: values.username,
@@ -140,6 +149,23 @@ const Login = observer(() => {
                 placeholder="请输入密码"
                 className="login-input"
               />
+            </Form.Item>
+
+            <Form.Item
+              name="captcha"
+              rules={[{ required: true, message: '请输入验证码!' }]}
+            >
+              <div className="flex space-x-2">
+                <Input
+                  placeholder="请输入验证码"
+                  className="login-input"
+                />
+                <Captcha
+                  width={120}
+                  height={40}
+                  onChange={code => setCaptchaCode(code)}
+                />
+              </div>
             </Form.Item>
 
             <div className="flex justify-between items-center -mt-2 mb-4">
