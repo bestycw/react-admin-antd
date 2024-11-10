@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../store";
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import Particles from "react-particles";
 import { loadSlim } from "tsparticles-slim";
@@ -10,6 +10,7 @@ import logo from "../../assets/logo.svg";
 import GlobalConfig  from '../../config/GlobalConfig'
 import TypeWriter from '../../components/TypeWriter';
 import Captcha from '../../components/Captcha';
+import { authService } from '../../services/auth';
 
 interface LoginForm {
   username: string;
@@ -89,20 +90,27 @@ const Login = observer(() => {
 
   const [captchaCode, setCaptchaCode] = useState('');
 
-  const onFinish = (values: LoginForm) => {
+  const onFinish = async (values: LoginForm) => {
     if (values.captcha.toLowerCase() !== captchaCode.toLowerCase()) {
       message.error('验证码错误！');
       return;
     }
     
-    console.log('登录信息:', values);
-    UserStore.setUserInfo({
-      name: values.username,
-      accessToken: '1234567890',
-      roles: ['admin'],
-      rolesValue: 0,
-    });
-    AuthStore.setIsLogin(true);
+    try {
+        const userInfo = await authService.login(values);
+        // 更新用户信息
+        UserStore.setUserInfo(userInfo);
+        // 设置登录状态
+        AuthStore.setIsLogin(true);
+        // 如果选择了记住登录，可以将token存储到localStorage
+        if (values.remember) {
+            localStorage.setItem('token', userInfo.accessToken);
+        }
+        message.success('登录成功！');
+    } catch (error) {
+        console.error('登录失败:', error);
+        message.error('登录失败，请检查用户名和密码！');
+    }
   };
 
   return (
@@ -198,7 +206,7 @@ const Login = observer(() => {
         </div>
         
         <div className="text-slate-300 text-sm">
-          <p>Copyright © {new Date().getFullYear()} {GlobalConfig.AdminName}. All Rights Reserved.</p>
+          <p>Copyright © {new Date().getFullYear()} {AdminName}. All Rights Reserved.</p>
         </div>
       </div>
     </div>
