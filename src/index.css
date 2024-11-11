@@ -2,6 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 亮色模式变量 */
+:root {
+  --background-color: #ffffff;
+  --text-color: #1f2937;
+}
+
+/* 暗色模式变量 */
+:root[class~="dark"] {
+  --background-color: #1f2937;
+  --text-color: #f3f4f6;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease-in-out;
+}
+
+@layer utilities {
+  /* 添加光标闪烁动画 */
+  @keyframes cursor-blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .animate-cursor-blink {
+    animation: cursor-blink 1s step-end infinite;
+  }
+
+  /* 添加渐变动画 */
+  @keyframes gradient-x {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-gradient-x {
+    animation: gradient-x 3s ease infinite;
+    background-size: 200% 200%;
+  }
+}
+
 @layer components {
   .modern-glass {
     @apply backdrop-blur-md bg-white/10 border border-white/10 shadow-lg;
@@ -45,7 +94,7 @@
     @apply text-slate-300;
   }
 
-  /* 密码可见性��标样式 */
+  /* 密码可见性标样式 */
   .login-input.ant-input-password .ant-input-password-icon {
     @apply text-slate-300 hover:text-blue-400 transition-colors duration-200;
   }

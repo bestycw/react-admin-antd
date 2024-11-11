@@ -10,7 +10,7 @@ interface IProps extends MenuProps {
 }
 
 const Menu = observer((props: IProps) => {
-    const { MenuStore } = useStore();
+    const { MenuStore, ConfigStore } = useStore();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -32,7 +32,8 @@ const Menu = observer((props: IProps) => {
                 selectedKeys={MenuStore.selectedKeys}
                 mode={props.mode || 'inline'}
                 items={MenuStore.menuList}
-                className={`${props.mode === 'horizontal' ? 'border-0 w-auto' : ''} flex-1`}
+                className={`${props.mode === 'horizontal' ? 'border-0 w-auto' : ''} flex-1 bg-transparent dark:bg-gray-800 dark:text-gray-300`}
+                theme={ConfigStore.isDarkMode ? 'dark' : 'light'}
                 {...props}
             />
         </div>

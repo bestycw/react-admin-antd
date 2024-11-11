@@ -1,67 +1,36 @@
 import { makeAutoObservable } from 'mobx'
 
-type NavMode = 'horizontal' | 'vertical' | 'mix'
-
 class ConfigStore {
   isDarkMode = false
-  isCompactMode = false
-  primaryColor = '#1890ff'
-  navMode: NavMode = 'horizontal'
-  isTabMode = true
-  isFixedHeader = true
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true })
     this.loadConfig()
+    this.applyTheme()
   }
 
   private loadConfig() {
-    const config = localStorage.getItem('siteConfig')
+    const config = localStorage.getItem('theme')
     if (config) {
-      const parsedConfig = JSON.parse(config)
-      Object.assign(this, parsedConfig)
+      this.isDarkMode = config === 'dark'
+    } else {
+      // 根据系统主题设置默认值
+      this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
     }
   }
 
-  private saveConfig() {
-    localStorage.setItem('siteConfig', JSON.stringify({
-      isDarkMode: this.isDarkMode,
-      isCompactMode: this.isCompactMode,
-      primaryColor: this.primaryColor,
-      navMode: this.navMode,
-      isTabMode: this.isTabMode,
-      isFixedHeader: this.isFixedHeader,
-    }))
+  private applyTheme() {
+    if (this.isDarkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light')
   }
 
-  setDarkMode(value: boolean) {
-    this.isDarkMode = value
-    this.saveConfig()
-  }
-
-  setCompactMode(value: boolean) {
-    this.isCompactMode = value
-    this.saveConfig()
-  }
-
-  setPrimaryColor(value: string) {
-    this.primaryColor = value
-    this.saveConfig()
-  }
-
-  setNavMode(value: NavMode) {
-    this.navMode = value
-    this.saveConfig()
-  }
-
-  setTabMode(value: boolean) {
-    this.isTabMode = value
-    this.saveConfig()
-  }
-
-  setFixedHeader(value: boolean) {
-    this.isFixedHeader = value
-    this.saveConfig()
+  toggleTheme() {
+    this.isDarkMode = !this.isDarkMode
+    this.applyTheme()
   }
 }
 
