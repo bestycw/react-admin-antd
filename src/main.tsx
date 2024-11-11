@@ -1,4 +1,5 @@
-import '../mock/user.ts'
+import '../mock/user'
+import './locales/i18n'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'

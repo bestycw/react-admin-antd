@@ -22,7 +22,7 @@
   }
 
   .login-input input {
-    @apply text-sm bg-transparent;
+    @apply text-sm bg-transparent text-slate-200 !important;
   }
 
   /* 调整所有输入框的 placeholder 样式 */
@@ -33,7 +33,7 @@
 
   /* 密码框的特殊处理 */
   .login-input.ant-input-password .ant-input {
-    @apply bg-transparent;
+    @apply bg-transparent text-slate-200 !important;
   }
 
   .login-input.ant-input-password input::placeholder {
@@ -45,7 +45,7 @@
     @apply text-slate-300;
   }
 
-  /* 密码可见性图标样式 */
+  /* 密码可见性��标样式 */
   .login-input.ant-input-password .ant-input-password-icon {
     @apply text-slate-300 hover:text-blue-400 transition-colors duration-200;
   }
@@ -76,5 +76,55 @@
   /* 验证码容器样式 */
   .captcha-container {
     @apply flex items-center space-x-2;
+  }
+
+  /* 输入框基础样式 */
+  .login-input {
+    @apply bg-slate-800/50 border-0 text-slate-200 transition-colors duration-200;
+  }
+
+  /* 输入框文本样式 */
+  .login-input input {
+    @apply text-sm bg-transparent text-slate-200 !important;
+  }
+
+  /* 密码框文本样式 */
+  .login-input.ant-input-password .ant-input {
+    @apply bg-transparent text-slate-200 !important;
+  }
+
+  /* 错误状态下的输入框样式 */
+  .login-input.ant-input-status-error {
+    @apply bg-slate-800/50 border-red-400/50 !important;
+  }
+
+  .login-input.ant-input-affix-wrapper-status-error {
+    @apply bg-slate-800/50 border-red-400/50 !important;
+  }
+
+  /* 错误提示文字样式 */
+  .ant-form-item-explain-error {
+    @apply text-red-400/90 text-xs mt-1 !important;
+  }
+
+  /* 输入框验证失败时的动画效果 */
+  .ant-form-item-has-error .login-input {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  }
+
+  /* 抖动动画 */
+  @keyframes shake {
+    10%, 90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+    20%, 80% {
+      transform: translate3d(2px, 0, 0);
+    }
+    30%, 50%, 70% {
+      transform: translate3d(-2px, 0, 0);
+    }
+    40%, 60% {
+      transform: translate3d(2px, 0, 0);
+    }
   }
 }

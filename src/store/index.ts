@@ -1,9 +1,9 @@
 import { createContext, useContext } from "react";
-import authStore from "./AuthStore";
+import menuStore from "./MenuStore";
 import userStore from "./UserStore";
 
 class RootStore {
-    AuthStore = authStore
+    MenuStore = menuStore
     UserStore = userStore
 }
 const rootStore = new RootStore();

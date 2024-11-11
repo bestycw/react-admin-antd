@@ -127,7 +127,7 @@ class Request {
                 const { code, message: msg, data } = response.data
 
                 if (code === 200) {
-                    return data
+                    return Promise.resolve(data)
                 }
 
                 message.error(msg || '请求失败')

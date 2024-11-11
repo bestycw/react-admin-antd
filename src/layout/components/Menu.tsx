@@ -1,80 +1,75 @@
-import {Menu as AntMenu} from 'antd';
+import { Menu as AntMenu } from 'antd';
 import type { MenuProps } from 'antd';
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../../store';
-type MenuItem = Required<MenuProps>['items'][number];
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { MenuItem } from '../../store/MenuStore';
 
 interface Iprops extends MenuProps {
-    type?:string;
+    type?: string;
 }
 
-const items: MenuItem[] = [
-    {
-        label: 'Navigation One',
-        key: 'mail',
-        icon: <MailOutlined />,
-    },
-    {
-        label: 'Navigation One',
-        key: 'mail',
-        icon: <MailOutlined />,
-    },
-    {
-        label: 'Navigation One',
-        key: 'mail',
-        icon: <MailOutlined />,
-    },
-    {
-        label: 'Navigation Two',
-        key: 'app',
-        icon: <AppstoreOutlined />,
-        disabled: true,
-    },
-    {
-        label: 'Navigation Three - Submenu',
-        key: 'SubMenu',
-        icon: <SettingOutlined />,
-        children: [
-            {
-                type: 'group',
-                label: 'Item 1',
-                children: [
-                    { label: 'Option 1', key: 'setting:1' },
-                    { label: 'Option 2', key: 'setting:2' },
-                ],
-            },
-            {
-                type: 'group',
-                label: 'Item 2',
-                children: [
-                    { label: 'Option 3', key: 'setting:3' },
-                    { label: 'Option 4', key: 'setting:4' },
-                ],
-            },
-        ],
-    },
-    {
-        key: 'alipay',
-        label: (
-            <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-                Navigation Four - Link
-            </a>
-        ),
-    },
-];
-const Menu =observer( (props:Iprops) => {
-    const {AuthStore} = useStore();
-    const {menuList} = AuthStore;
-    console.log(menuList);
-    const [current, setCurrent] = useState('mail');
+const Menu = observer((props: Iprops) => {
+    const { MenuStore, UserStore } = useStore();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const roles = UserStore.userRoles;
+
+    // 根据用户角色过滤菜单
+    const filteredMenuList = MenuStore.filterMenuByRoles(roles);
+    console.log(filteredMenuList);
+    // 初始化选中的菜单项
+    useEffect(() => {
+        const currentPath = location.pathname;
+        MenuStore.setSelectedKeys([currentPath]);
+        
+        // 设置展开的子菜单
+        const item = MenuStore.findMenuByPath(currentPath);
+        if (item) {
+            const parentKeys = getParentKeys(filteredMenuList, currentPath);
+            MenuStore.setOpenKeys(parentKeys);
+        }
+    }, [location.pathname]);
+
     const onClick: MenuProps['onClick'] = (e) => {
-        console.log('click ', e);
-        setCurrent(e.key);
+        const path = e.key;
+        MenuStore.setSelectedKeys([path]);
+        navigate(path);
     };
-    return(
-        <AntMenu onClick={onClick} selectedKeys={[current]}  items={items} {...props}/>
-    )
-})
+
+    // 获取父级菜单的 key
+    const getParentKeys = (items: MenuItem[], path: string): string[] => {
+        const parentKeys: string[] = [];
+        const findParent = (menuItems: MenuItem[], targetPath: string, parents: string[]) => {
+            for (const item of menuItems) {
+                if (item.path === targetPath) {
+                    parentKeys.push(...parents);
+                    return true;
+                }
+                if (item.children) {
+                    if (findParent(item.children, targetPath, [...parents, item.key])) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        findParent(items, path, []);
+        return parentKeys;
+    };
+
+    return (
+        <AntMenu
+            onClick={onClick}
+            selectedKeys={MenuStore.selectedKeys}
+            openKeys={MenuStore.openKeys}
+            onOpenChange={(keys) => MenuStore.setOpenKeys(keys)}
+            mode="inline"
+            items={filteredMenuList}
+            {...props}
+        />
+    );
+});
+
 export default Menu;

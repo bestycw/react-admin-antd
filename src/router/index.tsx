@@ -48,6 +48,7 @@ function getRouteFirstPath(pathList: string[], path: string) {
 
 }
 handleOriginRoute()
+//静态路由
 export const StaticRoutes: CoRouteObject[] = [
     {
         path: '/',
@@ -55,6 +56,7 @@ export const StaticRoutes: CoRouteObject[] = [
         children: staticRoutesList
     }
 ]
+//动态路由
 export const DynamicRoutes: CoRouteObject[] = [
     {
         path: '/',
@@ -62,6 +64,7 @@ export const DynamicRoutes: CoRouteObject[] = [
         children: dynamicRoutesList
     }
 ]
+//登录、错误页
 export const RemainingRoutes: CoRouteObject[] = [
     {
         path: '/login',

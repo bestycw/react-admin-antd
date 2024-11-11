@@ -6,11 +6,14 @@ import Particles from "react-particles";
 import { loadSlim } from "tsparticles-slim";
 import type { Engine, IOptions, RecursivePartial } from "tsparticles-engine";
 import { useCallback, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo.svg";
-import GlobalConfig  from '../../config/GlobalConfig'
+import GlobalConfig from '../../config/GlobalConfig'
 import TypeWriter from '../../components/TypeWriter';
 import Captcha from '../../components/Captcha';
 import { authService } from '../../services/auth';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitch from '../../components/LanguageSwitch';
 
 interface LoginForm {
   username: string;
@@ -82,8 +85,12 @@ const ParticlesOptions:RecursivePartial<IOptions> = {
   detectRetina: true,
 }
 const Login = observer(() => {
-  const { UserStore, AuthStore } = useStore();
-  const {AdminName} = GlobalConfig
+  const { UserStore } = useStore();
+  const { AdminName } = GlobalConfig;
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
+
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
@@ -96,25 +103,27 @@ const Login = observer(() => {
       return;
     }
     
+    setLoading(true);
     try {
-        const userInfo = await authService.login(values);
-        // 更新用户信息
-        UserStore.setUserInfo(userInfo);
-        // 设置登录状态
-        AuthStore.setIsLogin(true);
-        // 如果选择了记住登录，可以将token存储到localStorage
-        if (values.remember) {
-            localStorage.setItem('token', userInfo.accessToken);
-        }
-        message.success('登录成功！');
+      const userInfo = await authService.login(values);
+      UserStore.setUserInfo(userInfo, values.remember);
+      
+      message.success('登录成功！');
+      navigate('/demo1');
     } catch (error) {
-        console.error('登录失败:', error);
-        message.error('登录失败，请检查用户名和密码！');
+      console.error('登录失败:', error);
+      message.error('登录失败，请检查用户名和密码！');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageSwitch />
+      </div>
+
       <Particles
         className="absolute inset-0"
         init={particlesInit}
@@ -136,36 +145,39 @@ const Login = observer(() => {
             size="large"
             initialValues={{ remember: false }}
             className="space-y-4"
+            autoComplete="off"
           >
             <Form.Item
               name="username"
-              rules={[{ required: true, message: '请输入用户名!' }]}
+              rules={[{ required: true, message: t('validation.usernameRequired') }]}
             >
               <Input
                 prefix={<UserOutlined className="text-gray-400" />}
-                placeholder="请输入用户名"
+                placeholder={t('common.username')}
                 className="login-input"
+                autoComplete="off"
               />
             </Form.Item>
 
             <Form.Item
               name="password"
-              rules={[{ required: true, message: '请输入密码!' }]}
+              rules={[{ required: true, message: t('validation.passwordRequired') }]}
             >
               <Input.Password
                 prefix={<LockOutlined className="text-gray-400" />}
-                placeholder="请输入密码"
+                placeholder={t('common.password')}
                 className="login-input"
+                autoComplete="new-password"
               />
             </Form.Item>
 
             <Form.Item
               name="captcha"
-              rules={[{ required: true, message: '请输入验证码!' }]}
+              rules={[{ required: true, message: t('validation.captchaRequired') }]}
             >
               <div className="flex space-x-2">
                 <Input
-                  placeholder="请输入验证码"
+                  placeholder={t('common.captcha')}
                   className="login-input"
                 />
                 <Captcha
@@ -182,13 +194,13 @@ const Login = observer(() => {
                 valuePropName="checked"
                 className="mb-0"
               >
-                <Checkbox className="text-white">7天免登录</Checkbox>
+                <Checkbox className="text-white">{t('common.rememberMe')}</Checkbox>
               </Form.Item>
               <a
                 className="text-white hover:text-blue-200 text-sm"
                 onClick={() => console.log('忘记密码')}
               >
-                忘记密码？
+                {t('common.forgotPassword')}
               </a>
             </div>
 
@@ -197,9 +209,10 @@ const Login = observer(() => {
                 type="primary"
                 htmlType="submit"
                 block
+                loading={loading}
                 className="h-10 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-0 transition-all duration-300"
               >
-                登录
+                {loading ? t('common.loading') : t('common.loginButton')}
               </Button>
             </Form.Item>
           </Form>
