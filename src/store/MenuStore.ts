@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx"
 import { CoRouteObject } from '../types/route'
-import { MenuProps } from 'antd'
+// import { MenuProps } from 'antd'
 
 export interface MenuItem {
     key: string

@@ -1,20 +1,19 @@
-import { Layout } from "antd"
-import Header from "./components/Header"
-import Footer from "./components/Footer"
-import { Outlet } from "react-router-dom"
-const {Content} = Layout
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const HomePage = (props: any) => {
-    // const{children} = props
-    console.log(props)
-    return (
-        <Layout style={{height:'100vh'}}>
-            <Header></Header>
-            <Content style={{marginTop:'82px',padding:'18px',height:'100%',background:'white'}}>
-                <Outlet></Outlet>
-            </Content>
-            <Footer></Footer>
-        </Layout>
-    )
-}
-export default HomePage
+import { Layout as AntLayout } from 'antd'
+import { observer } from 'mobx-react-lite'
+import { Outlet } from 'react-router-dom'
+import Header from './components/Header'
+
+const { Content } = AntLayout
+
+const Layout = observer(() => {
+  return (
+    <AntLayout className="min-h-screen">
+      <Header />
+      <Content className="p-6">
+        <Outlet />
+      </Content>
+    </AntLayout>
+  )
+})
+
+export default Layout
