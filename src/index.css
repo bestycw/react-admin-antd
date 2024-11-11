@@ -23,25 +23,31 @@
   }
 
   /* 输入框通用样式 */
-  .login-input {
+  .login-input,
+  .captcha-input {
     @apply text-sm bg-white/50 dark:bg-slate-800/50 
       border-gray-200 dark:border-gray-700
       text-gray-900 dark:text-gray-100 
       transition-colors duration-200 !important;
   }
 
-  .login-input:hover {
+  .login-input:hover,
+  .captcha-input:hover {
     @apply border-blue-400 dark:border-blue-500 !important;
   }
 
   .login-input:focus,
-  .login-input.ant-input-focused {
+  .login-input.ant-input-focused,
+  .captcha-input:focus {
     @apply border-blue-500 dark:border-blue-400 
       ring-2 ring-blue-500/20 dark:ring-blue-400/20 !important;
   }
 
-  /* placeholder 样式 */
-  .login-input input::placeholder {
+  /* placeholder 样式统一处理 */
+  .login-input input::placeholder,
+  .login-input.ant-input-password input::placeholder,
+  .captcha-input::placeholder,
+  .ant-input::placeholder {
     @apply text-sm text-gray-400 dark:text-gray-500 
       tracking-wide font-normal !important;
   }
@@ -56,5 +62,19 @@
   .login-input.ant-input-password .ant-input-password-icon {
     @apply text-gray-400 dark:text-gray-500 
       hover:text-blue-500 dark:hover:text-blue-400;
+  }
+
+  /* 验证码容器样式 */
+  .captcha-container {
+    @apply flex items-center space-x-2;
+  }
+
+  /* 验证码图片容器样式 */
+  .captcha-image-container {
+    @apply h-10 w-[100px] rounded overflow-hidden
+      bg-gray-800 dark:bg-gray-900
+      border border-gray-200 dark:border-gray-700
+      transition-colors duration-200
+      hover:border-blue-400 dark:hover:border-blue-500;
   }
 }
