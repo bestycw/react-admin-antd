@@ -77,4 +77,87 @@
       transition-colors duration-200
       hover:border-blue-400 dark:hover:border-blue-500;
   }
+
+  /* 菜单组件样式 */
+  .menu-component.ant-menu {
+    @apply bg-transparent !important;
+  }
+
+  /* 亮色主题菜单项样式 */
+  .menu-component.ant-menu-light .ant-menu-item,
+  .menu-component.ant-menu-light .ant-menu-submenu-title {
+    @apply text-gray-600 !important;
+  }
+
+  /* 暗色主题菜单项样式 */
+  .menu-component.ant-menu-dark .ant-menu-item,
+  .menu-component.ant-menu-dark .ant-menu-submenu-title {
+    @apply text-gray-300 !important;
+  }
+
+  /* 菜单项悬停样式 */
+  .menu-component.ant-menu-light .ant-menu-item:hover,
+  .menu-component.ant-menu-light .ant-menu-submenu-title:hover {
+    @apply text-blue-500 !important;
+  }
+
+  .menu-component.ant-menu-dark .ant-menu-item:hover,
+  .menu-component.ant-menu-dark .ant-menu-submenu-title:hover {
+    @apply text-blue-400 !important;
+  }
+
+  /* 选中的菜单项样式 */
+  .menu-component.ant-menu-light .ant-menu-item-selected {
+    @apply text-blue-500 !important;
+  }
+
+  .menu-component.ant-menu-dark .ant-menu-item-selected {
+    @apply text-blue-400 !important;
+    @apply bg-transparent !important;
+  }
+
+  /* 菜单项下划线样式 */
+  .menu-component.ant-menu-horizontal > .ant-menu-item::after,
+  .menu-component.ant-menu-horizontal > .ant-menu-submenu::after {
+    @apply border-blue-500 dark:border-blue-400 !important;
+  }
+
+  /* 强制覆盖 antd 的默认背景色 */
+  .ant-menu.ant-menu-dark {
+    @apply bg-transparent !important;
+  }
+
+  .ant-menu-dark .ant-menu-item-selected {
+    @apply bg-transparent !important;
+  }
+
+  /* 子菜单弹出层样式 */
+  .ant-menu-submenu-popup > .ant-menu {
+    @apply bg-white dark:bg-gray-800 !important;
+  }
+
+  /* 子菜单项样式 */
+  .ant-menu-submenu-popup > .ant-menu .ant-menu-item,
+  .ant-menu-submenu-popup > .ant-menu .ant-menu-item .ant-menu-title-content {
+    @apply text-gray-600 dark:text-gray-300;
+  }
+
+  /* 子菜单项悬停和选中样式 */
+  .ant-menu-submenu-popup > .ant-menu .ant-menu-item:hover,
+  .ant-menu-submenu-popup > .ant-menu .ant-menu-item-selected,
+  .ant-menu-submenu-popup > .ant-menu .ant-menu-item:hover .ant-menu-title-content,
+  .ant-menu-submenu-popup > .ant-menu .ant-menu-item-selected .ant-menu-title-content {
+    @apply text-blue-500 dark:text-blue-400 
+      bg-blue-50 dark:bg-blue-900/20 !important;
+  }
+
+  /* 子菜单箭头颜色 */
+  .menu-component .ant-menu-submenu-arrow {
+    @apply text-gray-600 dark:text-gray-300;
+  }
+
+  /* 子菜单箭头悬停颜色 */
+  .menu-component .ant-menu-submenu:hover .ant-menu-submenu-arrow {
+    @apply text-blue-500 dark:text-blue-400;
+  }
 }

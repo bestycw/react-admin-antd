@@ -1,7 +1,7 @@
 import { Menu as AntMenu } from 'antd';
 import type { MenuProps } from 'antd';
 import { observer } from 'mobx-react-lite';
-import { useStore } from '../../store';
+import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -26,14 +26,18 @@ const Menu = observer((props: IProps) => {
     };
 
     return (
-        <div className="w-full flex justify-center">
+        <div className="w-full">
             <AntMenu
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
                 mode={props.mode || 'inline'}
                 items={MenuStore.menuList}
-                className={`${props.mode === 'horizontal' ? 'border-0 w-auto' : ''} flex-1 bg-transparent dark:bg-gray-800 dark:text-gray-300`}
                 theme={ConfigStore.isDarkMode ? 'dark' : 'light'}
+                className={`
+                    menu-component
+                    ${props.mode === 'horizontal' ? 'border-0' : ''}
+                    !justify-start
+                `}
                 {...props}
             />
         </div>

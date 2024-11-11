@@ -7,11 +7,15 @@ const { Content } = AntLayout
 
 const Layout = observer(() => {
   return (
-    <AntLayout className="min-h-screen">
+    <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Header />
-      <Content className="p-6">
-        <Outlet />
-      </Content>
+      <div className="max-w-screen-2xl mx-2 px-3">
+        <Content className="w-full">
+          <div className="modern-glass rounded-lg min-h-[calc(100vh-88px)] mt-3">
+            <Outlet />
+          </div>
+        </Content>
+      </div>
     </AntLayout>
   )
 })
