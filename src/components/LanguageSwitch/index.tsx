@@ -1,41 +1,42 @@
-import { Dropdown } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { GlobalOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+import { GlobalOutlined } from '@ant-design/icons'
+import { Dropdown } from 'antd'
+import type { MenuProps } from 'antd'
+import { useTranslation } from 'react-i18next'
 
-const LanguageSwitch: React.FC = () => {
-  const { i18n } = useTranslation();
-
-  const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
-    i18n.changeLanguage(key);
-    localStorage.setItem('language', key);
-  };
+const LanguageSwitch = () => {
+  const { i18n } = useTranslation()
 
   const items: MenuProps['items'] = [
     {
-      key: 'zh',
+      key: 'zh-CN',
       label: '简体中文',
     },
     {
-      key: 'en',
+      key: 'en-US',
       label: 'English',
-    },
-  ];
+    }
+  ]
+
+  const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
+    i18n.changeLanguage(key)
+    localStorage.setItem('language', key)
+  }
 
   return (
     <Dropdown
       menu={{
         items,
         onClick: handleMenuClick,
-        selectedKeys: [i18n.language],
+        selectedKeys: [i18n.language]
       }}
-      placement="bottomRight"
+      trigger={['click']}
     >
-      <GlobalOutlined 
-        className="text-slate-300 text-xl cursor-pointer hover:text-blue-400 transition-colors duration-200" 
-      />
+      <button className="w-10 h-10 flex items-center justify-center rounded-full
+        modern-glass text-gray-600 dark:text-gray-300">
+        <GlobalOutlined className="text-xl" />
+      </button>
     </Dropdown>
-  );
-};
+  )
+}
 
-export default LanguageSwitch; 
+export default LanguageSwitch 

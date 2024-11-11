@@ -56,52 +56,61 @@ body {
     @apply backdrop-blur-md bg-white/10 border border-white/10 shadow-lg;
   }
 
-  .login-input {
-    @apply bg-slate-800/50 border-0 text-slate-200 transition-colors duration-200;
+  .login-input,
+  .captcha-input {
+    @apply text-sm bg-white/50 dark:bg-slate-800/50 
+      border-gray-200 dark:border-gray-700
+      text-gray-900 dark:text-gray-100 
+      transition-colors duration-200 !important;
   }
 
   .login-input:hover,
-  .login-input:focus {
-    @apply bg-slate-700/50 !border-blue-500/50;
+  .captcha-input:hover {
+    @apply border-blue-400 dark:border-blue-500 !important;
   }
 
-  /* 重写 antd 的默认聚焦样式 */
-  .login-input.ant-input-affix-wrapper-focused {
-    @apply !shadow-none !border-blue-500/50 bg-slate-700/50;
+  .login-input:focus,
+  .login-input-focused,
+  .captcha-input:focus {
+    @apply border-blue-500 dark:border-blue-400 
+      ring-2 ring-blue-500/20 dark:ring-blue-400/20 !important;
   }
 
-  .login-input input {
-    @apply text-sm bg-transparent text-slate-200 !important;
-  }
-
-  /* 调整所有输入框的 placeholder 样式 */
   .login-input input::placeholder,
+  .login-input.ant-input-password input::placeholder,
+  .captcha-input::placeholder,
   .ant-input::placeholder {
-    @apply text-slate-300 opacity-70 text-xs;
+    @apply text-sm text-gray-400 dark:text-gray-500 
+      tracking-wide font-normal
+      transition-colors duration-200 !important;
   }
 
-  /* 密码框的特殊处理 */
-  .login-input.ant-input-password .ant-input {
-    @apply bg-transparent text-slate-200 !important;
+  .captcha-container {
+    @apply flex items-center space-x-2;
   }
 
-  .login-input.ant-input-password input::placeholder {
-    @apply text-xs;
+  .captcha-input {
+    @apply flex-1;
   }
 
-  /* 密码框图标颜色 */
-  .login-input .anticon {
-    @apply text-slate-300;
+  .captcha-image-container {
+    @apply h-10 w-[100px] rounded overflow-hidden
+      bg-gray-800 dark:bg-gray-900
+      border border-gray-200 dark:border-gray-700
+      transition-colors duration-200
+      hover:border-blue-400 dark:hover:border-blue-500;
   }
 
-  /* 密码可见性标样式 */
-  .login-input.ant-input-password .ant-input-password-icon {
-    @apply text-slate-300 hover:text-blue-400 transition-colors duration-200;
+  .login-input input,
+  .login-input.ant-input-password input,
+  .captcha-input {
+    @apply text-sm tracking-wide !important;
   }
 
-  /* 密码框聚焦时图标样式 */
-  .login-input.ant-input-password.ant-input-affix-wrapper-focused .ant-input-password-icon {
-    @apply text-blue-400;
+  .login-input .ant-input-prefix,
+  .login-input .ant-input-suffix {
+    @apply text-base text-gray-400 dark:text-gray-500 
+      transition-colors duration-200;
   }
 
   .artistic-text {
@@ -117,63 +126,85 @@ body {
     @apply animate-cursor-blink ml-0.5;
   }
 
-  /* 验证码输入框样式 */
-  .captcha-input {
-    @apply flex-1;
-  }
-
-  /* 验证码容器样式 */
-  .captcha-container {
-    @apply flex items-center space-x-2;
-  }
-
-  /* 输入框基础样式 */
-  .login-input {
-    @apply bg-slate-800/50 border-0 text-slate-200 transition-colors duration-200;
-  }
-
-  /* 输入框文本样式 */
-  .login-input input {
-    @apply text-sm bg-transparent text-slate-200 !important;
-  }
-
-  /* 密码框文本样式 */
-  .login-input.ant-input-password .ant-input {
-    @apply bg-transparent text-slate-200 !important;
-  }
-
   /* 错误状态下的输入框样式 */
-  .login-input.ant-input-status-error {
-    @apply bg-slate-800/50 border-red-400/50 !important;
+  .login-input.ant-input-status-error,
+  .login-input.ant-input-affix-wrapper-status-error {
+    @apply bg-white/50 dark:bg-slate-800/50 
+      border-red-400/70 dark:border-red-500/70
+      hover:border-red-500 dark:hover:border-red-400
+      transition-colors duration-200 !important;
   }
 
-  .login-input.ant-input-affix-wrapper-status-error {
-    @apply bg-slate-800/50 border-red-400/50 !important;
+  /* 错误状态下的输入框聚焦样式 */
+  .login-input.ant-input-affix-wrapper-status-error:focus,
+  .login-input.ant-input-affix-wrapper-status-error-focused {
+    @apply border-red-500 dark:border-red-400
+      ring-2 ring-red-500/20 dark:ring-red-400/20 
+      shadow-none !important;
   }
 
   /* 错误提示文字样式 */
   .ant-form-item-explain-error {
-    @apply text-red-400/90 text-xs mt-1 !important;
+    @apply text-red-500 dark:text-red-400 
+      text-sm mt-1 !important;
+  }
+
+  /* 错误状态下的输入框图标样式 */
+  .login-input.ant-input-status-error .ant-input-prefix,
+  .login-input.ant-input-affix-wrapper-status-error .ant-input-prefix {
+    @apply text-red-500/70 dark:text-red-400/70 !important;
+  }
+
+  /* 错误状态下密码框图标样式 */
+  .login-input.ant-input-affix-wrapper-status-error .ant-input-password-icon {
+    @apply text-red-500/70 dark:text-red-400/70 
+      hover:text-red-500 dark:hover:text-red-400 !important;
   }
 
   /* 输入框验证失败时的动画效果 */
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-2px, 0, 0); }
+    40%, 60% { transform: translate3d(2px, 0, 0); }
+  }
+
   .ant-form-item-has-error .login-input {
     animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
   }
 
-  /* 抖动动画 */
-  @keyframes shake {
-    10%, 90% {
-      transform: translate3d(-1px, 0, 0);
-    }
-    20%, 80% {
-      transform: translate3d(2px, 0, 0);
-    }
-    30%, 50%, 70% {
-      transform: translate3d(-2px, 0, 0);
-    }
-    40%, 60% {
-      transform: translate3d(2px, 0, 0);
-    }
+  /* 密码框图标样式 */
+  .login-input.ant-input-password .anticon {
+    @apply text-gray-400 dark:text-gray-500 
+      transition-colors duration-200 !important;
+  }
+
+  /* 密码可见性图标样式 */
+  .login-input.ant-input-password .ant-input-password-icon {
+    @apply text-gray-400 dark:text-gray-500 
+      hover:text-blue-500 dark:hover:text-blue-400
+      transition-colors duration-200 !important;
+  }
+
+  /* 密码框聚焦时图标样式 */
+  .login-input.ant-input-password.ant-input-affix-wrapper-focused .ant-input-password-icon {
+    @apply text-blue-500 dark:text-blue-400 !important;
+  }
+
+  /* 密码框聚焦时的前缀图标样式 */
+  .login-input.ant-input-password.ant-input-affix-wrapper-focused .ant-input-prefix {
+    @apply text-blue-500 dark:text-blue-400 !important;
+  }
+
+  /* 密码框悬停时的图标样式 */
+  .login-input.ant-input-password:hover .ant-input-password-icon {
+    @apply text-gray-500 dark:text-gray-400 
+      hover:text-blue-500 dark:hover:text-blue-400 !important;
+  }
+
+  /* 确保所有大尺寸输入框高度一致 */
+  .ant-input-lg,
+  .ant-input-affix-wrapper-lg {
+    @apply h-10 !important;
   }
 }
