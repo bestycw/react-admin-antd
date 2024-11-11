@@ -119,7 +119,7 @@ const Login = observer(() => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center 
+    <div className="relative min-h-screen flex flex-col items-center justify-center 
       bg-gradient-to-br from-blue-50 to-indigo-100 
       dark:from-slate-900 dark:to-slate-800">
       <Particles
@@ -219,6 +219,10 @@ const Login = observer(() => {
             </Button>
           </Form.Item>
         </Form>
+      </div>
+
+      <div className="absolute bottom-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p>Copyright © {new Date().getFullYear()} CoffeeAdmin. All Rights Reserved.</p>
       </div>
     </div>
   );
