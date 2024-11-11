@@ -1,3 +1,5 @@
+@import './styles/mac.scss';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,205 +16,34 @@
   --text-color: #f3f4f6;
 }
 
-@layer components {
-  /* 可复用的通用样式 */
-  .modern-glass {
-    @apply bg-white/80 dark:bg-gray-800/80 
-      backdrop-blur-xl backdrop-saturate-150 
-      border border-white/20 dark:border-gray-700/30;
+@layer utilities {
+  /* 光标闪烁动画 */
+  @keyframes cursor-blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
   }
 
-  /* 输入框通用样式 */
-  .login-input,
-  .captcha-input {
-    @apply text-sm bg-white/50 dark:bg-slate-800/50 
-      border-gray-200 dark:border-gray-700
-      text-gray-900 dark:text-gray-100 
-      transition-colors duration-200 !important;
+  .animate-cursor-blink {
+    animation: cursor-blink 1s step-end infinite;
   }
 
-  .login-input:hover,
-  .captcha-input:hover {
-    @apply border-blue-400 dark:border-blue-500 !important;
+  /* 渐变动画 */
+  @keyframes gradient-x {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
 
-  .login-input:focus,
-  .login-input.ant-input-focused,
-  .captcha-input:focus {
-    @apply border-blue-500 dark:border-blue-400 
-      ring-2 ring-blue-500/20 dark:ring-blue-400/20 !important;
-  }
-
-  /* placeholder 样式统一处理 */
-  .login-input input::placeholder,
-  .login-input.ant-input-password input::placeholder,
-  .captcha-input::placeholder,
-  .ant-input::placeholder {
-    @apply text-sm text-gray-400 dark:text-gray-500 
-      tracking-wide font-normal !important;
-  }
-
-  /* 图标样式 */
-  .login-input .ant-input-prefix,
-  .login-input .ant-input-suffix {
-    @apply text-base text-gray-400 dark:text-gray-500;
-  }
-
-  /* 密码框图标 */
-  .login-input.ant-input-password .ant-input-password-icon {
-    @apply text-gray-400 dark:text-gray-500 
-      hover:text-blue-500 dark:hover:text-blue-400;
-  }
-
-  /* 验证码容器样式 */
-  .captcha-container {
-    @apply flex items-center space-x-2;
-  }
-
-  /* 验证码图片容器样式 */
-  .captcha-image-container {
-    @apply h-10 w-[100px] rounded overflow-hidden
-      bg-gray-800 dark:bg-gray-900
-      border border-gray-200 dark:border-gray-700
-      transition-colors duration-200
-      hover:border-blue-400 dark:hover:border-blue-500;
-  }
-
-  /* 菜单组件样式 */
-  .menu-component.ant-menu {
-    @apply bg-transparent !important;
-  }
-
-  /* 亮色主题菜单项样式 */
-  .menu-component.ant-menu-light .ant-menu-item,
-  .menu-component.ant-menu-light .ant-menu-submenu-title {
-    @apply text-gray-600 !important;
-  }
-
-  /* 暗色主题菜单项样式 */
-  .menu-component.ant-menu-dark .ant-menu-item,
-  .menu-component.ant-menu-dark .ant-menu-submenu-title {
-    @apply text-gray-300 !important;
-  }
-
-  /* 菜单项悬停样式 */
-  .menu-component.ant-menu-light .ant-menu-item:hover,
-  .menu-component.ant-menu-light .ant-menu-submenu-title:hover {
-    @apply text-blue-500 !important;
-  }
-
-  .menu-component.ant-menu-dark .ant-menu-item:hover,
-  .menu-component.ant-menu-dark .ant-menu-submenu-title:hover {
-    @apply text-blue-400 !important;
-  }
-
-  /* 选中的菜单项样式 */
-  .menu-component.ant-menu-light .ant-menu-item-selected {
-    @apply text-blue-500 !important;
-  }
-
-  .menu-component.ant-menu-dark .ant-menu-item-selected {
-    @apply text-blue-400 !important;
-    @apply bg-transparent !important;
-  }
-
-  /* 菜单项下划线样式 */
-  .menu-component.ant-menu-horizontal > .ant-menu-item::after,
-  .menu-component.ant-menu-horizontal > .ant-menu-submenu::after {
-    @apply border-blue-500 dark:border-blue-400 !important;
-  }
-
-  /* 强制覆盖 antd 的默认背景色 */
-  .ant-menu.ant-menu-dark {
-    @apply bg-transparent !important;
-  }
-
-  .ant-menu-dark .ant-menu-item-selected {
-    @apply bg-transparent !important;
-  }
-
-  /* 子菜单弹出层样式 */
-  .ant-menu-submenu-popup > .ant-menu {
-    @apply bg-white dark:bg-gray-800 !important;
-  }
-
-  /* 子菜单项样式 */
-  .ant-menu-submenu-popup > .ant-menu .ant-menu-item,
-  .ant-menu-submenu-popup > .ant-menu .ant-menu-item .ant-menu-title-content {
-    @apply text-gray-600 dark:text-gray-300;
-  }
-
-  /* 子菜单项悬停和选中样式 */
-  .ant-menu-submenu-popup > .ant-menu .ant-menu-item:hover,
-  .ant-menu-submenu-popup > .ant-menu .ant-menu-item-selected,
-  .ant-menu-submenu-popup > .ant-menu .ant-menu-item:hover .ant-menu-title-content,
-  .ant-menu-submenu-popup > .ant-menu .ant-menu-item-selected .ant-menu-title-content {
-    @apply text-blue-500 dark:text-blue-400 
-      bg-blue-50 dark:bg-blue-900/20 !important;
-  }
-
-  /* 子菜单箭头颜色 */
-  .menu-component .ant-menu-submenu-arrow {
-    @apply text-gray-600 dark:text-gray-300;
-  }
-
-  /* 子菜单箭头悬停颜色 */
-  .menu-component .ant-menu-submenu:hover .ant-menu-submenu-arrow {
-    @apply text-blue-500 dark:text-blue-400;
-  }
-
-  /* 设置抽屉样式 */
-  .setting-drawer .ant-drawer-content-wrapper {
-    @apply !important;
-  }
-
-  .setting-drawer .ant-drawer-content {
-    @apply bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-xl backdrop-saturate-150 !important;
-  }
-
-  .setting-drawer .ant-drawer-header {
-    @apply bg-transparent border-b-0 pb-0 px-7 !important;
-  }
-
-  .setting-drawer .ant-drawer-title {
-    @apply text-gray-800 dark:text-gray-200 font-medium !important;
-  }
-
-  .setting-drawer .ant-drawer-close {
-    @apply text-gray-600 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 
-      rounded-lg transition-colors mr-4 !important;
-  }
-
-  .setting-drawer .ant-drawer-body {
-    @apply p-0 !important;
-  }
-
-  /* Select 组件样式 */
-  .setting-select.ant-select:not(.ant-select-customize-input) .ant-select-selector {
-    @apply bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700
-      text-gray-900 dark:text-gray-100 !important;
-  }
-
-  .setting-select.ant-select:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer):hover .ant-select-selector {
-    @apply border-blue-400 dark:border-blue-500 !important;
-  }
-
-  /* Select 下拉菜单样式 */
-  .ant-select-dropdown {
-    @apply bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl backdrop-saturate-150
-      border border-gray-200 dark:border-gray-700 !important;
-  }
-
-  .ant-select-item {
-    @apply text-gray-600 dark:text-gray-400 !important;
-  }
-
-  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
-    @apply bg-gray-100 dark:bg-gray-700/50 !important;
-  }
-
-  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-    @apply bg-blue-50 dark:bg-blue-900/20 text-blue-500 dark:text-blue-400 !important;
+  .animate-gradient-x {
+    animation: gradient-x 3s ease infinite;
+    background-size: 200% 200%;
   }
 }
 
@@ -253,3 +84,5 @@
   opacity: 0;
   transition: opacity 300ms ease-in;
 }
+
+/* 其他全局样式... */

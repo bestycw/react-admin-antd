@@ -120,110 +120,114 @@ const Login = observer(() => {
   };
 
   return (
-    <div className="login-page relative min-h-screen flex flex-col items-center justify-center 
-      bg-gradient-to-br from-blue-50 to-indigo-100 
-      dark:from-slate-900 dark:to-slate-800">
-      <Particles
-        className="absolute inset-0"
-        init={particlesInit}
-        options={ParticlesOptions}
-      />
+    <div className="login-page">
+      <div className="login-container">
+        <Particles
+          className="absolute inset-0"
+          init={particlesInit}
+          options={ParticlesOptions}
+        />
 
-      <div className="absolute top-4 right-4 flex items-center space-x-3">
-        <LanguageSwitch />
-        <button
-          className="w-10 h-10 flex items-center justify-center rounded-full
-            modern-glass text-gray-600 dark:text-gray-300"
-          onClick={() => ConfigStore.toggleTheme()}
-        >
-          {ConfigStore.isDarkMode ? <SunOutlined className="text-xl" /> : <MoonOutlined className="text-xl" />}
-        </button>
-      </div>
-
-      <div className="relative w-full max-w-md p-8 modern-glass rounded-2xl">
-        <div className="text-center mb-8">
-          <img src={logo} alt="Logo" className="h-16 mx-auto mb-4" />
-          <TypeWriter
-            text={AdminName}
-            className="artistic-text mb-2"
-          />
-          <p className="text-gray-600 dark:text-gray-400">{t('login.subtitle')}</p>
+        <div className="absolute top-4 right-4 flex items-center space-x-3">
+          <LanguageSwitch />
+          <button
+            className="w-10 h-10 flex items-center justify-center rounded-full
+              modern-glass text-gray-600 dark:text-gray-300"
+            onClick={() => ConfigStore.toggleTheme()}
+          >
+            {ConfigStore.isDarkMode ? <SunOutlined className="text-xl" /> : <MoonOutlined className="text-xl" />}
+          </button>
         </div>
 
-        <Form
-          name="login"
-          autoComplete="off"
-          onFinish={onFinish}
-          className="login-form space-y-4"
-        >
-          <Form.Item
-            name="username"
-            rules={[{ required: true, message: t('login.usernameRequired') }]}
-          >
-            <Input
-              prefix={<UserOutlined />}
-              placeholder={t('login.usernamePlaceholder')}
-              size="large"
-              className="login-input"
+        <div className="login-form-container">
+          <div className="text-center mb-8">
+            <img src={logo} alt="Logo" className="h-16 mx-auto mb-4" />
+            <TypeWriter
+              text={AdminName}
+              className="artistic-text mb-2"
+              loop={true}
+              loopDelay={3000}
+              speed={100}
+              showCursor={false}
             />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: t('login.passwordRequired') }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder={t('login.passwordPlaceholder')}
-              size="large"
-              className="login-input"
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <div className="captcha-container">
-              <Form.Item
-                name="captcha"
-                noStyle
-                rules={[{ required: true, message: t('login.captchaRequired') }]}
-              >
-                <Input
-                  placeholder={t('login.captchaPlaceholder')}
-                  size="large"
-                  className="login-input captcha-input"
-                />
-              </Form.Item>
-              <Captcha onChange={setCaptchaCode} />
-            </div>
-          </Form.Item>
-
-          <div className="login-form-footer flex items-center justify-between">
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox className="text-gray-600 dark:text-gray-400">
-                {t('login.rememberMe')}
-              </Checkbox>
-            </Form.Item>
-            <a className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
-              {t('login.forgotPassword')}
-            </a>
+            <p className="text-gray-600 dark:text-gray-400">{t('login.subtitle')}</p>
           </div>
 
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              size="large"
-              className="w-full h-11 bg-gradient-to-r from-blue-500 to-indigo-600 
-                hover:from-blue-600 hover:to-indigo-700 border-none"
+          <Form
+            name="login"
+            autoComplete="off"
+            onFinish={onFinish}
+            className="login-form space-y-4"
+          >
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: t('login.usernameRequired') }]}
             >
-              {t('login.loginButton')}
-            </Button>
-          </Form.Item>
-        </Form>
+              <Input
+                prefix={<UserOutlined />}
+                placeholder={t('login.usernamePlaceholder')}
+                size="large"
+                className="login-input"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: t('login.passwordRequired') }]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder={t('login.passwordPlaceholder')}
+                size="large"
+                className="login-input"
+              />
+            </Form.Item>
+
+            <Form.Item>
+              <div className="captcha-container">
+                <Form.Item
+                  name="captcha"
+                  noStyle
+                  rules={[{ required: true, message: t('login.captchaRequired') }]}
+                >
+                  <Input
+                    placeholder={t('login.captchaPlaceholder')}
+                    size="large"
+                    className="login-input captcha-input"
+                  />
+                </Form.Item>
+                <Captcha onChange={setCaptchaCode} />
+              </div>
+            </Form.Item>
+
+            <div className="login-form-footer flex items-center justify-between">
+              <Form.Item name="remember" valuePropName="checked" noStyle>
+                <Checkbox className="text-gray-600 dark:text-gray-400">
+                  {t('login.rememberMe')}
+                </Checkbox>
+              </Form.Item>
+              <a className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300">
+                {t('login.forgotPassword')}
+              </a>
+            </div>
+
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                size="large"
+                className="w-full h-11 bg-gradient-to-r from-blue-500 to-indigo-600 
+                  hover:from-blue-600 hover:to-indigo-700 border-none"
+              >
+                {t('login.loginButton')}
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
       </div>
 
-      <div className="absolute bottom-4 text-center text-sm text-gray-500 dark:text-gray-400">
+      <div className="copyright">
         <p>Copyright © {new Date().getFullYear()} CoffeeAdmin. All Rights Reserved.</p>
       </div>
     </div>

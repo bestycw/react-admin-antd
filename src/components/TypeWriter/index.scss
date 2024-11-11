@@ -1,0 +1,62 @@
+@keyframes cursor-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.typewriter-text {
+  @apply text-3xl font-bold relative;
+  background: linear-gradient(
+    to right,
+    #3b82f6,
+    #6366f1,
+    #8b5cf6,
+    #6366f1,
+    #3b82f6
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradient 3s linear infinite;
+
+  .dark & {
+    background: linear-gradient(
+      to right,
+      #60a5fa,
+      #818cf8,
+      #a78bfa,
+      #818cf8,
+      #60a5fa
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  &.with-cursor::after {
+    content: '|';
+    @apply absolute;
+    background: inherit;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: cursor-blink 1s step-end infinite;
+  }
+} 

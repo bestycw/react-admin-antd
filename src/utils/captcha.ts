@@ -16,21 +16,18 @@ export const generateCaptcha = (length = 4): string => {
       // 清空画布
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       
-      // 设置背景 - 使用暗色背景
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-      gradient.addColorStop(0, '#1f2937')
-      gradient.addColorStop(1, '#374151')
-      ctx.fillStyle = gradient
+      // 设置背景
+      ctx.fillStyle = '#1f2937'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       // 绘制文字
-      ctx.fillStyle = '#e5e7eb'  // 浅色文字
+      ctx.fillStyle = '#e5e7eb'
       ctx.font = '24px Arial'
       ctx.textBaseline = 'middle'
       
       // 随机旋转和位置
       for (let i = 0; i < code.length; i++) {
-        const x = 15 + i * 23  // 调整字符间距
+        const x = 15 + i * 23
         const y = canvas.height / 2
         const rotation = (Math.random() - 0.5) * 0.3
         
@@ -43,7 +40,7 @@ export const generateCaptcha = (length = 4): string => {
 
       // 添加干扰线
       for (let i = 0; i < 3; i++) {
-        ctx.strokeStyle = `rgba(229, 231, 235, ${Math.random() * 0.2})`  // 浅色干扰线
+        ctx.strokeStyle = `rgba(229, 231, 235, ${Math.random() * 0.2})`
         ctx.beginPath()
         ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height)
         ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height)
@@ -52,7 +49,7 @@ export const generateCaptcha = (length = 4): string => {
 
       // 添加噪点
       for (let i = 0; i < 50; i++) {
-        ctx.fillStyle = `rgba(229, 231, 235, ${Math.random() * 0.3})`  // 浅色噪点
+        ctx.fillStyle = `rgba(229, 231, 235, ${Math.random() * 0.3})`
         ctx.beginPath()
         ctx.arc(
           Math.random() * canvas.width,
