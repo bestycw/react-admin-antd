@@ -1,50 +1,49 @@
-# React + TypeScript + Vite
+# CoffeeAdmin - 轻量级后台管理系统
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CoffeeAdmin 是一个基于最新技术栈的轻量级后台管理系统模板，专注于提供快速、简洁的开发体验。
 
-Currently, two official plugins are available:
+## 技术栈
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 核心框架
+- React 18
+- TypeScript 5.x
+- Vite 5.x (构建工具)
 
-## Expanding the ESLint configuration
+### 状态管理
+- MobX 6.x
+- MobX React Lite 4.x (React 绑定)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### UI 框架
+- Ant Design 5.x
+- TailwindCSS 3.x (原子化 CSS)
 
-- Configure the top-level `parserOptions` property like this:
+### 路由
+- React Router 6.x (声明式路由)
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### 开发工具
+- ESLint (代码检查)
+- Prettier (代码格式化)
+- TypeScript (类型检查)
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 特性
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### 1. 轻量级设计
+- 最小化依赖
+- 快速启动和构建
+- 模块化设计
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### 2. 开发体验
+- 完整的 TypeScript 支持
+- 路径别名支持
+- 热更新
+- 自动导入组件
+
+### 3. 功能特性
+- 基于角色的权限控制
+- 可配置的导航菜单
+- 主题定制
+- 响应式设计
+- 多语言支持
+- 系统配置持久化
+
+### 4. 代码组织
