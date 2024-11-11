@@ -207,4 +207,24 @@ body {
   .ant-input-affix-wrapper-lg {
     @apply h-10 !important;
   }
+
+  /* 登录表单间距 */
+  .login-form .ant-form-item {
+    @apply mb-4 !important;  /* 减小表单项之间的间距 */
+  }
+
+  /* 验证码表单项样式 */
+  .captcha-container .ant-form-item {
+    @apply mb-0 !important;  /* 移除验证码内部表单项的下边距 */
+  }
+
+  /* 验证码输入框样式 */
+  .captcha-input {
+    @apply flex-1;
+  }
+
+  /* 记住密码和忘记密码容器 */
+  .login-form-footer {
+    @apply mt-2 !important;  /* 调整底部区域的上边距 */
+  }
 }

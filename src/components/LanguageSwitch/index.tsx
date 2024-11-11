@@ -4,16 +4,16 @@ import type { MenuProps } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 const LanguageSwitch = () => {
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
 
   const items: MenuProps['items'] = [
     {
       key: 'zh-CN',
-      label: '简体中文',
+      label: t('common.language.zh'),
     },
     {
       key: 'en-US',
-      label: 'English',
+      label: t('common.language.en'),
     }
   ]
 

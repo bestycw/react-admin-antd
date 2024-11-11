@@ -152,7 +152,7 @@ const Login = observer(() => {
         <Form
           name="login"
           onFinish={onFinish}
-          className="space-y-6"
+          className="login-form space-y-4"
         >
           <Form.Item
             name="username"
@@ -195,7 +195,7 @@ const Login = observer(() => {
             </div>
           </Form.Item>
 
-          <div className="flex items-center justify-between mb-4">
+          <div className="login-form-footer flex items-center justify-between">
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox className="text-gray-600 dark:text-gray-400">
                 {t('login.rememberMe')}
