@@ -14,6 +14,7 @@ import Captcha from '../../components/Captcha';
 import { authService } from '../../services/auth';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitch from '../../components/LanguageSwitch';
+import './index.scss';
 
 interface LoginForm {
   username: string;
@@ -119,7 +120,7 @@ const Login = observer(() => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center 
+    <div className="login-page relative min-h-screen flex flex-col items-center justify-center 
       bg-gradient-to-br from-blue-50 to-indigo-100 
       dark:from-slate-900 dark:to-slate-800">
       <Particles
@@ -151,6 +152,7 @@ const Login = observer(() => {
 
         <Form
           name="login"
+          autoComplete="off"
           onFinish={onFinish}
           className="login-form space-y-4"
         >
