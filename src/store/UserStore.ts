@@ -2,7 +2,8 @@
 import { makeAutoObservable } from "mobx"
 
 export interface UserInfo {
-    name: string
+    username: string
+    avatar?: string
     roles: string[]
     accessToken: string
     rolesValue: number
@@ -56,6 +57,11 @@ class UserStore {
         sessionStorage.removeItem('userInfo')
     }
 
+    logout() {
+        this.clearUserInfo()
+        window.location.href = '/login'
+    }
+
     hasRole(role: string): boolean {
         return this.userInfo?.roles?.includes(role) ?? false
     }
@@ -73,7 +79,7 @@ class UserStore {
     }
 
     get userName(): string {
-        return this.userInfo?.name ?? ''
+        return this.userInfo?.username ?? ''
     }
 
     get userRoles(): string[] {
