@@ -85,8 +85,9 @@ const Header = observer(() => {
                   p-1 rounded-full transition-all duration-200 
                   hover:bg-white/20 dark:hover:bg-white/10
                   text-gray-600 dark:text-gray-300
+                  w-8 h-8 flex items-center justify-center
                 `}
-                onClick={() => ConfigStore.toggleTheme()}
+                onClick={() => ConfigStore.toggleDarkMode()}
               >
                 {ConfigStore.isDarkMode ? (
                   <SunOutlined className="text-lg text-amber-500" />
@@ -101,6 +102,7 @@ const Header = observer(() => {
                   p-1 rounded-full transition-all duration-200
                   hover:bg-white/20 dark:hover:bg-white/10
                   text-gray-600 dark:text-gray-300
+                  w-8 h-8 flex items-center justify-center
                 `}
                 onClick={() => setSettingOpen(true)}
               >
