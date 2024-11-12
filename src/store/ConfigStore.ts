@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx'
 
-type ThemeStyle = 'mac' | 'win'
+type ThemeStyle = 'dynamic' | 'classic'
 
 class ConfigStore {
   // 界面风格
-  themeStyle: ThemeStyle = 'mac'
+  themeStyle: ThemeStyle = 'dynamic'
   // 暗色模式
   isDarkMode: boolean = false
   // 主题色
@@ -19,7 +19,7 @@ class ConfigStore {
   }
 
   toggleTheme = () => {
-    this.themeStyle = this.themeStyle === 'mac' ? 'win' : 'mac'
+    this.themeStyle = this.themeStyle === 'dynamic' ? 'classic' : 'dynamic'
   }
 
   toggleDarkMode = () => {

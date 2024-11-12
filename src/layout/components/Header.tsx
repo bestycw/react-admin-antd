@@ -70,7 +70,7 @@ const Header = observer(() => {
           <div className="flex items-center">
             <div className={`
               flex items-center gap-1 p-0.5 rounded-full transition-all duration-200
-              ${ConfigStore.themeStyle === 'mac'
+              ${ConfigStore.themeStyle === 'dynamic'
                 ? ConfigStore.isDarkMode
                   ? 'bg-white/8 hover:bg-white/12'
                   : 'bg-black/5 hover:bg-black/8'

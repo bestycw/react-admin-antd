@@ -15,12 +15,12 @@ interface SettingDrawerProps {
 
 const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
   const { ConfigStore } = useStore()
-  const isMac = ConfigStore.themeStyle === 'mac'
+  const isDynamic = ConfigStore.themeStyle === 'dynamic'
   const isDark = ConfigStore.isDarkMode
 
   const buttonClass = `
     px-3 py-1.5 rounded-full text-sm transition-colors
-    ${isMac
+    ${isDynamic
       ? isDark
         ? 'bg-white/10 hover:bg-white/15'
         : 'bg-black/5 hover:bg-black/10'
@@ -33,7 +33,7 @@ const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
 
   const disabledButtonClass = `
     px-3 py-1.5 rounded-full text-sm
-    ${isMac
+    ${isDynamic
       ? isDark
         ? 'bg-white/5'
         : 'bg-black/5'
@@ -65,10 +65,10 @@ const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
             <div className="flex justify-between items-center">
               <span className={itemLabelClass}>界面风格</span>
               <button
-                onClick={() => ConfigStore.setThemeStyle(ConfigStore.themeStyle === 'mac' ? 'win' : 'mac')}
+                onClick={() => ConfigStore.toggleTheme()}
                 className={buttonClass}
               >
-                {ConfigStore.themeStyle === 'mac' ? 'Mac风格' : 'Windows风格'}
+                {ConfigStore.themeStyle === 'dynamic' ? '灵动' : '经典'}
               </button>
             </div>
             

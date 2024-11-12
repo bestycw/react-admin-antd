@@ -1,5 +1,5 @@
 .theme-container {
-  &.theme-mac {
+  &.theme-dynamic {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
     border-radius: 12px;
@@ -60,7 +60,7 @@
     }
   }
   
-  &.theme-win {
+  &.theme-classic {
     background: #ffffff;
     border-radius: 3px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
