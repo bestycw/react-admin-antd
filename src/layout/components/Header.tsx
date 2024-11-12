@@ -49,15 +49,15 @@ const Header = observer(() => {
       <ThemeContainer>
         <div className="flex items-center h-10">
           {/* Logo */}
-          <div className="flex items-center shrink-0 gap-3 mr-8">
+          <div className="flex items-center shrink-0 gap-3 mr-10">
             <div className={`
-              w-9 h-9 flex items-center justify-center
+              w-10 h-10 flex items-center justify-center
               p-2 rounded-lg transition-all duration-200
               ${isDynamic ? 'dynamic-bg' : 'classic-bg'}
             `}>
               <img src={logo} alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="text-[15px] font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
+            <span className="text-base font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
               {AdminName}
             </span>
           </div>
