@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { DownOutlined } from '@ant-design/icons';
 
 interface IProps extends MenuProps {
     type?: string;
@@ -34,7 +35,8 @@ const Menu = observer((props: IProps) => {
                 items={MenuStore.menuList}
                 className="!bg-transparent !border-none"
                 // overflowedIndicator={<span className="text-gray-500 dark:text-gray-400">•••</span>}
-                {...props}
+                // expandIcon={<DownOutlined className="text-xs opacity-60" />}
+                // subMenuIcon={<DownOutlined className="text-xs opacity-60" />}
             />
         </div>
     );

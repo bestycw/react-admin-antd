@@ -1,7 +1,7 @@
 /* Antd 组件样式覆盖 */
 .ant-menu-horizontal {
   border-bottom: none !important;
-  background: var(--menu-bg-color) !important;
+  background: var(--menu-bg) !important;
   line-height: 40px !important;
   width: 100% !important;
   
@@ -23,45 +23,47 @@
     &::before {
       content: '';
       position: absolute;
-      left: 50%;
-      bottom: 8px;
-      width: 0;
-      height: 2px;
-      background: var(--primary-color);
-      transform: translateX(-50%);
-      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      left: 16px;
+      right: 16px;
+      bottom: 0;
+      height: 3px;
+      background: var(--text-secondary);
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       opacity: 0;
+      border-radius: 1.5px;
     }
     
     /* 悬浮效果 */
     &:hover {
-      color: var(--text-primary) !important;
-      background: color-mix(in srgb, var(--primary-color) 5%, transparent) !important;
+      color: var(--text-secondary) !important;
+      background: var(--bg-hover) !important;
       
       &::before {
-        width: 24px;
-        opacity: 0.6;
+        transform: scaleX(1);
+        opacity: 1;
       }
     }
   }
 
   /* 选中效果 */
   .ant-menu-item-selected {
-    color: var(--primary-color) !important;
+    color: var(--text-secondary) !important;
     font-weight: 500;
-    background: color-mix(in srgb, var(--primary-color) 12%, transparent) !important;
+    background: var(--bg-active) !important;
     
     &::before {
-      width: 100% !important;
+      transform: scaleX(1) !important;
       opacity: 1 !important;
     }
 
     &:hover {
-      color: var(--primary-color) !important;
-      background: color-mix(in srgb, var(--primary-color) 15%, transparent) !important;
+      color: var(--text-secondary) !important;
+      background: var(--bg-active) !important;
       
       &::before {
-        width: 100% !important;
+        transform: scaleX(1) !important;
         opacity: 1 !important;
       }
     }
@@ -72,25 +74,21 @@
     .ant-menu-submenu-title {
       color: var(--text-primary) !important;
       transition: all 0.3s !important;
+      /* padding-right: 24px !important; */
       
       &:hover {
-        color: var(--primary-color) !important;
-      }
-      
-      .ant-menu-submenu-arrow {
-        color: var(--text-primary) !important;
-        transition: color 0.3s !important;
+        color: var(--text-secondary) !important;
+        
+
       }
     }
     
     &.ant-menu-submenu-selected > .ant-menu-submenu-title {
-      color: var(--primary-color) !important;
-      background: color-mix(in srgb, var(--primary-color) 12%, transparent) !important;
+      color: var(--text-secondary) !important;
+      background: var(--bg-active) !important;
     }
     
-    &:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
-      color: var(--primary-color) !important;
-    }
+
   }
 }
 
@@ -101,12 +99,13 @@
     border-radius: var(--radius) !important;
     padding: 4px !important;
     border: 1px solid var(--border-primary) !important;
+    margin-top: 4px !important;
     
     /* 灵动风格 */
     .theme-dynamic & {
-      background: rgba(var(--bg-primary-rgb), 0.8) !important;
-      backdrop-filter: blur(10px);
-      border-color: rgba(255, 255, 255, 0.1) !important;
+      background: rgba(var(--bg-primary-rgb), var(--bg-opacity)) !important;
+      backdrop-filter: blur(var(--blur-amount));
+      border-color: rgba(255, 255, 255, var(--border-opacity)) !important;
     }
     
     .ant-menu-item {
@@ -114,16 +113,25 @@
       border-radius: var(--radius) !important;
       margin: 2px 4px !important;
       transition: all 0.2s !important;
+      min-width: 120px !important;
       
       &:hover {
-        color: var(--primary-color) !important;
+        color: var(--text-secondary) !important;
         background: var(--bg-hover) !important;
+
+        * {
+          color: var(--text-secondary) !important;
+        }
       }
       
       &.ant-menu-item-selected {
-        color: var(--primary-color) !important;
-        background: color-mix(in srgb, var(--primary-color) 12%, transparent) !important;
+        color: var(--text-secondary) !important;
+        background: var(--bg-active) !important;
         font-weight: 500;
+
+        * {
+          color: var(--text-secondary) !important;
+        }
       }
     }
   }
@@ -139,9 +147,9 @@
     
     /* 灵动风格 */
     .theme-dynamic & {
-      background: rgba(var(--bg-primary-rgb), 0.8);
-      backdrop-filter: blur(10px);
-      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(var(--bg-primary-rgb), var(--bg-opacity));
+      backdrop-filter: blur(var(--blur-amount));
+      border-color: rgba(255, 255, 255, var(--border-opacity));
     }
     
     .ant-dropdown-menu-item,
@@ -154,7 +162,7 @@
       
       &:hover {
         background: var(--bg-hover);
-        color: var(--primary-color);
+        color: var(--text-secondary);
       }
       
       .anticon {
@@ -169,21 +177,24 @@
   }
 }
 
+/* 按钮样式 */
 .ant-btn {
-  border-color: var(--button-border-color);
+  border-color: var(--border-primary);
   color: var(--text-primary);
 }
 
+/* 输入框样式 */
 .ant-input {
-  background: var(--input-bg);
-  border-color: var(--input-border-color);
+  background: var(--bg-primary);
+  border-color: var(--border-primary);
   color: var(--text-primary);
   
   &::placeholder {
-    color: var(--input-placeholder-color);
+    color: var(--text-disabled);
   }
 }
 
+/* 确保所有组件文字颜色统一 */
 .ant-menu,
 .ant-dropdown-menu,
 .ant-btn,
