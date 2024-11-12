@@ -91,6 +91,7 @@ const Login = observer(() => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
+  const isDynamic = ConfigStore.themeStyle === 'dynamic'
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
@@ -131,11 +132,21 @@ const Login = observer(() => {
         <div className="absolute top-4 right-4 flex items-center space-x-3">
           <LanguageSwitch />
           <button
-            className="w-10 h-10 flex items-center justify-center rounded-full
-              modern-glass text-gray-600 dark:text-gray-300"
-            onClick={() => ConfigStore.toggleTheme()}
+            className={`
+              w-10 h-10 flex items-center justify-center rounded-full transition-all
+              ${isDynamic
+                ? 'dynamic-bg dynamic-bg-hover'
+                : 'classic-bg classic-bg-hover'
+              }
+              text-secondary
+            `}
+            onClick={() => ConfigStore.toggleDarkMode()}
           >
-            {ConfigStore.isDarkMode ? <SunOutlined className="text-xl" /> : <MoonOutlined className="text-xl" />}
+            {ConfigStore.isDarkMode ? (
+              <SunOutlined className="text-lg text-amber-500" />
+            ) : (
+              <MoonOutlined className="text-lg text-blue-500" />
+            )}
           </button>
         </div>
 

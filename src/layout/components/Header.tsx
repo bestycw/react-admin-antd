@@ -14,25 +14,26 @@ import {
   MoonOutlined,
   LogoutOutlined,
 } from '@ant-design/icons'
-
+import GlobalConfig from '@/config/GlobalConfig'
 const Header = observer(() => {
   const { UserStore, ConfigStore } = useStore()
   const [settingOpen, setSettingOpen] = useState(false)
   const isDynamic = ConfigStore.themeStyle === 'dynamic'
+  const {AdminName=''} = GlobalConfig
 
   const userMenuItems: MenuProps['items'] = [
     {
       key: 'profile',
-      icon: <UserOutlined />,
-      label: '个人信息'
+      icon: <UserOutlined className="text-gray-400" />,
+      label: <span className="text-gray-600 dark:text-gray-300">个人信息</span>
     },
     {
       type: 'divider'
     },
     {
       key: 'logout',
-      icon: <LogoutOutlined />,
-      label: '退出登录'
+      icon: <LogoutOutlined className="text-red-400" />,
+      label: <span className="text-red-500 dark:text-red-400">退出登录</span>
     }
   ]
 
@@ -48,11 +49,14 @@ const Header = observer(() => {
         <div className="flex items-center h-10">
           {/* Logo */}
           <div className="flex items-center gap-2.5 mr-7">
-            <div className="p-1.5 rounded-lg transition-all duration-200 dynamic-bg dynamic-bg-hover">
+            <div className={`
+              p-1.5 rounded-lg transition-all duration-200
+              ${isDynamic ? 'dynamic-bg' : 'classic-bg'}
+            `}>
               <img src={logo} alt="Logo" className="w-7 h-7" />
             </div>
-            <span className="text-base font-semibold">
-              CoffeeAdmin
+            <span className="text-base font-semibold text-gray-800 dark:text-gray-200 transition-colors">
+              {AdminName}
             </span>
           </div>
 
@@ -65,12 +69,12 @@ const Header = observer(() => {
           <div className="flex items-center">
             <div className={`
               flex items-center gap-1 p-0.5 rounded-full transition-all duration-200
-              ${isDynamic ? 'dynamic-bg dynamic-bg-hover' : 'classic-bg classic-bg-hover'}
+              ${isDynamic ? 'dynamic-bg' : 'classic-bg'}
             `}>
               {/* Theme Toggle */}
               <button 
                 className="w-8 h-8 flex items-center justify-center rounded-full
-                  transition-all duration-200 bg-base-hover text-secondary"
+                  transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/10"
                 onClick={() => ConfigStore.toggleDarkMode()}
               >
                 {ConfigStore.isDarkMode ? (
@@ -83,7 +87,8 @@ const Header = observer(() => {
               {/* Settings */}
               <button 
                 className="w-8 h-8 flex items-center justify-center rounded-full
-                  transition-all duration-200 bg-base-hover text-secondary"
+                  transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/10
+                  text-gray-500 dark:text-gray-400"
                 onClick={() => setSettingOpen(true)}
               >
                 <SettingOutlined className="text-lg" />
@@ -93,19 +98,24 @@ const Header = observer(() => {
               <Dropdown
                 menu={{
                   items: userMenuItems,
-                  onClick: handleUserMenuClick
+                  onClick: handleUserMenuClick,
+                  className: isDynamic 
+                    ? 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg'
+                    : 'bg-white dark:bg-gray-800'
                 }}
                 trigger={['click']}
               >
                 <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full
-                  cursor-pointer transition-all duration-200 bg-base-hover">
+                  cursor-pointer transition-all duration-200
+                  hover:bg-black/5 dark:hover:bg-white/10">
                   <Avatar 
                     size="small" 
                     src={UserStore.userInfo?.avatar}
                     icon={<UserOutlined />}
-                    className="w-5.5 h-5.5 bg-gradient-to-r from-blue-500 to-indigo-500"
+                    className="w-5.5 h-5.5 bg-gradient-to-r from-blue-500 to-indigo-500
+                      flex items-center justify-center text-white"
                   />
-                  <span className="text-sm text-base">
+                  <span className="text-sm text-gray-700 dark:text-gray-200">
                     {UserStore.userInfo?.username || '用户'}
                   </span>
                 </div>
