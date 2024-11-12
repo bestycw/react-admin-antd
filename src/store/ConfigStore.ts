@@ -1,37 +1,50 @@
 import { makeAutoObservable } from 'mobx'
 
+type ThemeStyle = 'mac' | 'sharp';
+
 class ConfigStore {
-  isDarkMode = false
+  isDarkMode: boolean;
+  themeStyle: ThemeStyle;
 
   constructor() {
-    makeAutoObservable(this, {}, { autoBind: true })
-    this.loadConfig()
-    this.applyTheme()
-  }
-
-  private loadConfig() {
-    const config = localStorage.getItem('theme')
-    if (config) {
-      this.isDarkMode = config === 'dark'
-    } else {
-      // 根据系统主题设置默认值
-      this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
-    }
+    this.isDarkMode = localStorage.getItem('isDarkMode') === 'true';
+    this.themeStyle = (localStorage.getItem('themeStyle') as ThemeStyle) || 'mac';
+    
+    makeAutoObservable(this, {}, { autoBind: true });
+    
+    this.applyTheme();
   }
 
   private applyTheme() {
     if (this.isDarkMode) {
-      document.documentElement.classList.add('dark')
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark')
+      document.documentElement.classList.remove('dark');
     }
-    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light')
+
+    document.documentElement.classList.remove('theme-mac', 'theme-sharp');
+    document.documentElement.classList.add(`theme-${this.themeStyle}`);
   }
 
   toggleTheme() {
-    this.isDarkMode = !this.isDarkMode
-    this.applyTheme()
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('isDarkMode', String(this.isDarkMode));
+    this.applyTheme();
+  }
+
+  setThemeStyle(style: ThemeStyle) {
+    this.themeStyle = style;
+    localStorage.setItem('themeStyle', style);
+    this.applyTheme();
+  }
+
+  get currentTheme() {
+    return this.isDarkMode ? 'dark' : 'light';
+  }
+
+  get currentStyle() {
+    return this.themeStyle;
   }
 }
 
-export default new ConfigStore()
+export default new ConfigStore();

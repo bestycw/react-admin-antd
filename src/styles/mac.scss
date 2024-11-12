@@ -4,29 +4,31 @@
   --mac-bg-dark: rgba(28, 28, 30, 0.8);
   --mac-border-light: rgba(255, 255, 255, 0.2);
   --mac-border-dark: rgba(55, 65, 81, 0.3);
-  --mac-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --mac-radius: 12px;  /* macOS 风格的圆角大小 */
 }
 
 /* macOS 风格的通用类 */
 .mac-glass {
   @apply bg-white/80 dark:bg-gray-800/80 
     backdrop-blur-xl backdrop-saturate-150 
-    border border-white/20 dark:border-gray-700/30
-    transition-colors duration-300;
+    border border-white/20 dark:border-gray-700/30;
+  border-radius: var(--mac-radius);
 }
 
 .mac-button {
   @apply flex items-center justify-center 
-    rounded-lg transition-all duration-200
+    transition-all duration-200
     hover:bg-white/10 dark:hover:bg-black/10
     active:scale-95;
+  border-radius: calc(var(--mac-radius) - 4px);
 }
 
 .mac-icon-button {
   @apply w-8 h-8 flex items-center justify-center 
-    rounded-full transition-all duration-200
+    transition-all duration-200
     hover:bg-white dark:hover:bg-gray-700 
     hover:shadow-md active:scale-95;
+  border-radius: calc(var(--mac-radius) - 2px);
 }
 
 .mac-menu {
@@ -38,18 +40,20 @@
 }
 
 .mac-panel {
-  @apply rounded-lg overflow-hidden
+  @apply overflow-hidden
     bg-white/50 dark:bg-gray-800/50
     border border-gray-200/50 dark:border-gray-700/50;
+  border-radius: calc(var(--mac-radius) - 2px);
 }
 
 .mac-input {
   @apply bg-white/50 dark:bg-slate-800/50 
-    border-gray-200 dark:border-gray-700
+    border border-gray-200 dark:border-gray-700
     text-gray-900 dark:text-gray-100 
     transition-colors duration-200
     hover:border-blue-400 dark:hover:border-blue-500
     focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20;
+  border-radius: calc(var(--mac-radius) - 4px);
 }
 
 /* macOS 风格的动画 */
@@ -68,11 +72,13 @@
 }
 
 .mac-content {
-  @apply rounded-lg min-h-[calc(100vh-88px)];
+  @apply w-full;
+  border-radius: var(--mac-radius);
 }
 
 .mac-drawer {
   @apply bg-transparent backdrop-blur-xl backdrop-saturate-150;
+  border-radius: var(--mac-radius);
 }
 
 /* macOS 风格的文本类 */
@@ -90,11 +96,20 @@
 /* macOS 风格的控件类 */
 .mac-select {
   @apply bg-white/50 dark:bg-gray-800/50 
-    border-gray-200 dark:border-gray-700
-    rounded-lg transition-colors duration-200;
+    border border-gray-200 dark:border-gray-700
+    transition-colors duration-200;
+  border-radius: calc(var(--mac-radius) - 4px);
 }
 
 .mac-switch {
   @apply bg-gray-200 dark:bg-gray-700
     checked:bg-blue-500 dark:checked:bg-blue-400;
-} 
+  border-radius: calc(var(--mac-radius) - 4px);
+}
+
+/* macOS 风格的功能区容器 */
+.mac-actions-container {
+  @apply flex items-center space-x-2 
+    bg-gray-100/50 dark:bg-gray-800/50 p-1.5;
+  border-radius: 9999px; /* 完全圆角 */
+}

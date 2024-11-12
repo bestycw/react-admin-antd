@@ -1,0 +1,91 @@
+/* 直角风格的基础变量 */
+:root {
+  --sharp-bg-light: rgba(255, 255, 255, 0.95);
+  --sharp-bg-dark: rgba(28, 28, 30, 0.95);
+  --sharp-border-light: rgba(229, 231, 235, 1);
+  --sharp-border-dark: rgba(75, 85, 99, 1);
+}
+
+/* 直角风格的通用类 */
+.sharp-glass {
+  @apply bg-white/95 dark:bg-gray-800/95 
+    border border-gray-200 dark:border-gray-700
+    transition-colors duration-300;
+}
+
+.sharp-button {
+  @apply flex items-center justify-center 
+    transition-all duration-200
+    hover:bg-gray-100 dark:hover:bg-gray-700
+    active:bg-gray-200 dark:active:bg-gray-600;
+}
+
+.sharp-icon-button {
+  @apply w-8 h-8 flex items-center justify-center 
+    transition-all duration-200
+    hover:bg-gray-100 dark:hover:bg-gray-700
+    active:bg-gray-200 dark:active:bg-gray-600;
+}
+
+.sharp-menu {
+  @apply bg-transparent border-0;
+
+  &:hover {
+    @apply text-blue-500 dark:text-blue-400;
+  }
+}
+
+.sharp-panel {
+  @apply bg-white/50 dark:bg-gray-800/50
+    border border-gray-200 dark:border-gray-700;
+}
+
+.sharp-input {
+  @apply bg-white/50 dark:bg-slate-800/50 
+    border border-gray-200 dark:border-gray-700
+    text-gray-900 dark:text-gray-100 
+    transition-colors duration-200
+    hover:border-blue-400 dark:hover:border-blue-500
+    focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20;
+}
+
+/* 直角风格的布局类 */
+.sharp-header {
+  @apply sticky top-0 z-50;
+}
+
+.sharp-content {
+  @apply w-full;
+}
+
+.sharp-glass {
+  @apply bg-white/95 dark:bg-gray-800/95 
+    border border-gray-200 dark:border-gray-700
+    transition-colors duration-300;
+}
+
+.sharp-drawer {
+  @apply bg-white dark:bg-gray-800;
+}
+
+/* 直角风格的文本类 */
+.sharp-title {
+  @apply text-lg font-semibold 
+    text-gray-900 dark:text-gray-100;
+}
+
+.sharp-text {
+  @apply text-gray-600 dark:text-gray-400;
+}
+
+/* 直角风格的控件类 */
+.sharp-select {
+  @apply bg-white/50 dark:bg-gray-800/50 
+    border border-gray-200 dark:border-gray-700
+    transition-colors duration-200;
+}
+
+.sharp-switch {
+  @apply bg-gray-200 dark:bg-gray-700
+    checked:bg-blue-500 dark:checked:bg-blue-400;
+} 

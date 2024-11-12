@@ -41,9 +41,9 @@ const Header = observer(() => {
   }
 
   return (
-    <div className="mac-header">
+    <div className={`${ConfigStore.themeStyle === 'mac' ? 'mac-header' : 'sharp-header'}`}>
       <div className="max-w-screen-2xl mx-2 px-3">
-        <div className="mac-glass rounded-lg mt-3">
+        <div className={`${ConfigStore.themeStyle === 'mac' ? 'mac-glass' : 'sharp-glass'} mt-3`}>
           <div className="px-3">
             <div className="flex h-16 items-center">
               {/* Logo */}
@@ -61,10 +61,14 @@ const Header = observer(() => {
 
               {/* Actions */}
               <div className="flex items-center">
-                <div className="flex items-center space-x-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-full p-1.5">
+                <div className={`flex items-center space-x-2 ${
+                  ConfigStore.themeStyle === 'mac' 
+                    ? 'bg-gray-100/50 dark:bg-gray-800/50 rounded-full' 
+                    : 'bg-gray-100 dark:bg-gray-800'
+                } p-1.5`}>
                   {/* Theme Toggle */}
                   <button 
-                    className="mac-icon-button"
+                    className={ConfigStore.themeStyle === 'mac' ? 'mac-icon-button' : 'sharp-icon-button'}
                     onClick={() => ConfigStore.toggleTheme()}
                   >
                     {ConfigStore.isDarkMode ? (

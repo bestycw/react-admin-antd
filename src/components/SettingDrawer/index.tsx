@@ -32,6 +32,19 @@ const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
                 className={`${ConfigStore.isDarkMode ? 'bg-blue-500' : ''}`}
               />
             </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 dark:text-gray-400">界面风格</span>
+              <Select
+                value={ConfigStore.themeStyle}
+                onChange={(value) => ConfigStore.setThemeStyle(value)}
+                style={{ width: 120 }}
+                options={[
+                  { label: 'macOS风格', value: 'mac' },
+                  { label: '直角风格', value: 'sharp' }
+                ]}
+                className="setting-select"
+              />
+            </div>
           </div>
         </div>
 
