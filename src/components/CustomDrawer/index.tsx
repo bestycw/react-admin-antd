@@ -3,6 +3,7 @@ import { useStore } from '@/store'
 import { CloseOutlined } from '@ant-design/icons'
 import { createPortal } from 'react-dom'
 import { CSSTransition } from 'react-transition-group'
+import { ThemeContainer } from '@/components/ThemeContainer'
 import classNames from 'classnames'
 import './styles.scss'
 
@@ -20,7 +21,6 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
   onClose,
 }) => {
   const { ConfigStore } = useStore()
-  const isMac = ConfigStore.themeStyle === 'mac'
   const isDark = ConfigStore.isDarkMode
 
   // 处理 ESC 键关闭
@@ -58,77 +58,34 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
         <div 
           className={`
             absolute inset-0
-            ${isMac
-              ? isDark
-                ? 'bg-black/40 backdrop-blur-sm'
-                : 'bg-black/20 backdrop-blur-sm'
-              : isDark
-                ? 'bg-black/60'
-                : 'bg-black/40'
-            }
+            ${isDark ? 'bg-black/60' : 'bg-black/40'}
           `}
           onClick={onClose}
         />
 
-        {/* 抽屉内容 */}
-        <div 
-          className={classNames(
-            'fixed top-0 right-0 h-full w-80',
-            isMac ? [
-              'backdrop-blur-xl',
-              isDark
-                ? 'bg-[rgba(28,28,32,0.85)]'
-                : 'bg-white/80',
-            ] : [
-              isDark
-                ? 'bg-gray-900'
-                : 'bg-white'
-            ]
-          )}
-        >
-          {/* 头部 */}
-          <div className={classNames(
-            'flex items-center justify-between px-4 h-14',
-            isMac ? [
-              isDark
-                ? 'border-b border-white/10'
-                : 'border-b border-black/5'
-            ] : [
-              isDark
-                ? 'border-b border-gray-800'
-                : 'border-b border-gray-200'
-            ]
-          )}>
-            <h3 className={classNames(
-              'text-base font-medium',
-              isDark ? 'text-gray-200' : 'text-gray-800'
-            )}>
-              {title}
-            </h3>
-            <button
-              onClick={onClose}
-              className={classNames(
-                'p-1.5 rounded-full transition-colors',
-                isMac ? [
-                  isDark
-                    ? 'hover:bg-white/10'
-                    : 'hover:bg-black/5'
-                ] : [
-                  isDark
-                    ? 'hover:bg-gray-800'
-                    : 'hover:bg-gray-100'
-                ],
-                isDark ? 'text-gray-400' : 'text-gray-500'
-              )}
-            >
-              <CloseOutlined />
-            </button>
-          </div>
+        {/* 抽屉容器 */}
+        <div className="fixed top-0 right-0 h-full w-80">
+          <ThemeContainer className="h-full rounded-l-xl rounded-r-none border-r-0">
+            {/* 头部 */}
+            <div className="flex items-center justify-between px-4 h-14">
+              <h3 className="text-base font-medium text-gray-800 dark:text-gray-200">
+                {title}
+              </h3>
+              <button
+                onClick={onClose}
+                className="w-8 h-8 flex items-center justify-center rounded-full transition-colors
+                  hover:bg-black/5 dark:hover:bg-white/10
+                  text-gray-500 dark:text-gray-400"
+              >
+                <CloseOutlined className="text-lg" />
+              </button>
+            </div>
 
-          {/* 内容区域 */}
-          <div className="h-[calc(100%-3.5rem)] overflow-y-auto">
-            {children}
-          </div>
+            {/* 内容区域 */}
+            <div className="h-[calc(100%-3.5rem)] overflow-y-auto">
+              {children}
+            </div>
+          </ThemeContainer>
         </div>
       </div>
     </CSSTransition>,

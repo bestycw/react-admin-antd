@@ -8,6 +8,9 @@
 :root {
   --background-color: #ffffff;
   --text-color: #1f2937;
+  --primary-color: #1890ff;
+  --primary-color-hover: #40a9ff;
+  --primary-color-rgb: 24, 144, 255;
 }
 
 /* 暗色模式变量 */
