@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStore } from '@/store';
 import classNames from 'classnames';
-import './styles.scss';
+import '@/styles/theme-style.scss';
 
 interface ThemeContainerProps {
   children: React.ReactNode;

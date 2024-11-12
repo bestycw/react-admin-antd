@@ -1,20 +1,70 @@
-@import './styles/mac.scss';
+@import './styles/theme.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 亮色模式变量 */
-:root {
-  --background-color: #ffffff;
-  --text-color: #1f2937;
-  --primary-color: #1890ff;
-  --primary-color-hover: #40a9ff;
-  --primary-color-rgb: 24, 144, 255;
+/* 基础样式 */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
-/* 暗色模式变量 */
-:root[class~="dark"] {
-  --background-color: #1f2937;
-  --text-color: #f3f4f6;
+/* 通用过渡效果 */
+* {
+  transition-property: color, background-color, border-color;
+  transition-duration: 200ms;
 }
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-overlay);
+}
+
+/* Antd 组件主题覆盖 */
+.ant-menu {
+  color: var(--menu-text);
+  background: var(--menu-bg);
+  border-color: var(--border-primary);
+}
+
+.ant-menu-item:hover {
+  color: var(--menu-hover-text) !important;
+  background: var(--menu-hover-bg) !important;
+}
+
+.ant-menu-item-selected {
+  color: var(--menu-active-text) !important;
+  background: var(--menu-active-bg) !important;
+}
+
+.ant-btn {
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+}
+
+.ant-input {
+  background: var(--bg-primary);
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+}
+
+.ant-input::placeholder {
+  color: var(--text-disabled);
+}
+
+/* 其他全局样式... */

@@ -1,0 +1,102 @@
+/* 基础主题变量 */
+:root {
+  /* 背景色系统 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #f3f4f6;
+  --bg-overlay: rgba(0, 0, 0, 0.05);
+  --bg-hover: rgba(0, 0, 0, 0.04);
+  --bg-active: rgba(0, 0, 0, 0.08);
+  
+  /* 文字颜色系统 */
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --text-disabled: #9ca3af;
+  --text-inverse: #ffffff;
+  
+  /* 边框颜色系统 */
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+  --border-divider: #f3f4f6;
+  
+  /* 菜单颜色系统 */
+  --menu-bg: transparent;
+  --menu-text: var(--text-secondary);
+  --menu-hover-bg: transparent;
+  --menu-hover-text: var(--primary-color);
+  --menu-active-bg: transparent;
+  --menu-active-text: var(--primary-color);
+  
+  /* 状态颜色 */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+  
+  /* 功能色 */
+  --link: #1890ff;
+  --link-hover: #40a9ff;
+  
+  /* 投影 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  
+  /* 圆角 */
+  --radius-sm: 0.125rem;
+  --radius: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-full: 9999px;
+}
+
+/* 暗色模式变量 */
+:root.dark {
+  /* 背景色系统 */
+  --bg-primary: #1f2937;
+  --bg-secondary: #111827;
+  --bg-tertiary: #374151;
+  --bg-overlay: rgba(255, 255, 255, 0.1);
+  --bg-hover: rgba(255, 255, 255, 0.08);
+  --bg-active: rgba(255, 255, 255, 0.12);
+  
+  /* 文字颜色系统 */
+  --text-primary: #f9fafb;
+  --text-secondary: #e5e7eb;
+  --text-tertiary: #d1d5db;
+  --text-disabled: #6b7280;
+  --text-inverse: #1f2937;
+  
+  /* 边框颜色系统 */
+  --border-primary: #374151;
+  --border-secondary: #4b5563;
+  --border-divider: #374151;
+  
+  /* 菜单颜色系统 */
+  --menu-bg: transparent;
+  --menu-text: var(--text-secondary);
+  --menu-hover-bg: transparent;
+  --menu-hover-text: var(--primary-color);
+  --menu-active-bg: transparent;
+  --menu-active-text: var(--primary-color);
+  
+  /* 投影 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+/* 灵动风格特定变量 */
+.theme-dynamic {
+  --bg-opacity: 0.8;
+  --blur-amount: 10px;
+  --border-opacity: 0.2;
+}
+
+/* 经典风格特定变量 */
+.theme-classic {
+  --bg-opacity: 1;
+  --blur-amount: 0px;
+  --border-opacity: 1;
+} 
