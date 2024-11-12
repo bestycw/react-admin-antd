@@ -5,11 +5,11 @@ const Demo1 = lazy(() => import('../../../pages/demo1'))
 
 
 const demo1Route: CoRouteObject = {
-    path: '/demo1',
+    path: '/dashboard',
     element: <Demo1 />,
     meta: {
-        title: 'demo1',
-        icon: 'icon-demo1',
+        title: 'Dashboard',
+        // icon: 'icon-demo1',
         // roles: ['admin', 'common']
     }
 }

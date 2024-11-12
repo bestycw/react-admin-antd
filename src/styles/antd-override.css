@@ -31,6 +31,7 @@
   /* 悬浮效果 */
   .ant-menu-item:hover,
   .ant-menu-submenu:hover {
+    color: var(--text-primary) !important;
     .ant-menu-title-content::after {
       left: 0;
       right: 0;
@@ -74,6 +75,7 @@
       
       &:hover {
         background: var(--bg-hover) !important;
+        color: var(--text-primary) !important;
         .ant-menu-title-content {
           color: var(--primary-color) !important;
         }
