@@ -1,13 +1,30 @@
-import { RouteObject } from "react-router-dom";
-import {AuthRoles} from '../config/AuthConstant'
-type RolesType = keyof typeof AuthRoles
+import { RouteObject } from 'react-router-dom'
 
-type CoRouteObject = RouteObject & {
-    meta?:{ 
-        title?:string,
-        icon?:string,
-        roles?:RolesType[],
-        rolesValue?:number
-    }
-    children?: CoRouteObject[]
+// 确保路径以 '/' 开头的字符串类型
+type PathWithSlash = `/${string}`
+
+// 扩展 RouteObject 类型，使 path 必须以 '/' 开头
+export interface CoRouteObject extends Omit<RouteObject, 'path'> {
+  path?: PathWithSlash
+  meta?: {
+    title?: string
+    icon?: React.ReactNode
+    roles?: ('admin' | 'common' | 'superAdmin')[]
+    rolesValue?: number
+  }
+  children?: CoRouteObject[]
+  hidden?: boolean
 }
+
+// 用于验证路径格式的类型守卫
+export function isValidPath(path: string): path is PathWithSlash {
+  return path.startsWith('/')
+}
+
+// 用于创建路由配置的辅助函数
+export function createRoute(route: CoRouteObject): CoRouteObject {
+  if (route.path && !isValidPath(route.path)) {
+    throw new Error(`Invalid route path: ${route.path}. Path must start with '/'`)
+  }
+  return route
+} 

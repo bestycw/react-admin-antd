@@ -5,7 +5,7 @@ const Demo1 = lazy(() => import('../../../pages/demo1'))
 
 
 const demo1Route: CoRouteObject = {
-    path: 'demo1',
+    path: '/demo1',
     element: <Demo1 />,
     meta: {
         title: 'demo1',

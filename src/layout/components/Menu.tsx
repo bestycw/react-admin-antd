@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { DownOutlined } from '@ant-design/icons';
 
 interface IProps extends MenuProps {
     type?: string;
@@ -15,6 +14,7 @@ const Menu = observer((props: IProps) => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // 初始化和路由变化时更新选中状态
     useEffect(() => {
         const currentPath = location.pathname;
         MenuStore.setSelectedKeys([currentPath]);
@@ -27,18 +27,15 @@ const Menu = observer((props: IProps) => {
     };
 
     return (
-        <div className="w-full overflow-hidden">
+        // <div className="w-full overflow-hidden">
             <AntMenu
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
                 mode={props.mode || 'inline'}
                 items={MenuStore.menuList}
-                className="!bg-transparent !border-none"
-                // overflowedIndicator={<span className="text-gray-500 dark:text-gray-400">•••</span>}
-                // expandIcon={<DownOutlined className="text-xs opacity-60" />}
-                // subMenuIcon={<DownOutlined className="text-xs opacity-60" />}
+                // className="!bg-transparent !border-none"
             />
-        </div>
+        // </div>
     );
 });
 
