@@ -18,7 +18,7 @@ import GlobalConfig from '@/config/GlobalConfig'
 const Header = observer(() => {
   const { UserStore, ConfigStore } = useStore()
   const [settingOpen, setSettingOpen] = useState(false)
-  const isDynamic = ConfigStore.themeStyle === 'dynamic'
+  // const isDynamic = ConfigStore.themeStyle === 'dynamic'
   const {AdminName=''} = GlobalConfig
 
   const userMenuItems: MenuProps['items'] = [
@@ -51,7 +51,6 @@ const Header = observer(() => {
           <div className="flex items-center gap-2.5 mr-7">
             <div className={`
               p-1.5 rounded-lg transition-all duration-200
-              ${isDynamic ? 'dynamic-bg' : 'classic-bg'}
             `}>
               <img src={logo} alt="Logo" className="w-7 h-7" />
             </div>
@@ -69,7 +68,6 @@ const Header = observer(() => {
           <div className="flex items-center">
             <div className={`
               flex items-center gap-1 p-0.5 rounded-full transition-all duration-200
-              ${isDynamic ? 'dynamic-bg' : 'classic-bg'}
             `}>
               {/* Theme Toggle */}
               <button 
@@ -99,9 +97,6 @@ const Header = observer(() => {
                 menu={{
                   items: userMenuItems,
                   onClick: handleUserMenuClick,
-                  className: isDynamic 
-                    ? 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg'
-                    : 'bg-white dark:bg-gray-800'
                 }}
                 trigger={['click']}
               >

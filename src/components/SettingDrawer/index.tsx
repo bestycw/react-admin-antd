@@ -15,32 +15,16 @@ interface SettingDrawerProps {
 
 const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
   const { ConfigStore } = useStore()
-  const isDynamic = ConfigStore.themeStyle === 'dynamic'
-  const isDark = ConfigStore.isDarkMode
+  // const isDynamic = ConfigStore.themeStyle === 'dynamic'
+  // const isDark = ConfigStore.isDarkMode
 
   const buttonClass = `
     px-3 py-1.5 rounded-full text-sm transition-colors
-    ${isDynamic
-      ? isDark
-        ? 'bg-white/10 hover:bg-white/15'
-        : 'bg-black/5 hover:bg-black/10'
-      : isDark
-        ? 'bg-gray-800 hover:bg-gray-700'
-        : 'bg-gray-100 hover:bg-gray-200'
-    }
     text-gray-700 dark:text-gray-200
   `
 
   const disabledButtonClass = `
     px-3 py-1.5 rounded-full text-sm
-    ${isDynamic
-      ? isDark
-        ? 'bg-white/5'
-        : 'bg-black/5'
-      : isDark
-        ? 'bg-gray-800/50'
-        : 'bg-gray-100'
-    }
     text-gray-500 dark:text-gray-400
     cursor-not-allowed opacity-60
   `

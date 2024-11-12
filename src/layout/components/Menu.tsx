@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { ThemeContainer } from '@/components/ThemeContainer';
 
 interface IProps extends MenuProps {
     type?: string;
@@ -26,21 +27,17 @@ const Menu = observer((props: IProps) => {
     };
 
     return (
-        <div className="w-full">
+        // <ThemeContainer className="menu-container">
             <AntMenu
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
                 mode={props.mode || 'inline'}
                 items={MenuStore.menuList}
                 theme={ConfigStore.isDarkMode ? 'dark' : 'light'}
-                className={`
-                    menu-component
-                    ${props.mode === 'horizontal' ? 'border-0' : ''}
-                    !justify-start
-                `}
+                className="menu-component !justify-start"
                 {...props}
             />
-        </div>
+        // </ThemeContainer>
     );
 });
 

@@ -58,6 +58,25 @@
         }
       }
     }
+
+    // 菜单样式
+    &.menu-container {
+      .menu-component {
+        background: transparent;
+        border: none;
+
+        .ant-menu-item {
+          &:hover, &.ant-menu-item-selected {
+            background: transparent;
+            color: var(--primary-color);
+          }
+
+          &::after {
+            border-bottom-color: var(--primary-color);
+          }
+        }
+      }
+    }
   }
   
   &.theme-classic {
@@ -76,6 +95,25 @@
 
     &:hover {
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+    }
+
+    // 菜单样式
+    &.menu-container {
+      .menu-component {
+        background: transparent;
+        border: none;
+
+        .ant-menu-item {
+          &:hover {
+            color: var(--primary-color);
+          }
+
+          &.ant-menu-item-selected {
+            color: var(--primary-color);
+            font-weight: 500;
+          }
+        }
+      }
     }
   }
 } 
