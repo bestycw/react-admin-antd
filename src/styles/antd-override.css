@@ -1,0 +1,193 @@
+/* Antd 组件样式覆盖 */
+.ant-menu-horizontal {
+  border-bottom: none !important;
+  background: var(--menu-bg-color) !important;
+  line-height: 40px !important;
+  width: 100% !important;
+  
+  /* 所有菜单项的基础样式 */
+  .ant-menu-item,
+  .ant-menu-submenu {
+    color: var(--text-primary) !important;
+    padding: 0 16px !important;
+    margin: 0 4px !important;
+    border-radius: var(--radius) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    
+    /* 移除默认下划线 */
+    &::after {
+      display: none !important;
+    }
+    
+    /* 自定义悬浮下划线 */
+    &::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 8px;
+      width: 0;
+      height: 2px;
+      background: var(--primary-color);
+      transform: translateX(-50%);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+    }
+    
+    /* 悬浮效果 */
+    &:hover {
+      color: var(--text-primary) !important;
+      background: color-mix(in srgb, var(--primary-color) 5%, transparent) !important;
+      
+      &::before {
+        width: 24px;
+        opacity: 0.6;
+      }
+    }
+  }
+
+  /* 选中效果 */
+  .ant-menu-item-selected {
+    color: var(--primary-color) !important;
+    font-weight: 500;
+    background: color-mix(in srgb, var(--primary-color) 12%, transparent) !important;
+    
+    &::before {
+      width: 100% !important;
+      opacity: 1 !important;
+    }
+
+    &:hover {
+      color: var(--primary-color) !important;
+      background: color-mix(in srgb, var(--primary-color) 15%, transparent) !important;
+      
+      &::before {
+        width: 100% !important;
+        opacity: 1 !important;
+      }
+    }
+  }
+
+  /* 子菜单样式 */
+  .ant-menu-submenu {
+    .ant-menu-submenu-title {
+      color: var(--text-primary) !important;
+      transition: all 0.3s !important;
+      
+      &:hover {
+        color: var(--primary-color) !important;
+      }
+      
+      .ant-menu-submenu-arrow {
+        color: var(--text-primary) !important;
+        transition: color 0.3s !important;
+      }
+    }
+    
+    &.ant-menu-submenu-selected > .ant-menu-submenu-title {
+      color: var(--primary-color) !important;
+      background: color-mix(in srgb, var(--primary-color) 12%, transparent) !important;
+    }
+    
+    &:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
+      color: var(--primary-color) !important;
+    }
+  }
+}
+
+/* 子菜单弹出层样式 */
+.ant-menu-submenu-popup {
+  .ant-menu {
+    background: var(--bg-primary) !important;
+    border-radius: var(--radius) !important;
+    padding: 4px !important;
+    border: 1px solid var(--border-primary) !important;
+    
+    /* 灵动风格 */
+    .theme-dynamic & {
+      background: rgba(var(--bg-primary-rgb), 0.8) !important;
+      backdrop-filter: blur(10px);
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .ant-menu-item {
+      color: var(--text-primary) !important;
+      border-radius: var(--radius) !important;
+      margin: 2px 4px !important;
+      transition: all 0.2s !important;
+      
+      &:hover {
+        color: var(--primary-color) !important;
+        background: var(--bg-hover) !important;
+      }
+      
+      &.ant-menu-item-selected {
+        color: var(--primary-color) !important;
+        background: color-mix(in srgb, var(--primary-color) 12%, transparent) !important;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* 下拉菜单样式 */
+.ant-dropdown {
+  .ant-dropdown-menu {
+    padding: 4px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-md);
+    
+    /* 灵动风格 */
+    .theme-dynamic & {
+      background: rgba(var(--bg-primary-rgb), 0.8);
+      backdrop-filter: blur(10px);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .ant-dropdown-menu-item,
+    .ant-dropdown-menu-submenu-title {
+      color: var(--text-primary);
+      border-radius: var(--radius);
+      transition: all 0.2s;
+      margin: 2px 0;
+      padding: 5px 12px;
+      
+      &:hover {
+        background: var(--bg-hover);
+        color: var(--primary-color);
+      }
+      
+      .anticon {
+        color: var(--text-secondary);
+      }
+    }
+    
+    .ant-dropdown-menu-item-divider {
+      background-color: var(--border-primary);
+      margin: 4px 0;
+    }
+  }
+}
+
+.ant-btn {
+  border-color: var(--button-border-color);
+  color: var(--text-primary);
+}
+
+.ant-input {
+  background: var(--input-bg);
+  border-color: var(--input-border-color);
+  color: var(--text-primary);
+  
+  &::placeholder {
+    color: var(--input-placeholder-color);
+  }
+}
+
+.ant-menu,
+.ant-dropdown-menu,
+.ant-btn,
+.ant-input,
+.ant-select {
+  color: var(--text-primary);
+} 

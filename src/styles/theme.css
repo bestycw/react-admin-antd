@@ -2,6 +2,7 @@
 :root {
   /* 背景色系统 */
   --bg-primary: #ffffff;
+  --bg-primary-rgb: 255, 255, 255;
   --bg-secondary: #f8f9fa;
   --bg-tertiary: #f3f4f6;
   --bg-overlay: rgba(0, 0, 0, 0.05);
@@ -49,12 +50,35 @@
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-full: 9999px;
+  
+  /* Antd 组件主题变量 */
+  --menu-item-color: var(--text-primary);
+  --menu-item-hover-color: var(--primary-color);
+  --menu-item-active-color: var(--primary-color);
+  --menu-item-selected-color: var(--primary-color);
+  --menu-border-color: transparent;
+  --menu-bg-color: transparent;
+  
+  --dropdown-bg: var(--bg-primary);
+  --dropdown-item-color: var(--text-primary);
+  --dropdown-item-hover-bg: var(--bg-hover);
+  --dropdown-item-hover-color: var(--primary-color);
+  --dropdown-border-color: var(--border-primary);
+  
+  --button-border-color: var(--border-primary);
+  --button-text-color: var(--text-primary);
+  
+  --input-bg: var(--bg-primary);
+  --input-border-color: var(--border-primary);
+  --input-text-color: var(--text-primary);
+  --input-placeholder-color: var(--text-disabled);
 }
 
 /* 暗色模式变量 */
 :root.dark {
   /* 背景色系统 */
   --bg-primary: #1f2937;
+  --bg-primary-rgb: 31, 41, 55;
   --bg-secondary: #111827;
   --bg-tertiary: #374151;
   --bg-overlay: rgba(255, 255, 255, 0.1);
@@ -85,6 +109,17 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  
+  /* Antd 组件暗色主题变量 */
+  --menu-item-color: var(--text-primary);
+  --menu-item-hover-color: var(--primary-color);
+  --menu-item-active-color: var(--primary-color);
+  --menu-item-selected-color: var(--primary-color);
+  
+  --dropdown-bg: var(--bg-primary);
+  --dropdown-item-color: var(--text-primary);
+  --dropdown-item-hover-bg: var(--bg-hover);
+  --dropdown-border-color: var(--border-primary);
 }
 
 /* 灵动风格特定变量 */
@@ -99,4 +134,6 @@
   --bg-opacity: 1;
   --blur-amount: 0px;
   --border-opacity: 1;
-} 
+}
+
+/* ... 其他主题相关样式 ... */ 

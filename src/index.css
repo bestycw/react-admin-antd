@@ -1,4 +1,5 @@
 @import './styles/theme.css';
+@import './styles/antd-override.css';
 
 @tailwind base;
 @tailwind components;
@@ -34,37 +35,3 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--bg-overlay);
 }
-
-/* Antd 组件主题覆盖 */
-.ant-menu {
-  color: var(--menu-text);
-  background: var(--menu-bg);
-  border-color: var(--border-primary);
-}
-
-.ant-menu-item:hover {
-  color: var(--menu-hover-text) !important;
-  background: var(--menu-hover-bg) !important;
-}
-
-.ant-menu-item-selected {
-  color: var(--menu-active-text) !important;
-  background: var(--menu-active-bg) !important;
-}
-
-.ant-btn {
-  border-color: var(--border-primary);
-  color: var(--text-primary);
-}
-
-.ant-input {
-  background: var(--bg-primary);
-  border-color: var(--border-primary);
-  color: var(--text-primary);
-}
-
-.ant-input::placeholder {
-  color: var(--text-disabled);
-}
-
-/* 其他全局样式... */

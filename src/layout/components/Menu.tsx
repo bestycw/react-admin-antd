@@ -26,14 +26,17 @@ const Menu = observer((props: IProps) => {
     };
 
     return (
-        <AntMenu
-            onClick={onClick}
-            selectedKeys={MenuStore.selectedKeys}
-            mode={props.mode || 'inline'}
-            items={MenuStore.menuList}
-            className="menu-component !border-none"
-            {...props}
-        />
+        <div className="w-full overflow-hidden">
+            <AntMenu
+                onClick={onClick}
+                selectedKeys={MenuStore.selectedKeys}
+                mode={props.mode || 'inline'}
+                items={MenuStore.menuList}
+                className="!bg-transparent !border-none"
+                // overflowedIndicator={<span className="text-gray-500 dark:text-gray-400">•••</span>}
+                {...props}
+            />
+        </div>
     );
 });
 
