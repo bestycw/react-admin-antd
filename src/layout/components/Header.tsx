@@ -51,7 +51,7 @@ const Header = observer(() => {
           {/* Logo */}
           <div className="flex items-center shrink-0 gap-3 mr-8">
             <div className={`
-              w-12 h-12 flex items-center justify-center
+              w-9 h-9 flex items-center justify-center
               p-2 rounded-lg transition-all duration-200
               ${isDynamic ? 'dynamic-bg' : 'classic-bg'}
             `}>
@@ -63,15 +63,15 @@ const Header = observer(() => {
           </div>
 
           {/* Menu */}
-          <div className="flex-1">
-            <Menu mode="horizontal"  />
+          <div className="flex-1 overflow-hidden">
+            <Menu mode="horizontal" className="!bg-transparent !border-none leading-9 text-sm" />
           </div>
 
           {/* Actions */}
-          <div className="flex items-center">
+          <div className="flex items-center shrink-0">
             <div className={`
               flex items-center gap-1 p-0.5 rounded-full transition-all duration-200
-              bg-black/5 dark:bg-white/5
+              ${isDynamic ? 'dynamic-bg' : 'classic-bg'}
             `}>
               {/* Theme Toggle */}
               <button 
@@ -100,7 +100,7 @@ const Header = observer(() => {
               <Dropdown
                 menu={{
                   items: userMenuItems,
-                  onClick: handleUserMenuClick,
+                  onClick: handleUserMenuClick
                 }}
                 trigger={['click']}
               >
@@ -111,8 +111,7 @@ const Header = observer(() => {
                     size="small" 
                     src={UserStore.userInfo?.avatar}
                     icon={<UserOutlined />}
-                    className="w-5.5 h-5.5 bg-gradient-to-r from-blue-500 to-indigo-500
-                      flex items-center justify-center text-white"
+                    className="w-5.5 h-5.5 bg-gradient-to-r from-blue-500 to-indigo-500"
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-200">
                     {UserStore.userInfo?.username || '用户'}

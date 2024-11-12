@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { EllipsisOutlined } from '@ant-design/icons';
 
 interface IProps extends MenuProps {
     type?: string;
@@ -11,10 +12,10 @@ interface IProps extends MenuProps {
 
 const Menu = observer((props: IProps) => {
     const { MenuStore } = useStore();
+    const {mode}=props
     const navigate = useNavigate();
     const location = useLocation();
 
-    // 初始化和路由变化时更新选中状态
     useEffect(() => {
         const currentPath = location.pathname;
         MenuStore.setSelectedKeys([currentPath]);
@@ -27,15 +28,16 @@ const Menu = observer((props: IProps) => {
     };
 
     return (
-        // <div className="w-full overflow-hidden">
+        <div className="flex-1 overflow-hidden">
             <AntMenu
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
-                mode={props.mode || 'inline'}
+                mode={mode || 'inline'}
                 items={MenuStore.menuList}
-                // className="!bg-transparent !border-none"
+                // className="menu-component border-none"
+                // overflowedIndicator={<EllipsisOutlined className="text-lg" />}
             />
-        // </div>
+        </div>
     );
 });
 
