@@ -4,12 +4,47 @@
   background: var(--menu-bg) !important;
   line-height: 40px !important;
   width: 100% !important;
-  .ant-menu-title-content{
+  
+  .ant-menu-title-content {
+    color: var(--text-primary) !important;
+    position: relative;
+    
+    /* 自定义悬浮下划线 */
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      right: 50%;
+      bottom: -16px; /* 调整下划线位置 */
+      height: 3px;
+      background: var(--primary-color);
+      border-radius: 1.5px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+    }
+  }
+  
+  .ant-menu-submenu-title {
     color: var(--text-primary) !important;
   }
-  .ant-menu-submenu-title{
-    color: var(--text-primary) !important;
-
+  
+  /* 悬浮效果 */
+  .ant-menu-item:hover,
+  .ant-menu-submenu:hover {
+    .ant-menu-title-content::after {
+      left: 0;
+      right: 0;
+      opacity: 1;
+    }
+  }
+  
+  /* 选中效果 */
+  .ant-menu-item-selected {
+    .ant-menu-title-content::after {
+      left: 0;
+      right: 0;
+      opacity: 1;
+    }
   }
 }
 
@@ -101,11 +136,53 @@
 }
 
 /* 确保所有组件文字颜色统一 */
-/* .ant-menu, */
+.ant-menu,
 .ant-dropdown-menu,
 .ant-btn,
 .ant-input,
 .ant-select {
-  background: var(--bg-primary) !important;
   color: var(--text-primary);
+}
+
+/* 下拉菜单样式 */
+.ant-dropdown {
+  .ant-dropdown-menu {
+    background: var(--bg-primary) !important;
+    border: 1px solid var(--border-primary) !important;
+    padding: 4px !important;
+    border-radius: var(--radius) !important;
+    
+    /* 灵动风格 */
+    .theme-dynamic & {
+      background: rgba(var(--bg-primary-rgb), var(--bg-opacity)) !important;
+      backdrop-filter: blur(var(--blur-amount));
+      border-color: rgba(255, 255, 255, var(--border-opacity)) !important;
+    }
+    
+    .ant-dropdown-menu-item {
+      margin: 2px 0 !important;
+      padding: 5px 12px !important;
+      border-radius: var(--radius) !important;
+      color: var(--text-primary) !important;
+      transition: all 0.2s !important;
+      
+      .anticon {
+        color: var(--text-secondary) !important;
+      }
+      
+      &:hover {
+        background: var(--bg-hover) !important;
+        color: var(--primary-color) !important;
+        
+        .anticon {
+          color: var(--primary-color) !important;
+        }
+      }
+    }
+    
+    .ant-dropdown-menu-item-divider {
+      background-color: var(--border-primary) !important;
+      margin: 4px 0 !important;
+    }
+  }
 } 
