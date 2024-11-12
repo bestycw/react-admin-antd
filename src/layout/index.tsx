@@ -13,10 +13,10 @@ const Layout = observer(() => {
     <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Header />
       <div className="mx-2 w-full max-w-screen-2xl px-3">
-        <Content className={`${ConfigStore.themeStyle === 'mac' ? 'mac-content' : 'sharp-content'} mt-3`}>
-          <div className={`${ConfigStore.themeStyle === 'mac' ? 'mac-glass' : 'sharp-glass'} min-h-[calc(100vh-88px)]`}>
+        <Content >
+          {/* <div className={`${ConfigStore.themeStyle === 'mac' ? 'mac-glass' : 'sharp-glass'} min-h-[calc(100vh-88px)]`}> */}
             <Outlet />
-          </div>
+          {/* </div> */}
         </Content>
       </div>
     </AntLayout>

@@ -1,21 +1,14 @@
-import { ThemeContainer } from '@/components/ThemeContainer';
+import React from 'react';
+import { Card } from 'antd';
 
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
   return (
-    <div className="dashboard">
-      <ThemeContainer>
-        <h1>Dashboard Content</h1>
-        {/* 其他内容 */}
-      </ThemeContainer>
-      
-      {/* 可以在同一个页面使用多个容器 */}
-      <ThemeContainer className="dashboard-card">
-        <div className="card-content">
-          {/* 卡片内容 */}
-        </div>
-      </ThemeContainer>
+    <div className="p-6 space-y-6">
+      <Card title="仪表盘" className="shadow-sm">
+        <p>欢迎使用管理系统</p>
+      </Card>
     </div>
   );
 };
 
-export default Dashboard 
+export default Dashboard; 
