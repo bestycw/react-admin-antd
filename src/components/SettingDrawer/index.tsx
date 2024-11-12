@@ -39,8 +39,8 @@ const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
                 onChange={(value) => ConfigStore.setThemeStyle(value)}
                 style={{ width: 120 }}
                 options={[
-                  { label: 'macOS风格', value: 'mac' },
-                  { label: '直角风格', value: 'sharp' }
+                  { label: 'macOS 风格', value: 'mac' },
+                  { label: 'Windows 风格', value: 'win' }
                 ]}
                 className="setting-select"
               />

@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
-
-type ThemeStyle = 'mac' | 'sharp';
+import { applyTheme } from '@/utils/theme'
+import type { ThemeStyle } from '@/utils/theme'
 
 class ConfigStore {
   isDarkMode: boolean;
@@ -12,38 +12,19 @@ class ConfigStore {
     
     makeAutoObservable(this, {}, { autoBind: true });
     
-    this.applyTheme();
-  }
-
-  private applyTheme() {
-    if (this.isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-
-    document.documentElement.classList.remove('theme-mac', 'theme-sharp');
-    document.documentElement.classList.add(`theme-${this.themeStyle}`);
+    applyTheme(this.isDarkMode, this.themeStyle);
   }
 
   toggleTheme() {
     this.isDarkMode = !this.isDarkMode;
     localStorage.setItem('isDarkMode', String(this.isDarkMode));
-    this.applyTheme();
+    applyTheme(this.isDarkMode, this.themeStyle);
   }
 
   setThemeStyle(style: ThemeStyle) {
     this.themeStyle = style;
     localStorage.setItem('themeStyle', style);
-    this.applyTheme();
-  }
-
-  get currentTheme() {
-    return this.isDarkMode ? 'dark' : 'light';
-  }
-
-  get currentStyle() {
-    return this.themeStyle;
+    applyTheme(this.isDarkMode, this.themeStyle);
   }
 }
 
