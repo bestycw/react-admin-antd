@@ -1,0 +1,183 @@
+.header-wrapper {
+  width: 100%;
+  padding: 0 16px;
+  
+  .header-container {
+    margin-top: 6px;
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      
+      // Logo 部分
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-right: 28px;
+        
+        .theme-panel {
+          padding: 6px;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.1);
+          transition: all 0.2s ease;
+          
+          .logo-image {
+            width: 28px;
+            height: 28px;
+          }
+        }
+        
+        .theme-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--text-primary);
+          transition: color 0.2s ease;
+        }
+      }
+      
+      // 菜单部分
+      .menu-section {
+        flex: 1;
+        
+        .theme-menu {
+          background: transparent;
+          border: none;
+          line-height: 38px;
+          font-size: 13px;
+          
+          :global(.ant-menu-item) {
+            color: var(--text-primary);
+            
+            &:hover {
+              color: var(--primary-color);
+            }
+            
+            &.ant-menu-item-selected {
+              color: var(--primary-color);
+            }
+          }
+        }
+      }
+      
+      // 操作按钮部分
+      .actions-section {
+        .action-buttons {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          padding: 2px;
+          border-radius: 16px;
+          transition: all 0.2s ease;
+          
+          &.mac {
+            background: rgba(0, 0, 0, 0.05);
+            
+            &:hover {
+              background: rgba(0, 0, 0, 0.08);
+            }
+          }
+          
+          &.win {
+            background: #f5f5f5;
+            
+            &:hover {
+              background: #ebebeb;
+            }
+          }
+          
+          .theme-icon-button {
+            padding: 4px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            color: var(--text-primary);
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.8);
+            }
+
+            .anticon {
+              transition: color 0.2s ease;
+            }
+          }
+          
+          .user-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.8);
+            }
+            
+            .user-avatar {
+              background: linear-gradient(135deg, #1890ff 0%, #722ed1 100%);
+              width: 22px;
+              height: 22px;
+            }
+            
+            .username {
+              font-size: 13px;
+              color: var(--text-primary);
+              transition: color 0.2s ease;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 暗色模式
+:root[data-theme='dark'] {
+  .header-wrapper {
+    .logo-section {
+      .theme-panel {
+        background: rgba(255, 255, 255, 0.05);
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.08);
+        }
+      }
+    }
+    
+    .action-buttons {
+      &.mac {
+        background: rgba(255, 255, 255, 0.08);
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+      }
+      
+      &.win {
+        background: rgba(255, 255, 255, 0.05);
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.08);
+        }
+      }
+      
+      .theme-icon-button {
+        &:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+      }
+      
+      .user-info {
+        &:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+      }
+    }
+  }
+} 

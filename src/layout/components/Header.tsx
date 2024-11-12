@@ -6,6 +6,7 @@ import { useState } from 'react'
 import Menu from './Menu'
 import logo from '@/assets/logo.svg'
 import SettingDrawer from '@/components/SettingDrawer'
+import { ThemeContainer } from '@/components/ThemeContainer'
 import {
   UserOutlined,
   SettingOutlined,
@@ -41,78 +42,99 @@ const Header = observer(() => {
   }
 
   return (
-    <div className={`${ConfigStore.themeStyle === 'mac' ? 'mac-header' : 'sharp-header'}`}>
-      <div className="max-w-screen-2xl mx-2 px-3">
-        <div className={`${ConfigStore.themeStyle === 'mac' ? 'mac-glass' : 'sharp-glass'} mt-3`}>
-          <div className="px-3">
-            <div className="flex h-16 items-center">
-              {/* Logo */}
-              <div className="flex-shrink-0 flex items-center space-x-3 mr-8">
-                <div className="mac-panel p-2">
-                  <img src={logo} alt="Logo" className="h-8 w-8" />
+    <div className="w-full">
+      <ThemeContainer>
+        <div className="flex items-center h-10">
+          {/* Logo */}
+          <div className="flex items-center gap-2.5 mr-7">
+            <div className={`
+              p-1.5 rounded-lg transition-all duration-200
+              ${ConfigStore.isDarkMode 
+                ? 'bg-white/5 hover:bg-white/8' 
+                : 'bg-black/5 hover:bg-black/8'
+              }
+            `}>
+              <img src={logo} alt="Logo" className="w-7 h-7" />
+            </div>
+            <span className="text-base font-semibold text-gray-800 dark:text-gray-200 transition-colors">
+              CoffeeAdmin
+            </span>
+          </div>
+
+          {/* Menu */}
+          <div className="flex-1">
+            <Menu mode="horizontal" className="!bg-transparent !border-none leading-9 text-sm" />
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center">
+            <div className={`
+              flex items-center gap-1 p-0.5 rounded-full transition-all duration-200
+              ${ConfigStore.themeStyle === 'mac'
+                ? ConfigStore.isDarkMode
+                  ? 'bg-white/8 hover:bg-white/12'
+                  : 'bg-black/5 hover:bg-black/8'
+                : ConfigStore.isDarkMode
+                  ? 'bg-white/5 hover:bg-white/8'
+                  : 'bg-gray-100 hover:bg-gray-200'
+              }
+            `}>
+              {/* Theme Toggle */}
+              <button 
+                className={`
+                  p-1 rounded-full transition-all duration-200 
+                  hover:bg-white/20 dark:hover:bg-white/10
+                  text-gray-600 dark:text-gray-300
+                `}
+                onClick={() => ConfigStore.toggleTheme()}
+              >
+                {ConfigStore.isDarkMode ? (
+                  <SunOutlined className="text-lg text-amber-500" />
+                ) : (
+                  <MoonOutlined className="text-lg text-blue-500" />
+                )}
+              </button>
+
+              {/* Settings */}
+              <button 
+                className={`
+                  p-1 rounded-full transition-all duration-200
+                  hover:bg-white/20 dark:hover:bg-white/10
+                  text-gray-600 dark:text-gray-300
+                `}
+                onClick={() => setSettingOpen(true)}
+              >
+                <SettingOutlined className="text-lg" />
+              </button>
+
+              {/* User Menu */}
+              <Dropdown
+                menu={{
+                  items: userMenuItems,
+                  onClick: handleUserMenuClick
+                }}
+                trigger={['click']}
+              >
+                <div className={`
+                  flex items-center gap-1.5 px-2.5 py-0.5 rounded-full cursor-pointer
+                  transition-all duration-200
+                  hover:bg-white/20 dark:hover:bg-white/10
+                `}>
+                  <Avatar 
+                    size="small" 
+                    src={UserStore.userInfo?.avatar}
+                    icon={<UserOutlined />}
+                    className="w-5.5 h-5.5 bg-gradient-to-r from-blue-500 to-indigo-500"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-200">
+                    {UserStore.userInfo?.username || '用户'}
+                  </span>
                 </div>
-                <span className="mac-title">CoffeeAdmin</span>
-              </div>
-
-              {/* Menu */}
-              <div className="flex-1">
-                <Menu mode="horizontal" className="mac-menu" />
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center">
-                <div className={`flex items-center space-x-2 ${
-                  ConfigStore.themeStyle === 'mac' 
-                    ? 'bg-gray-100/50 dark:bg-gray-800/50 rounded-full' 
-                    : 'bg-gray-100 dark:bg-gray-800'
-                } p-1.5`}>
-                  {/* Theme Toggle */}
-                  <button 
-                    className={ConfigStore.themeStyle === 'mac' ? 'mac-icon-button' : 'sharp-icon-button'}
-                    onClick={() => ConfigStore.toggleTheme()}
-                  >
-                    {ConfigStore.isDarkMode ? (
-                      <SunOutlined className="text-lg text-amber-500" />
-                    ) : (
-                      <MoonOutlined className="text-lg text-blue-500" />
-                    )}
-                  </button>
-
-                  {/* Settings */}
-                  <button 
-                    className="mac-icon-button"
-                    onClick={() => setSettingOpen(true)}
-                  >
-                    <SettingOutlined className="text-lg text-gray-600 dark:text-gray-300" />
-                  </button>
-
-                  {/* User Menu */}
-                  <Dropdown
-                    menu={{
-                      items: userMenuItems,
-                      onClick: handleUserMenuClick
-                    }}
-                    trigger={['click']}
-                  >
-                    <div className="flex items-center space-x-2 px-2 py-1 rounded-full cursor-pointer
-                      hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md">
-                      <Avatar 
-                        size="small" 
-                        src={UserStore.userInfo?.avatar}
-                        icon={<UserOutlined />}
-                        className="bg-gradient-to-r from-blue-500 to-indigo-500"
-                      />
-                      <span className="text-gray-700 dark:text-gray-200">
-                        {UserStore.userInfo?.username || '用户'}
-                      </span>
-                    </div>
-                  </Dropdown>
-                </div>
-              </div>
+              </Dropdown>
             </div>
           </div>
         </div>
-      </div>
+      </ThemeContainer>
 
       <SettingDrawer 
         open={settingOpen}
