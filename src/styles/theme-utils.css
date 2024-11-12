@@ -1,0 +1,45 @@
+@layer utilities {
+  /* 背景类 */
+  .bg-base-hover {
+    @apply hover:bg-black/8 dark:hover:bg-white/12;
+  }
+
+  .bg-base-active {
+    @apply bg-black/5 dark:bg-white/10;
+  }
+
+  /* 文本类 */
+  .text-base {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+
+  .text-secondary {
+    @apply text-gray-600 dark:text-gray-400;
+  }
+
+  /* 边框类 */
+  .border-base {
+    @apply border-gray-200 dark:border-gray-700/50;
+  }
+
+  .border-subtle {
+    @apply border-black/5 dark:border-white/10;
+  }
+
+  /* 主题风格相关 */
+  .dynamic-bg {
+    @apply bg-black/5 dark:bg-white/8;
+  }
+
+  .dynamic-bg-hover {
+    @apply hover:bg-black/8 dark:hover:bg-white/12;
+  }
+
+  .classic-bg {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+
+  .classic-bg-hover {
+    @apply hover:bg-gray-200 dark:hover:bg-gray-700;
+  }
+} 

@@ -18,6 +18,7 @@ import {
 const Header = observer(() => {
   const { UserStore, ConfigStore } = useStore()
   const [settingOpen, setSettingOpen] = useState(false)
+  const isDynamic = ConfigStore.themeStyle === 'dynamic'
 
   const userMenuItems: MenuProps['items'] = [
     {
@@ -47,16 +48,10 @@ const Header = observer(() => {
         <div className="flex items-center h-10">
           {/* Logo */}
           <div className="flex items-center gap-2.5 mr-7">
-            <div className={`
-              p-1.5 rounded-lg transition-all duration-200
-              ${ConfigStore.isDarkMode 
-                ? 'bg-white/5 hover:bg-white/8' 
-                : 'bg-black/5 hover:bg-black/8'
-              }
-            `}>
+            <div className="p-1.5 rounded-lg transition-all duration-200 dynamic-bg dynamic-bg-hover">
               <img src={logo} alt="Logo" className="w-7 h-7" />
             </div>
-            <span className="text-base font-semibold text-gray-800 dark:text-gray-200 transition-colors">
+            <span className="text-base font-semibold">
               CoffeeAdmin
             </span>
           </div>
@@ -70,23 +65,12 @@ const Header = observer(() => {
           <div className="flex items-center">
             <div className={`
               flex items-center gap-1 p-0.5 rounded-full transition-all duration-200
-              ${ConfigStore.themeStyle === 'dynamic'
-                ? ConfigStore.isDarkMode
-                  ? 'bg-white/8 hover:bg-white/12'
-                  : 'bg-black/5 hover:bg-black/8'
-                : ConfigStore.isDarkMode
-                  ? 'bg-white/5 hover:bg-white/8'
-                  : 'bg-gray-100 hover:bg-gray-200'
-              }
+              ${isDynamic ? 'dynamic-bg dynamic-bg-hover' : 'classic-bg classic-bg-hover'}
             `}>
               {/* Theme Toggle */}
               <button 
-                className={`
-                  p-1 rounded-full transition-all duration-200 
-                  hover:bg-white/20 dark:hover:bg-white/10
-                  text-gray-600 dark:text-gray-300
-                  w-8 h-8 flex items-center justify-center
-                `}
+                className="w-8 h-8 flex items-center justify-center rounded-full
+                  transition-all duration-200 bg-base-hover text-secondary"
                 onClick={() => ConfigStore.toggleDarkMode()}
               >
                 {ConfigStore.isDarkMode ? (
@@ -98,12 +82,8 @@ const Header = observer(() => {
 
               {/* Settings */}
               <button 
-                className={`
-                  p-1 rounded-full transition-all duration-200
-                  hover:bg-white/20 dark:hover:bg-white/10
-                  text-gray-600 dark:text-gray-300
-                  w-8 h-8 flex items-center justify-center
-                `}
+                className="w-8 h-8 flex items-center justify-center rounded-full
+                  transition-all duration-200 bg-base-hover text-secondary"
                 onClick={() => setSettingOpen(true)}
               >
                 <SettingOutlined className="text-lg" />
@@ -117,18 +97,15 @@ const Header = observer(() => {
                 }}
                 trigger={['click']}
               >
-                <div className={`
-                  flex items-center gap-1.5 px-2.5 py-0.5 rounded-full cursor-pointer
-                  transition-all duration-200
-                  hover:bg-white/20 dark:hover:bg-white/10
-                `}>
+                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full
+                  cursor-pointer transition-all duration-200 bg-base-hover">
                   <Avatar 
                     size="small" 
                     src={UserStore.userInfo?.avatar}
                     icon={<UserOutlined />}
                     className="w-5.5 h-5.5 bg-gradient-to-r from-blue-500 to-indigo-500"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">
+                  <span className="text-sm text-base">
                     {UserStore.userInfo?.username || '用户'}
                   </span>
                 </div>
