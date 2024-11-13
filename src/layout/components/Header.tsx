@@ -19,7 +19,6 @@ import GlobalConfig from '@/config/GlobalConfig'
 const Header = observer(() => {
   const { UserStore, ConfigStore } = useStore()
   const [settingOpen, setSettingOpen] = useState(false)
-  // const isDynamic = ConfigStore.themeStyle === 'dynamic'
   const {AdminName=''} = GlobalConfig
 
   const userMenuItems: MenuProps['items'] = [
@@ -47,51 +46,53 @@ const Header = observer(() => {
   return (
     <div className="w-full">
       <div className="theme-style">
-        {/* <ThemeContainer> */}
-          <div className="flex items-center h-10">
+        <div className="flex flex-col">
+          {/* 顶部导航 */}
+          <div className="flex items-center h-14">
             {/* Logo */}
-            <div className="flex items-center shrink-0 gap-3 mr-10">
+            <div className="flex items-center shrink-0 gap-4 mr-12">
               <div className={`
-                w-10 h-10 flex items-center justify-center
-                p-2 rounded-lg transition-all duration-200              `}>
+                w-12 h-12 flex items-center justify-center
+                p-2.5 rounded-lg transition-all duration-200
+              `}>
                 <img src={logo} alt="Logo" className="w-full h-full object-contain" />
               </div>
-              <span className="text-base font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
+              <span className="text-lg font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
                 {AdminName}
               </span>
             </div>
 
             {/* Menu */}
             <div className="flex-1 overflow-hidden">
-              <Menu mode="horizontal" className="!bg-transparent !border-none leading-9 text-sm" />
+              <Menu mode="horizontal" className="!bg-transparent !border-none leading-[56px] text-sm" />
             </div>
 
             {/* Actions */}
             <div className="flex items-center shrink-0">
               <div className={`
-                flex items-center gap-1 p-0.5 rounded-full transition-all duration-200
+                flex items-center gap-1.5 p-1 rounded-full transition-all duration-200
               `}>
                 {/* Theme Toggle */}
                 <button 
-                  className="w-8 h-8 flex items-center justify-center rounded-full
+                  className="w-9 h-9 flex items-center justify-center rounded-full
                     transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/10"
                   onClick={() => ConfigStore.toggleDarkMode()}
                 >
                   {ConfigStore.isDarkMode ? (
-                    <SunOutlined className="text-lg text-amber-500" />
+                    <SunOutlined className="text-xl text-amber-500" />
                   ) : (
-                    <MoonOutlined className="text-lg text-blue-500" />
+                    <MoonOutlined className="text-xl text-blue-500" />
                   )}
                 </button>
 
                 {/* Settings */}
                 <button 
-                  className="w-8 h-8 flex items-center justify-center rounded-full
+                  className="w-9 h-9 flex items-center justify-center rounded-full
                     transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/10
                     text-gray-500 dark:text-gray-400"
                   onClick={() => setSettingOpen(true)}
                 >
-                  <SettingOutlined className="text-lg" />
+                  <SettingOutlined className="text-xl" />
                 </button>
 
                 {/* User Menu */}
@@ -102,14 +103,14 @@ const Header = observer(() => {
                   }}
                   trigger={['click']}
                 >
-                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-full
                     cursor-pointer transition-all duration-200
                     hover:bg-black/5 dark:hover:bg-white/10">
                     <Avatar 
                       size="small" 
                       src={UserStore.userInfo?.avatar}
                       icon={<UserOutlined />}
-                      className="w-5.5 h-5.5 bg-gradient-to-r from-blue-500 to-indigo-500"
+                      className="w-7 h-7 bg-gradient-to-r from-blue-500 to-indigo-500"
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-200">
                       {UserStore.userInfo?.username || '用户'}
@@ -119,13 +120,16 @@ const Header = observer(() => {
               </div>
             </div>
           </div>
-        {/* </ThemeContainer> */}
 
-        <SettingDrawer 
-          open={settingOpen}
-          onClose={() => setSettingOpen(false)}
-        />
+          {/* Tags */}
+          {/* <Tags /> */}
+        </div>
       </div>
+
+      <SettingDrawer 
+        open={settingOpen}
+        onClose={() => setSettingOpen(false)}
+      />
     </div>
   )
 })
