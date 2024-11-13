@@ -72,6 +72,9 @@
   --input-border-color: var(--border-primary);
   --input-text-color: var(--text-primary);
   --input-placeholder-color: var(--text-disabled);
+  
+  /* 布局变量 */
+
 }
 
 /* 风格相关的样式类 */
@@ -102,12 +105,18 @@
     0 0 0 1px rgba(255, 255, 255, 0.1);
   
   /* 间距效果 */
-  --style-margin: 0.5rem;
+  --style-margin: 10px;
   
   /* 内容区域效果 */
   --content-spacing: 1rem;
   --inner-radius: 8px;
-  
+  /* Header部分*/
+  --header-height: calc(var(--header-nav-height) + var(--header-tags-height) + var(--header-border-height) + var(--header-margin-height));
+  --header-nav-height: 56px;
+  --header-tags-height: 0px;
+  --header-border-height: 2px;
+  --header-margin-height:calc(2 *   var(--style-margin));  
+
   /* 卡片效果 */
   --card-bg-opacity: 0.7;
   --card-blur: 10px;
@@ -131,8 +140,13 @@
   --style-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   
   /* 间距效果 */
-  --style-margin: 0;
-  
+  --style-margin: 0px;
+    /* Header部分*/
+    --header-height: calc(var(--header-nav-height) + var(--header-tags-height) + var(--header-border-height) + var(--header-margin-height));
+    --header-nav-height: 56px;
+    --header-tags-height: 0px;
+    --header-border-height: 2px;
+    --header-margin-height:calc(2 *   var(--style-margin));  
   /* 内容区域效果 */
   --content-spacing: 1rem;
   --inner-radius: 2px;
