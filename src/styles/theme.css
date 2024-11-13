@@ -98,7 +98,8 @@
   --blur-amount: 12px;
   
   /* 边框效果 */
-  --style-border: 1px solid rgba(255, 255, 255, 0.2);
+  /* --style-border: 1px solid rgba(255, 255, 255, 0.2); */
+  --style-border: unset;
   --style-radius: 12px;
   
   /* 阴影效果 */
@@ -135,7 +136,7 @@
   --blur-amount: 0;
   
   /* 边框效果 */
-  --style-border: 1px solid var(--border-primary);
+  /* --style-border: 1px solid var(--border-primary); */
   --style-radius: 2px;
   
   /* 阴影效果 */
@@ -214,7 +215,7 @@
     --bg-opacity: 0.75;
     
     /* 边框效果 */
-    --style-border: 1px solid rgba(255, 255, 255, 0.1);
+    /* --style-border: 1px solid rgba(255, 255, 255, 0.1); */
     
     /* 阴影效果 */
     --style-shadow: 
