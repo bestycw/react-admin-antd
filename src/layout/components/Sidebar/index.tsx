@@ -11,7 +11,8 @@ const Sidebar = observer(() => {
   const {AdminName=''} = GlobalConfig
 
   return (
-    <div className="theme-style h-full flex flex-col">
+
+    <div className="theme-style flex flex-col" style={{height:'calc(100% - var(--header-margin-height))'}}>
       {/* Logo */}
       <div className="flex items-center gap-4 p-4 h-14">
         <div className={`
@@ -36,6 +37,8 @@ const Sidebar = observer(() => {
         <UserActions mode="vertical" />
       </div>
     </div>
+
+
   )
 })
 

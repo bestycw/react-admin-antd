@@ -1,6 +1,7 @@
 import { Layout as AntLayout } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
+import { Outlet } from 'react-router-dom'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Content from './components/Content'
@@ -16,18 +17,21 @@ const Layout = observer(() => {
       {isHorizontal ? (
         <>
           <Header />
-          <Content />
+          <Content style={{ height: 'calc(100vh - var(--header-height))',marginTop:0 ,marginBottom:0}}>
+            <Outlet />
+          </Content>
         </>
       ) : (
         <AntLayout>
-          <Sider width={260} className="!bg-transparent">
-            {/* <div className="h-full"> */}
-              <Sidebar />
-            {/* </div> */}
+          <Sider width={280} className="!bg-transparent">
+
+            <Sidebar />
+
           </Sider>
           <AntLayout>
-            {/* <Header /> */}
-            <Content />
+            <Content style={{ height: 'calc(100% - var(--header-margin-height))' }}>
+              <Outlet />
+            </Content>
           </AntLayout>
         </AntLayout>
       )}

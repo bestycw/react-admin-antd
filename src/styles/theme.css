@@ -80,6 +80,7 @@
 /* 风格相关的样式类 */
 .theme-style {
   position: relative;
+  box-sizing: border-box;
   background: rgba(var(--bg-primary-rgb), var(--bg-opacity));
   backdrop-filter: blur(var(--blur-amount));
   border-radius: var(--style-radius);
@@ -91,6 +92,7 @@
 
 /* 灵动风格（类似 macOS） */
 :root.theme-dynamic {
+  
   /* 背景效果 */
   --bg-opacity: 0.85;
   --blur-amount: 12px;

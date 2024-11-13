@@ -1,20 +1,24 @@
 import { Layout } from 'antd'
 import { observer } from 'mobx-react-lite'
-import { Outlet } from 'react-router-dom'
+import { CSSProperties, ReactNode } from 'react'
+
+interface ContentProps {
+  className?: string
+  style?: CSSProperties
+  children?: ReactNode
+}
 
 const { Content: AntContent } = Layout
 
-const Content = observer(() => {
+const Content = observer(({ className, style, children }: ContentProps) => {
   return (
-    <AntContent className="flex-1">
+    <AntContent className={`flex flex-1 ${className || ''}` }>
       <div 
         className="mx-auto w-full max-w-screen-2xl" 
-        style={{ height: 'calc(100vh - var(--header-height))' }}
+       
       >
-        <div className="theme-style h-full overflow-auto mt-0">
-          {/* <div className="p-6 h-full"> */}
-            <Outlet />
-          {/* </div> */}
+        <div className="theme-style h-full overflow-auto"  style={style}>
+          {children}
         </div>
       </div>
     </AntContent>
