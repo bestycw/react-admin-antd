@@ -22,13 +22,13 @@ const Layout = observer(() => {
           </Content>
         </>
       ) : (
-        <AntLayout>
+        <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
           <Sider width={280} className="!bg-transparent">
 
             <Sidebar />
 
           </Sider>
-          <AntLayout>
+          <AntLayout className="bg-gray-100 dark:bg-gray-900">
             <Content style={{ height: 'calc(100% - var(--header-margin-height))' }}>
               <Outlet />
             </Content>
