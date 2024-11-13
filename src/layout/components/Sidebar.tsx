@@ -22,7 +22,7 @@ const Sidebar = observer(() => {
       <div className="theme-style flex flex-col" style={{height:'calc(100% - var(--header-margin-height))'}}>
         {/* Logo */}
         <div className={`
-          flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} p-4 h-14 shrink-0
+          flex items-center ${isCollapsed ? 'justify-center' : 'gap-4 p-4'}  h-14 shrink-0
         `}>
           <div className={`
             w-10 h-10 flex items-center justify-center
