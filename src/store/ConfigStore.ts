@@ -3,12 +3,14 @@ import { makeAutoObservable } from 'mobx'
 type ThemeStyle = 'dynamic' | 'classic'
 type LayoutMode = 'horizontal' | 'vertical' | 'mix'
 type UserActionsPosition = 'header' | 'sidebar'
+type LogoPosition = 'header' | 'sidebar'
 
 class ConfigStore {
   themeStyle: ThemeStyle = 'dynamic'
   isDarkMode: boolean = false
   layoutMode: LayoutMode = 'mix'
   userActionsPosition: UserActionsPosition = 'header'
+  logoPosition: LogoPosition = 'header'
   sidebarCollapsed: boolean = false
 
   constructor() {
@@ -19,6 +21,7 @@ class ConfigStore {
     const savedLayout = localStorage.getItem('layoutMode') as LayoutMode
     const savedCollapsed = localStorage.getItem('sidebarCollapsed') === 'true'
     const savedPosition = localStorage.getItem('userActionsPosition') as UserActionsPosition
+    const savedLogoPosition = localStorage.getItem('logoPosition') as LogoPosition
     
     if (savedTheme) {
       this.themeStyle = savedTheme
@@ -42,6 +45,10 @@ class ConfigStore {
 
     if (savedPosition) {
       this.userActionsPosition = savedPosition
+    }
+
+    if (savedLogoPosition) {
+      this.logoPosition = savedLogoPosition
     }
   }
 
@@ -80,6 +87,11 @@ class ConfigStore {
   setUserActionsPosition = (position: UserActionsPosition) => {
     this.userActionsPosition = position
     localStorage.setItem('userActionsPosition', position)
+  }
+
+  setLogoPosition = (position: LogoPosition) => {
+    this.logoPosition = position
+    localStorage.setItem('logoPosition', position)
   }
 }
 

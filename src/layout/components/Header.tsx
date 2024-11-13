@@ -13,14 +13,16 @@ interface HeaderProps {
 const Header = observer(({ style }: HeaderProps) => {
   const { ConfigStore } = useStore()
   const isHorizontal = ConfigStore.layoutMode === 'horizontal'
-  const showUserActions = isHorizontal ||
+  const showLogo = isHorizontal || 
+    (ConfigStore.layoutMode === 'mix' && ConfigStore.logoPosition === 'header')
+  const showUserActions = isHorizontal || 
     (ConfigStore.layoutMode === 'mix' && ConfigStore.userActionsPosition === 'header')
 
   return (
     <div className="theme-style" style={style}>
       <div className="flex flex-col">
         <div className="flex items-center h-14">
-          {isHorizontal && (
+          {showLogo && (
             <div className="shrink-0 mr-12">
               <Logo />
             </div>

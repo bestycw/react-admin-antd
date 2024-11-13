@@ -15,6 +15,7 @@ import {
   GlobalOutlined,
 } from '@ant-design/icons'
 import SettingDrawer from '@/components/SettingDrawer'
+import React from 'react'
 
 const HorizontalUserActions = observer(() => {
   const { UserStore, ConfigStore } = useStore()

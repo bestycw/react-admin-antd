@@ -11,14 +11,15 @@ import React from 'react'
 const Sidebar = observer(() => {
   const { ConfigStore } = useStore()
   const isCollapsed = ConfigStore.sidebarCollapsed
+  const showLogo = ConfigStore.layoutMode === 'vertical' || 
+    (ConfigStore.layoutMode === 'mix' && ConfigStore.logoPosition === 'sidebar')
   const showUserActions = ConfigStore.layoutMode === 'vertical' || 
     (ConfigStore.layoutMode === 'mix' && ConfigStore.userActionsPosition === 'sidebar')
 
   return (
     <Sider width={280} collapsedWidth={80} collapsed={isCollapsed} className="!bg-transparent group relative">
       <div className="theme-style flex flex-col" style={{height:'calc(100% - var(--header-margin-height))'}}>
-        {/* Logo */}
-        <Logo collapsed={isCollapsed} className="p-4 h-14 shrink-0" />
+        {showLogo && <Logo collapsed={isCollapsed} className="p-4 h-14 shrink-0" />}
 
         {/* Menu */}
         <div className="flex-1 overflow-hidden py-4">
