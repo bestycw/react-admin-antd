@@ -1,21 +1,17 @@
 import { observer } from 'mobx-react-lite'
-import { useStore } from '@/store'
 import HorizontalUserActions from './HorizontalUserActions'
 import VerticalUserActions from './VerticalUserActions'
 
 interface UserActionsProps {
-  mode?: 'horizontal' | 'vertical'
+  mode?: 'horizontal' | 'vertical';
+  collapsed?: boolean;
 }
 
-const UserActions = observer(({ mode = 'horizontal' }: UserActionsProps) => {
-  const { ConfigStore } = useStore()
-  const isHorizontal = mode === 'horizontal'
-
-  // 根据布局模式返回对应的组件
-  return isHorizontal ? (
+const UserActions = observer(({ mode = 'horizontal', collapsed = false }: UserActionsProps) => {
+  return mode === 'horizontal' ? (
     <HorizontalUserActions />
   ) : (
-    <VerticalUserActions />
+    <VerticalUserActions collapsed={collapsed} />
   )
 })
 

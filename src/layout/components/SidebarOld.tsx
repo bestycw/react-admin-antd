@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
-import Menu from '../Menu'
+import Menu from './Menu'
 import logo from '@/assets/logo.svg'
 import GlobalConfig from '@/config/GlobalConfig'
 import UserActions from '@/components/UserActions'
@@ -11,9 +11,10 @@ const Sidebar = observer(() => {
   const {AdminName=''} = GlobalConfig
 
   return (
-    <div className="h-full flex flex-col">
+
+    <div className="theme-style flex flex-col" style={{height:'calc(100% - var(--header-margin-height))'}}>
       {/* Logo */}
-      <div className="flex items-center gap-4 p-4 h-14 shrink-0">
+      <div className="flex items-center gap-4 p-4 h-14">
         <div className={`
           w-10 h-10 flex items-center justify-center
           p-2 rounded-lg transition-all duration-200
@@ -32,22 +33,12 @@ const Sidebar = observer(() => {
       </div>
 
       {/* Bottom Actions */}
-      <div className="mt-1 pt-2 border-t border-black/[0.02] dark:border-white/[0.02]">
-        <div className={`
-          relative overflow-hidden m-2
-          ${isDynamic 
-            ? 'bg-white/40 dark:bg-black/20 backdrop-blur-md' 
-            : 'bg-gray-50 dark:bg-gray-800'
-          }
-          rounded-2xl
-          before:absolute before:inset-0 before:rounded-2xl
-          before:border before:border-white/20 dark:before:border-white/10
-          before:pointer-events-none
-        `}>
-          <UserActions mode="vertical" />
-        </div>
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <UserActions mode="vertical" />
       </div>
     </div>
+
+
   )
 })
 

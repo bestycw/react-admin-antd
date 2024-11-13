@@ -1,4 +1,4 @@
-import { Avatar, Dropdown, Badge } from 'antd'
+import { Avatar, Dropdown, Badge, Tooltip } from 'antd'
 import type { MenuProps } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
@@ -16,7 +16,11 @@ import {
 } from '@ant-design/icons'
 import SettingDrawer from '@/components/SettingDrawer'
 
-const VerticalUserActions = observer(() => {
+interface VerticalUserActionsProps {
+  collapsed?: boolean;
+}
+
+const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActionsProps) => {
   const { UserStore, ConfigStore } = useStore()
   const [settingOpen, setSettingOpen] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -69,37 +73,90 @@ const VerticalUserActions = observer(() => {
     label: string
     badge?: number
     onClick?: () => void
-  }) => (
-    <button 
-      className="flex items-center gap-2 w-full px-2 py-1.5 rounded-lg
-        hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-      onClick={onClick}
-    >
-      <div className="flex items-center justify-center w-7">
-        {badge ? (
-          <Badge count={badge} size="small">
-            {icon}
-          </Badge>
-        ) : icon}
-      </div>
-      <span className="text-sm text-gray-600 dark:text-gray-300">{label}</span>
-    </button>
+  }) => {
+    const button = (
+      <button 
+        className={`
+          flex items-center rounded-lg transition-all duration-200
+          hover:bg-black/5 dark:hover:bg-white/5 w-full
+          ${collapsed 
+            ? 'h-10 w-10' 
+            : 'h-10 w-full px-4 gap-3'
+          }
+        `}
+        onClick={onClick}
+      >
+        <div className={`
+          flex items-center justify-center text-lg
+          ${collapsed ? 'w-full' : ''}
+        `}>
+          {badge ? (
+            <Badge count={badge} size="small">
+              {icon}
+            </Badge>
+          ) : icon}
+        </div>
+        {!collapsed && (
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            {label}
+          </span>
+        )}
+      </button>
+    )
+
+    return collapsed ? (
+      <Tooltip title={label} placement="right">
+        {button}
+      </Tooltip>
+    ) : button
+  }
+
+  const userButton = (
+    <div className={`
+      flex items-center cursor-pointer transition-colors w-full
+      hover:bg-black/5 dark:hover:bg-white/5
+      ${collapsed 
+        ? 'h-10 w-10 justify-center' 
+        : 'h-10 gap-3 mx-2 px-2 rounded-lg'
+      }
+    `}>
+      <Avatar 
+        size={28}
+        src={UserStore.userInfo?.avatar}
+        icon={<UserOutlined />}
+        className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-indigo-500"
+      />
+      {!collapsed && (
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+            {UserStore.userInfo?.username || '用户'}
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+            {UserStore.userInfo?.email || 'user@example.com'}
+          </div>
+        </div>
+      )}
+    </div>
   )
 
   return (
-    <>
+    <div className="flex flex-col">
       {/* Action Buttons */}
-      <div className="flex flex-col gap-0.5 p-2">
+      <div className={`
+        flex flex-col
+        ${collapsed ? 'px-0' : 'p-2'}
+        gap-1
+      `}>
         <ActionButton 
-          icon={<BellOutlined className="text-lg text-gray-600 dark:text-gray-300" />}
+          icon={<BellOutlined className="text-gray-600 dark:text-gray-300" />}
           label="通知"
           badge={5}
         />
 
         <ActionButton 
           icon={ConfigStore.isDarkMode ? 
-            <SunOutlined className="text-lg text-amber-500" /> : 
-            <MoonOutlined className="text-lg text-blue-500" />
+            <SunOutlined className="text-amber-500" /> : 
+            <MoonOutlined className="text-blue-500" />
           }
           label={ConfigStore.isDarkMode ? "亮色模式" : "暗色模式"}
           onClick={() => ConfigStore.toggleDarkMode()}
@@ -107,8 +164,8 @@ const VerticalUserActions = observer(() => {
 
         <ActionButton 
           icon={isFullscreen ? 
-            <FullscreenExitOutlined className="text-lg text-gray-600 dark:text-gray-300" /> : 
-            <FullscreenOutlined className="text-lg text-gray-600 dark:text-gray-300" />
+            <FullscreenExitOutlined className="text-gray-600 dark:text-gray-300" /> : 
+            <FullscreenOutlined className="text-gray-600 dark:text-gray-300" />
           }
           label={isFullscreen ? "退出全屏" : "全屏显示"}
           onClick={toggleFullscreen}
@@ -117,21 +174,21 @@ const VerticalUserActions = observer(() => {
         <Dropdown menu={{ items: languageItems }} placement="topRight" trigger={['click']}>
           <div>
             <ActionButton 
-              icon={<GlobalOutlined className="text-lg text-gray-600 dark:text-gray-300" />}
+              icon={<GlobalOutlined className="text-gray-600 dark:text-gray-300" />}
               label="切换语言"
             />
           </div>
         </Dropdown>
 
         <ActionButton 
-          icon={<SettingOutlined className="text-lg text-gray-600 dark:text-gray-300" />}
+          icon={<SettingOutlined className="text-gray-600 dark:text-gray-300" />}
           label="系统设置"
           onClick={() => setSettingOpen(true)}
         />
       </div>
 
       {/* User Profile */}
-      <div className="mt-1 pt-2 border-t border-black/[0.03] dark:border-white/[0.03]">
+      <div className=" mt-1 pt-2 border-t border-black/[0.02] dark:border-white/[0.02]">
         <Dropdown
           menu={{
             items: userMenuItems,
@@ -140,23 +197,11 @@ const VerticalUserActions = observer(() => {
           trigger={['click']}
           placement="topRight"
         >
-          <div className="flex items-center gap-2 mx-2 p-1.5 rounded-lg cursor-pointer
-            hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-            <Avatar 
-              size="default"
-              src={UserStore.userInfo?.avatar}
-              icon={<UserOutlined />}
-              className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500"
-            />
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
-                {UserStore.userInfo?.username || '用户'}
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                {UserStore.userInfo?.email || 'user@example.com'}
-              </div>
-            </div>
-          </div>
+          {collapsed ? (
+            <Tooltip title={UserStore.userInfo?.username || '用户'} placement="right">
+              {userButton}
+            </Tooltip>
+          ) : userButton}
         </Dropdown>
       </div>
 
@@ -164,7 +209,7 @@ const VerticalUserActions = observer(() => {
         open={settingOpen}
         onClose={() => setSettingOpen(false)}
       />
-    </>
+    </div>
   )
 })
 

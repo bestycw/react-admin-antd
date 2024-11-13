@@ -8,9 +8,10 @@ import { EllipsisOutlined } from '@ant-design/icons';
 
 interface IProps extends MenuProps {
     type?: string;
+    collapsed?: boolean;
 }
 
-const Menu = observer((props: IProps) => {
+const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     const { MenuStore } = useStore();
     const {mode}=props
     const navigate = useNavigate();
@@ -32,7 +33,9 @@ const Menu = observer((props: IProps) => {
             <AntMenu
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
-                mode={mode || 'inline'}
+                mode={mode}
+                inlineCollapsed={collapsed}
+                className="menu-component !border-none"
                 items={MenuStore.menuList}
                 // className="menu-component border-none"
                 // overflowedIndicator={<EllipsisOutlined className="text-lg" />}

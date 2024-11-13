@@ -7,6 +7,7 @@ class ConfigStore {
   themeStyle: ThemeStyle = 'dynamic'
   isDarkMode: boolean = false
   layoutMode: LayoutMode = 'horizontal'
+  sidebarCollapsed: boolean = false
 
   constructor() {
     makeAutoObservable(this)
@@ -14,6 +15,7 @@ class ConfigStore {
     const savedTheme = localStorage.getItem('themeStyle') as ThemeStyle
     const savedDarkMode = localStorage.getItem('isDarkMode') === 'true'
     const savedLayout = localStorage.getItem('layoutMode') as LayoutMode
+    const savedCollapsed = localStorage.getItem('sidebarCollapsed') === 'true'
     
     if (savedTheme) {
       this.themeStyle = savedTheme
@@ -29,6 +31,10 @@ class ConfigStore {
 
     if (savedLayout) {
       this.layoutMode = savedLayout
+    }
+
+    if (savedCollapsed !== null) {
+      this.sidebarCollapsed = savedCollapsed
     }
   }
 
@@ -52,6 +58,11 @@ class ConfigStore {
   setLayoutMode = (mode: LayoutMode) => {
     this.layoutMode = mode
     localStorage.setItem('layoutMode', mode)
+  }
+
+  toggleSidebar = () => {
+    this.sidebarCollapsed = !this.sidebarCollapsed
+    localStorage.setItem('sidebarCollapsed', String(this.sidebarCollapsed))
   }
 }
 

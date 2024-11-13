@@ -6,7 +6,7 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Content from './components/Content'
 
-const { Sider } = AntLayout
+// const { Sider } = AntLayout
 
 const Layout = observer(() => {
   const { ConfigStore } = useStore()
@@ -23,13 +23,12 @@ const Layout = observer(() => {
         </>
       ) : (
         <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
-          <Sider width={280} className="!bg-transparent">
 
             <Sidebar />
 
-          </Sider>
+          {/* </Sider> */}
           <AntLayout className="bg-gray-100 dark:bg-gray-900">
-            <Content style={{ height: 'calc(100% - var(--header-margin-height))' }}>
+            <Content style={{ height: 'calc(100% - var(--header-margin-height))' ,marginLeft:0}}>
               <Outlet />
             </Content>
           </AntLayout>
