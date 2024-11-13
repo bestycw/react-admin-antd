@@ -6,7 +6,6 @@ import { useState } from 'react'
 import Menu from './Menu'
 import logo from '@/assets/logo.svg'
 import SettingDrawer from '@/components/SettingDrawer'
-// import { ThemeContainer } from '@/components/ThemeContainer'
 import {
   UserOutlined,
   SettingOutlined,

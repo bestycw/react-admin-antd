@@ -3,8 +3,8 @@ import { useStore } from '@/store'
 import { CloseOutlined } from '@ant-design/icons'
 import { createPortal } from 'react-dom'
 import { CSSTransition } from 'react-transition-group'
-import { ThemeContainer } from '@/components/ThemeContainer'
-import classNames from 'classnames'
+// import { ThemeContainer } from '@/components/ThemeContainer'
+// import classNames from 'classnames'
 import './styles.scss'
 
 interface CustomDrawerProps {
@@ -65,7 +65,7 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
 
         {/* 抽屉容器 */}
         <div className="fixed top-0 right-0 h-full w-80">
-          <ThemeContainer className="h-full rounded-l-xl rounded-r-none border-r-0">
+          <div className="theme-style h-full">
             {/* 头部 */}
             <div className="flex items-center justify-between px-4 h-14">
               <h3 className="text-base font-medium text-gray-800 dark:text-gray-200">
@@ -85,7 +85,7 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
             <div className="h-[calc(100%-3.5rem)] overflow-y-auto">
               {children}
             </div>
-          </ThemeContainer>
+          </div>
         </div>
       </div>
     </CSSTransition>,
