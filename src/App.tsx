@@ -61,7 +61,7 @@ function App() {
                 navigate(firstPath)
             }
         }
-    }, [isLogin, MenuStore])
+    }, [isLogin])
 
     return <Suspense>{useRoutes(routes as RouteObject[])}</Suspense>
 }

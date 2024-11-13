@@ -24,6 +24,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
 
     const onClick: MenuProps['onClick'] = (e) => {
         const path = e.key;
+        console.log(e)
         MenuStore.setSelectedKeys([path]);
         navigate(path);
     };

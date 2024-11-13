@@ -75,6 +75,11 @@
   
   /* 布局变量 */
 
+  /* Tab 样式变量 */
+  --tab-active-color: var(--primary-color);
+  --tab-hover-bg: var(--bg-hover);
+  --tab-active-bg: var(--bg-active);
+  --tab-border-color: transparent;
 }
 
 /* 风格相关的样式类 */

@@ -12,6 +12,11 @@ export interface MenuItem {
     hidden?: boolean
 }
 
+interface TagItem {
+    path: string
+    title: string
+}
+
 class MenuStore {
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true })
@@ -19,7 +24,7 @@ class MenuStore {
     }
 
     // 菜单列表
-    menuList: MenuItem[] = []
+    menuList: CoRouteObject[] = []
 
     // 当前选中的菜单项
     selectedKeys: string[] = []
@@ -29,6 +34,9 @@ class MenuStore {
 
     // 菜单是否折叠
     collapsed = false
+
+    // 访问过的标签
+    visitedTags: TagItem[] = []
 
     // 初始化菜单状态
     private initMenuState() {
@@ -46,13 +54,21 @@ class MenuStore {
     }
 
     // 设置菜单列表
-    setMenuList(menuList: MenuItem[]) {
+    setMenuList(menuList: CoRouteObject[]) {
         this.menuList = menuList
     }
 
     // 设置选中的菜单项
     setSelectedKeys(selectedKeys: string[]) {
         this.selectedKeys = selectedKeys
+        // 从 menuList 中查找对应的菜单项
+        const currentMenu = this.findMenuByPath(selectedKeys[0])
+        if (currentMenu?.label) {
+            this.addTag({
+                path: selectedKeys[0],
+                title: currentMenu.label
+            })
+        }
     }
 
     // 设置展开的子菜单
@@ -74,8 +90,8 @@ class MenuStore {
     }
 
     // 根据路径查找菜单项
-    findMenuByPath(path: string): MenuItem | null {
-        const find = (items: MenuItem[]): MenuItem | null => {
+    findMenuByPath(path: string): MenuItem | undefined {
+        const find = (items: MenuItem[]): MenuItem | undefined => {
             for (const item of items) {
                 if (item.path === path) {
                     return item
@@ -85,9 +101,7 @@ class MenuStore {
                     if (found) return found
                 }
             }
-            return null
         }
-
         return find(this.menuList)
     }
 
@@ -192,6 +206,40 @@ class MenuStore {
             }
         }
         return null
+    }
+
+    // 添加访问标签
+    addTag(tag: TagItem) {
+        if (!this.visitedTags.find(t => t.path === tag.path)) {
+            this.visitedTags.push(tag)
+        }
+    }
+
+    // 移除访问标签
+    removeTag(path: string) {
+        const index = this.visitedTags.findIndex(tag => tag.path === path)
+        if (index > -1) {
+            this.visitedTags.splice(index, 1)
+            // 如果关闭的是当前标签，则跳转到最后一个标签
+            if (path === this.selectedKeys[0] && this.visitedTags.length > 0) {
+                const lastTag = this.visitedTags[this.visitedTags.length - 1]
+                this.setSelectedKeys([lastTag.path])
+            }
+        }
+    }
+
+    // 根据路径查找路由
+    private findRouteByPath(path: string): CoRouteObject | undefined {
+        const find = (routes: CoRouteObject[]): CoRouteObject | undefined => {
+            for (const route of routes) {
+                if (route.path === path) return route
+                if (route.children) {
+                    const found = find(route.children)
+                    if (found) return found
+                }
+            }
+        }
+        return find(this.menuList)
     }
 }
 

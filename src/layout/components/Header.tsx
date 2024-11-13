@@ -4,6 +4,7 @@ import Menu from './Menu'
 import logo from '@/assets/logo.svg'
 import GlobalConfig from '@/config/GlobalConfig'
 import UserActions from '@/components/UserActions'
+// import Tab from './Tab'
 
 const Header = observer(() => {
   const { ConfigStore } = useStore()
@@ -41,8 +42,8 @@ const Header = observer(() => {
               </div>
             )}
           </div>
-
-          {/* <Tags /> */}
+{/*  */}
+          {/* <Tab /> */}
         </div>
       </div>
     </div>

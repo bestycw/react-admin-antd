@@ -5,6 +5,7 @@ import { Outlet } from 'react-router-dom'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Content from './components/Content'
+import Tab from './components/Tab'
 
 // const { Sider } = AntLayout
 
@@ -17,7 +18,9 @@ const Layout = observer(() => {
       {isHorizontal ? (
         <>
           <Header />
+
           <Content style={{ height: 'calc(100vh - var(--header-height))',marginTop:0 ,marginBottom:0}}>
+          <Tab></Tab>
             <Outlet />
           </Content>
         </>
@@ -29,6 +32,7 @@ const Layout = observer(() => {
           {/* </Sider> */}
           <AntLayout className="bg-gray-100 dark:bg-gray-900">
             <Content style={{ height: 'calc(100% - var(--header-margin-height))' ,marginLeft:0}}>
+            <Tab></Tab>
               <Outlet />
             </Content>
           </AntLayout>

@@ -187,4 +187,47 @@
       margin: 4px 0 !important;
     }
   }
+}
+
+/* Tab 样式覆盖 */
+.ant-tabs-card {
+  .ant-tabs-nav {
+    margin-bottom: 0 !important;
+    
+    &::before {
+      border: none !important;
+    }
+    
+    .ant-tabs-tab {
+      border: none !important;
+      background: transparent !important;
+      padding: 4px 8px !important;
+      border-radius: var(--radius) !important;
+      transition: all 0.2s !important;
+      margin: 0 2px !important;
+      
+      &:hover {
+        background: var(--bg-hover) !important;
+      }
+      
+      &.ant-tabs-tab-active {
+        background: var(--bg-active) !important;
+        
+        .ant-tabs-tab-btn {
+          color: var(--primary-color) !important;
+        }
+      }
+      
+      .ant-tabs-tab-remove {
+        margin-left: 4px;
+        padding: 2px;
+        border-radius: 50%;
+        
+        &:hover {
+          background: rgba(0, 0, 0, 0.04);
+          color: var(--error);
+        }
+      }
+    }
+  }
 } 
