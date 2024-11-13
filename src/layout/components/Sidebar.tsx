@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
-import Menu from '../Menu'
+import Menu from './Menu'
 import logo from '@/assets/logo.svg'
 import GlobalConfig from '@/config/GlobalConfig'
 import UserActions from '@/components/UserActions'
