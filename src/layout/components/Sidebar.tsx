@@ -1,59 +1,37 @@
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
 import Menu from './Menu'
-import logo from '@/assets/logo.svg'
+import Logo from '@/components/Logo'
 import GlobalConfig from '@/config/GlobalConfig'
 import UserActions from '@/components/UserActions'
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import Sider from 'antd/es/layout/Sider'
+import React from 'react'
 
 const Sidebar = observer(() => {
   const { ConfigStore } = useStore()
-  const {AdminName=''} = GlobalConfig
   const isCollapsed = ConfigStore.sidebarCollapsed
+  const showUserActions = ConfigStore.layoutMode === 'vertical' || 
+    (ConfigStore.layoutMode === 'mix' && ConfigStore.userActionsPosition === 'sidebar')
 
   return (
-    <Sider 
-      width={280} 
-      collapsedWidth={80}
-      collapsed={isCollapsed}
-      className="!bg-transparent group relative"
-    >
+    <Sider width={280} collapsedWidth={80} collapsed={isCollapsed} className="!bg-transparent group relative">
       <div className="theme-style flex flex-col" style={{height:'calc(100% - var(--header-margin-height))'}}>
         {/* Logo */}
-        <div className={`
-          flex items-center ${isCollapsed ? 'justify-center' : 'gap-4 p-4'}  h-14 shrink-0
-        `}>
-          <div className={`
-            w-10 h-10 flex items-center justify-center
-            p-2 rounded-lg transition-all duration-200
-          `}>
-            <img src={logo} alt="Logo" className="w-full h-full object-contain" />
-          </div>
-          {!isCollapsed && (
-            <span className="text-base font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
-              {AdminName}
-            </span>
-          )}
-        </div>
+        <Logo collapsed={isCollapsed} className="p-4 h-14 shrink-0" />
 
         {/* Menu */}
         <div className="flex-1 overflow-hidden py-4">
-          <Menu mode="inline" inlineCollapsed={isCollapsed} />
+          <Menu mode="inline" collapsed={isCollapsed} />
         </div>
 
-        {/* Bottom Actions */}
-        <div className="mt-1 pt-2 border-t border-black/[0.02] dark:border-white/[0.02]">
-          <div className={`
-            relative overflow-hidden m-2
-            rounded-2xl
-            before:absolute before:inset-0 before:rounded-2xl
-            before:border before:border-white/20 dark:before:border-white/10
-            before:pointer-events-none
-          `}>
-            <UserActions mode="vertical" collapsed={isCollapsed} />
+        {showUserActions && (
+          <div className="mt-1 pt-2 border-t border-black/[0.02] dark:border-white/[0.02]">
+            <div className="relative overflow-hidden m-2 rounded-2xl">
+              <UserActions mode="vertical" collapsed={isCollapsed} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Floating Collapse Toggle Button */}

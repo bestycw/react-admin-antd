@@ -138,6 +138,29 @@ const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
                 流式布局
               </button>
             </div>
+            {ConfigStore.layoutMode === 'mix' && (
+              <div className="flex justify-between items-center">
+                <span className={itemLabelClass}>用户操作区</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => ConfigStore.setUserActionsPosition('header')}
+                    className={`${buttonClass} ${
+                      ConfigStore.userActionsPosition === 'header' ? 'bg-primary-50 dark:bg-primary-900/20' : ''
+                    }`}
+                  >
+                    顶部
+                  </button>
+                  <button
+                    onClick={() => ConfigStore.setUserActionsPosition('sidebar')}
+                    className={`${buttonClass} ${
+                      ConfigStore.userActionsPosition === 'sidebar' ? 'bg-primary-50 dark:bg-primary-900/20' : ''
+                    }`}
+                  >
+                    侧边
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
 import Menu from './Menu'
-import logo from '@/assets/logo.svg'
+import Logo from '@/components/Logo'
 import GlobalConfig from '@/config/GlobalConfig'
 import UserActions from '@/components/UserActions'
 import React, { CSSProperties } from 'react'
@@ -12,26 +12,17 @@ interface HeaderProps {
 
 const Header = observer(({ style }: HeaderProps) => {
   const { ConfigStore } = useStore()
-  const isDynamic = ConfigStore.themeStyle === 'dynamic'
   const isHorizontal = ConfigStore.layoutMode === 'horizontal'
-  const {AdminName=''} = GlobalConfig
+  const showUserActions = isHorizontal ||
+    (ConfigStore.layoutMode === 'mix' && ConfigStore.userActionsPosition === 'header')
 
   return (
     <div className="theme-style" style={style}>
       <div className="flex flex-col">
         <div className="flex items-center h-14">
           {isHorizontal && (
-            <div className="flex items-center shrink-0 gap-4 mr-12">
-              <div className={`
-                w-10 h-10 flex items-center justify-center
-                p-2 rounded-lg transition-all duration-200
-                ${isDynamic ? 'dynamic-bg' : 'classic-bg'}
-              `}>
-                <img src={logo} alt="Logo" className="w-full h-full object-contain" />
-              </div>
-              <span className="text-base font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
-                {AdminName}
-              </span>
+            <div className="shrink-0 mr-12">
+              <Logo />
             </div>
           )}
 
@@ -39,7 +30,7 @@ const Header = observer(({ style }: HeaderProps) => {
             <Menu mode="horizontal" />
           </div>
 
-          {isHorizontal && (
+          {showUserActions && (
             <div className="flex items-center shrink-0">
               <UserActions mode="horizontal" />
             </div>

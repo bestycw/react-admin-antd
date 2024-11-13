@@ -2,11 +2,13 @@ import { makeAutoObservable } from 'mobx'
 
 type ThemeStyle = 'dynamic' | 'classic'
 type LayoutMode = 'horizontal' | 'vertical' | 'mix'
+type UserActionsPosition = 'header' | 'sidebar'
 
 class ConfigStore {
   themeStyle: ThemeStyle = 'dynamic'
   isDarkMode: boolean = false
-  layoutMode: LayoutMode = 'horizontal'
+  layoutMode: LayoutMode = 'mix'
+  userActionsPosition: UserActionsPosition = 'header'
   sidebarCollapsed: boolean = false
 
   constructor() {
@@ -16,6 +18,7 @@ class ConfigStore {
     const savedDarkMode = localStorage.getItem('isDarkMode') === 'true'
     const savedLayout = localStorage.getItem('layoutMode') as LayoutMode
     const savedCollapsed = localStorage.getItem('sidebarCollapsed') === 'true'
+    const savedPosition = localStorage.getItem('userActionsPosition') as UserActionsPosition
     
     if (savedTheme) {
       this.themeStyle = savedTheme
@@ -35,6 +38,10 @@ class ConfigStore {
 
     if (savedCollapsed !== null) {
       this.sidebarCollapsed = savedCollapsed
+    }
+
+    if (savedPosition) {
+      this.userActionsPosition = savedPosition
     }
   }
 
@@ -63,6 +70,16 @@ class ConfigStore {
   toggleSidebar = () => {
     this.sidebarCollapsed = !this.sidebarCollapsed
     localStorage.setItem('sidebarCollapsed', String(this.sidebarCollapsed))
+  }
+
+  setSidebarCollapsed = (collapsed: boolean) => {
+    this.sidebarCollapsed = collapsed
+    localStorage.setItem('sidebarCollapsed', String(collapsed))
+  }
+
+  setUserActionsPosition = (position: UserActionsPosition) => {
+    this.userActionsPosition = position
+    localStorage.setItem('userActionsPosition', position)
   }
 }
 
