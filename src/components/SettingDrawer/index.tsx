@@ -115,6 +115,17 @@ const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
                 流式布局
               </button>
             </div>
+            <div className="flex justify-between items-center">
+              <span className={itemLabelClass}>布局模式</span>
+              <button
+                onClick={() => ConfigStore.setLayoutMode(
+                  ConfigStore.layoutMode === 'horizontal' ? 'vertical' : 'horizontal'
+                )}
+                className={buttonClass}
+              >
+                {ConfigStore.layoutMode === 'horizontal' ? '顶部导航' : '侧边导航'}
+              </button>
+            </div>
           </div>
         </div>
 
