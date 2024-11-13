@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 
 type ThemeStyle = 'dynamic' | 'classic'
-type LayoutMode = 'horizontal' | 'vertical'
+type LayoutMode = 'horizontal' | 'vertical' | 'mix'
 
 class ConfigStore {
   themeStyle: ThemeStyle = 'dynamic'

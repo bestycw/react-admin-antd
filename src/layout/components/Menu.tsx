@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { EllipsisOutlined } from '@ant-design/icons';
+// import { EllipsisOutlined } from '@ant-design/icons';
 
 interface IProps extends MenuProps {
     type?: string;
