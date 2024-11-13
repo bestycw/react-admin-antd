@@ -1,4 +1,4 @@
-import { useRoutes, useNavigate } from 'react-router-dom'
+import { useRoutes, useNavigate, RouteObject } from 'react-router-dom'
 import './App.css'
 import './index.css'
 import { Suspense, useEffect } from 'react'
@@ -63,7 +63,7 @@ function App() {
         }
     }, [isLogin, MenuStore])
 
-    return <Suspense>{useRoutes(routes)}</Suspense>
+    return <Suspense>{useRoutes(routes as RouteObject[])}</Suspense>
 }
 
 export default App
