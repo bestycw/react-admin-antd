@@ -12,13 +12,13 @@ const Content = observer(() => {
     const isDynamic = ConfigStore.themeStyle === 'dynamic'
     console.log('isDynamic',isDynamic)
   return (
-    <AntContent className="flex-1">
+    <AntContent className="flex-1 p-4">
       <div className="mx-auto w-full max-w-screen-2xl h-[calc(100vh-80px)]">
-        <ThemeContainer className="h-full overflow-auto">
+        <div className="theme-style h-full overflow-auto">
           <div className="p-6 h-full">
             <Outlet />
           </div>
-        </ThemeContainer>
+        </div>
       </div>
     </AntContent>
   )

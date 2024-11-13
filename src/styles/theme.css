@@ -74,7 +74,79 @@
   --input-placeholder-color: var(--text-disabled);
 }
 
-/* 暗色模式变量 */
+/* 风格相关的样式类 */
+.theme-style {
+  position: relative;
+  background: rgba(var(--bg-primary-rgb), var(--bg-opacity));
+  backdrop-filter: blur(var(--blur-amount));
+  border-radius: var(--style-radius);
+  box-shadow: var(--style-shadow);
+  border: var(--style-border);
+  margin: var(--style-margin);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 灵动风格（类似 macOS） */
+:root.theme-dynamic {
+  /* 背景效果 */
+  --bg-opacity: 0.85;
+  --blur-amount: 12px;
+  
+  /* 边框效果 */
+  --style-border: 1px solid rgba(255, 255, 255, 0.2);
+  --style-radius: 12px;
+  
+  /* 阴影效果 */
+  --style-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  
+  /* 间距效果 */
+  --style-margin: 0.5rem;
+  
+  /* 内容区域效果 */
+  --content-spacing: 1rem;
+  --inner-radius: 8px;
+  
+  /* 卡片效果 */
+  --card-bg-opacity: 0.7;
+  --card-blur: 10px;
+  --card-border: 1px solid rgba(255, 255, 255, 0.1);
+  --card-radius: 8px;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --card-margin: 0.5rem;
+}
+
+/* 经典风格（传统后台） */
+:root.theme-classic {
+  /* 背景效果 */
+  --bg-opacity: 1;
+  --blur-amount: 0;
+  
+  /* 边框效果 */
+  --style-border: 1px solid var(--border-primary);
+  --style-radius: 2px;
+  
+  /* 阴影效果 */
+  --style-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  
+  /* 间距效果 */
+  --style-margin: 0;
+  
+  /* 内容区域效果 */
+  --content-spacing: 1rem;
+  --inner-radius: 2px;
+  
+  /* 卡片效果 */
+  --card-bg-opacity: 1;
+  --card-blur: 0;
+  --card-border: 1px solid var(--border-primary);
+  --card-radius: 2px;
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --card-margin: 0;
+}
+
+/* 暗色模式下的变量覆盖 */
 :root.dark {
   /* 背景色系统 */
   --bg-primary: #1f2937;
@@ -120,6 +192,43 @@
   --dropdown-item-color: var(--text-primary);
   --dropdown-item-hover-bg: var(--bg-hover);
   --dropdown-border-color: var(--border-primary);
+
+  &.theme-dynamic {
+    /* 背景效果 */
+    --bg-opacity: 0.75;
+    
+    /* 边框效果 */
+    --style-border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    /* 阴影效果 */
+    --style-shadow: 
+      0 2px 10px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+    
+    /* 卡片效果 */
+    --card-bg-opacity: 0.6;
+    --card-border: 1px solid rgba(255, 255, 255, 0.05);
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.theme-classic {
+    /* 阴影效果 */
+    --style-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    
+    /* 卡片效果 */
+    --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* 卡片样式类 */
+.card-style {
+  background: rgba(var(--bg-primary-rgb), var(--card-bg-opacity));
+  backdrop-filter: blur(var(--card-blur));
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  margin: var(--card-margin);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 灵动风格特定变量 */
