@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../store";
 import { Navigate } from "react-router-dom";
+import React from "react";
 
 const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
     const { children } = props;

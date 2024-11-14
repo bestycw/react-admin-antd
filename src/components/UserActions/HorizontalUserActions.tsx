@@ -2,6 +2,7 @@ import { Avatar, Dropdown, Badge } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { UserOutlined } from '@ant-design/icons'
 import useUserActions from './BaseUserActions'
+import React from 'react'
 
 const HorizontalUserActions = observer(() => {
   const { actionItems, userMenuItems, languageItems, handleUserMenuClick, userInfo } = useUserActions()
