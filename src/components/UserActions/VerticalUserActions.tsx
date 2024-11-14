@@ -1,15 +1,16 @@
 import { Avatar, Dropdown, Badge, Tooltip } from 'antd'
 import { observer } from 'mobx-react-lite'
-import { UserOutlined } from '@ant-design/icons'
+import { UserOutlined, UpOutlined, DownOutlined } from '@ant-design/icons'
 import useUserActions from './BaseUserActions'
-import React from 'react'
+import React, { useState } from 'react'
 
 interface VerticalUserActionsProps {
   collapsed?: boolean
 }
 
 const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActionsProps) => {
-  const { actionItems, userMenuItems, languageItems, handleUserMenuClick, userInfo, currentLang } = useUserActions()
+  const { actionItems, userMenuItems, languageItems, handleUserMenuClick, userInfo } = useUserActions()
+  const [isActionsCollapsed, setIsActionsCollapsed] = useState(false)
 
   const ActionButton = ({ icon, label, badge, onClick }: {
     icon: React.ReactNode
@@ -76,9 +77,26 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
 
   return (
     <div className="flex flex-col">
-      {/* Action Buttons */}
+      {/* Collapse Toggle Button - 添加箭头旋转动画 */}
+      <button
+        onClick={() => setIsActionsCollapsed(prev => !prev)}
+        className="flex items-center justify-center h-8 hover:bg-black/5 dark:hover:bg-white/5"
+      >
+        <span className={`
+          transition-transform duration-300
+          ${isActionsCollapsed ? 'rotate-0' : 'rotate-180'}
+        `}>
+          <DownOutlined />
+        </span>
+      </button>
+
+      {/* Action Buttons - 优化过渡动画 */}
       <div className={`
-        flex flex-col items-center
+        flex flex-col items-center overflow-hidden transition-all duration-300 ease-in-out
+        ${isActionsCollapsed 
+          ? 'max-h-0 opacity-0' 
+          : 'max-h-[500px] opacity-100'
+        }
         ${collapsed ? 'px-2' : 'px-2'}
         gap-0.5
       `}>
@@ -90,9 +108,8 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
                 items: languageItems,
                 style: { minWidth: '120px' }
               }} 
-              
               trigger={['click']} 
-              placement={'topRight'}
+              placement="topRight"
               arrow={{ pointAtCenter: true }}
             >
               <div className="w-full">
@@ -132,14 +149,13 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
         ))}
       </div>
 
-      {/* User Profile */}
+      {/* User Profile - always visible */}
       <div className="mt-1 pt-2 border-t border-black/[0.02] dark:border-white/[0.02]">
         <Dropdown
           menu={{ items: userMenuItems, onClick: handleUserMenuClick }}
           trigger={['click']}
-          placement={collapsed ? "rightTop" : "topRight"}
+          placement="topRight"
           overlayStyle={{ minWidth: '160px' }}
-        //   getPopupContainer={node => node.parentElement || document.body}
         >
           {collapsed ? (
             <Tooltip title={userInfo.username} placement="right">
