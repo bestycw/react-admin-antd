@@ -74,9 +74,8 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
         {showMask && (
           <div 
             className={`
-              absolute inset-0 backdrop:blur-md
+              absolute inset-0 backdrop:blur-md drawer-mask
               ${isDark ? 'bg-black/60' : 'bg-black/40'}
-              transition-opacity duration-300
             `}
             style={maskStyle}
             onClick={maskClosable ? onClose : undefined}
@@ -87,7 +86,7 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
         <div 
           className={`
             fixed top-0 h-full
-            ${placement === 'left' ? 'left-0' : 'right-0'}
+            drawer-content-${placement}
             ${className}
           `}
           style={{

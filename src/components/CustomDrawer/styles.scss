@@ -75,4 +75,71 @@
       }
     }
   }
+}
+
+.drawer {
+  &-enter {
+    opacity: 0;
+    
+    .drawer-mask {
+      opacity: 0;
+    }
+    
+    .drawer-content-left {
+      transform: translateX(-100%);
+    }
+    
+    .drawer-content-right {
+      transform: translateX(100%);
+    }
+  }
+
+  &-enter-active {
+    opacity: 1;
+    transition: opacity 300ms ease-out;
+    
+    .drawer-mask {
+      opacity: 1;
+      transition: opacity 300ms ease-out;
+    }
+    
+    .drawer-content-left,
+    .drawer-content-right {
+      transform: translateX(0);
+      transition: transform 300ms ease-out;
+    }
+  }
+
+  &-exit {
+    opacity: 1;
+    
+    .drawer-mask {
+      opacity: 1;
+    }
+    
+    .drawer-content-left,
+    .drawer-content-right {
+      transform: translateX(0);
+    }
+  }
+
+  &-exit-active {
+    opacity: 0;
+    transition: opacity 300ms ease-in;
+    
+    .drawer-mask {
+      opacity: 0;
+      transition: opacity 300ms ease-in;
+    }
+    
+    .drawer-content-left {
+      transform: translateX(-100%);
+      transition: transform 300ms ease-in;
+    }
+    
+    .drawer-content-right {
+      transform: translateX(100%);
+      transition: transform 300ms ease-in;
+    }
+  }
 } 

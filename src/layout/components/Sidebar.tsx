@@ -38,7 +38,7 @@ const Sidebar = observer(() => {
   )
 
   const drawerContent = (
-    <div className="theme-style flex flex-col" style={{ height: 'calc(100% - var(--header-margin-height))' }}>
+    <div className="theme-style flex flex-col m-0" style={{ height: 'calc(100% - var(--header-margin-height))' }}>
       {ConfigStore.showDrawerLogo && (
         <Logo 
           collapsed={false} 
