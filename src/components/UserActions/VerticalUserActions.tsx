@@ -1,8 +1,8 @@
 import { Avatar, Dropdown, Badge, Tooltip } from 'antd'
 import { observer } from 'mobx-react-lite'
-import { UserOutlined, UpOutlined, DownOutlined } from '@ant-design/icons'
+import { UserOutlined, DownOutlined } from '@ant-design/icons'
 import useUserActions from './BaseUserActions'
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 interface VerticalUserActionsProps {
   collapsed?: boolean
@@ -11,6 +11,44 @@ interface VerticalUserActionsProps {
 const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActionsProps) => {
   const { actionItems, userMenuItems, languageItems, handleUserMenuClick, userInfo } = useUserActions()
   const [isActionsCollapsed, setIsActionsCollapsed] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // 监听 Sidebar 高度变化
+  useEffect(() => {
+    const container = containerRef.current?.closest('.ant-layout-sider-children')
+    if (!container) return
+
+    const checkHeight = () => {
+      const containerHeight = container.clientHeight
+      // 当高度小于 500px 时自动折叠
+      setIsActionsCollapsed(containerHeight < 500)
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      checkHeight()
+    })
+
+    resizeObserver.observe(container)
+    
+    // 初始检查
+    checkHeight()
+
+    return () => resizeObserver.disconnect()
+  }, [])
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => {
+      const container = containerRef.current?.closest('.ant-layout-sider-children')
+      if (container) {
+        const containerHeight = container.clientHeight
+        setIsActionsCollapsed(containerHeight < 500)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const ActionButton = ({ icon, label, badge, onClick }: {
     icon: React.ReactNode
@@ -23,11 +61,17 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
         className={`
           flex items-center h-9 rounded-lg transition-all duration-200
           hover:bg-black/5 dark:hover:bg-white/5 w-full
-          ${collapsed ? 'justify-center px-2' : 'px-3 gap-3'}
+          ${collapsed 
+            ? 'justify-center px-0'
+            : 'px-3 gap-3'
+          }
         `}
         onClick={onClick}
       >
-        <div className="flex items-center justify-center w-5">
+        <div className={`
+          flex items-center justify-center
+          ${collapsed ? 'w-16' : 'w-5'}
+        `}>
           {badge ? (
             <Badge count={badge} size="small">
               {icon}
@@ -52,16 +96,21 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
       flex items-center h-9 cursor-pointer transition-colors
       hover:bg-black/5 dark:hover:bg-white/5
       ${collapsed 
-        ? 'justify-center px-2' 
+        ? 'justify-center px-0'
         : 'gap-3 mx-2 px-2 rounded-lg'
       }
     `}>
-      <Avatar 
-        size={24}
-        src={userInfo.avatar}
-        icon={<UserOutlined />}
-        className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-indigo-500"
-      />
+      <div className={`
+        flex items-center justify-center
+        auto
+      `}>
+        <Avatar 
+          size={24}
+          src={userInfo.avatar}
+          icon={<UserOutlined />}
+          className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-indigo-500"
+        />
+      </div>
       {!collapsed && (
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
@@ -76,11 +125,17 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
   )
 
   return (
-    <div className="flex flex-col">
-      {/* Collapse Toggle Button - 添加箭头旋转动画 */}
+    <div 
+      ref={containerRef}
+      className={`
+        flex flex-col
+        transition-[width] duration-200
+      `}
+    >
+      {/* Collapse Toggle Button */}
       <button
         onClick={() => setIsActionsCollapsed(prev => !prev)}
-        className="flex items-center justify-center h-8 hover:bg-black/5 dark:hover:bg-white/5"
+        className="flex items-center justify-center h-8 hover:bg-black/5 dark:hover:bg-white/5 w-full"
       >
         <span className={`
           transition-transform duration-300
@@ -90,11 +145,11 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
         </span>
       </button>
 
-      {/* Action Buttons - 优化过渡动画 */}
+      {/* Action Buttons */}
       <div className={`
-        flex flex-col items-center overflow-hidden transition-all duration-300 ease-in-out
+        flex flex-col items-center overflow-hidden transition-all duration-300 ease-in-out w-full
         ${isActionsCollapsed 
-          ? 'max-h-0 opacity-0' 
+          ? 'max-h-0 opacity-0 pointer-events-none' 
           : 'max-h-[500px] opacity-100'
         }
         ${collapsed ? 'px-2' : 'px-2'}
@@ -149,8 +204,8 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
         ))}
       </div>
 
-      {/* User Profile - always visible */}
-      <div className="mt-1 pt-2 border-t border-black/[0.02] dark:border-white/[0.02]">
+      {/* User Profile */}
+      <div className="mt-1 pt-2 border-t border-black/[0.06] dark:border-white/[0.06] w-full">
         <Dropdown
           menu={{ items: userMenuItems, onClick: handleUserMenuClick }}
           trigger={['click']}
