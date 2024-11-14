@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
 import Menu from './Menu'
 import Logo from '@/components/Logo'
-import GlobalConfig from '@/config/GlobalConfig'
 import UserActions from '@/components/UserActions'
 import React, { CSSProperties } from 'react'
 

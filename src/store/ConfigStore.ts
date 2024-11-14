@@ -3,7 +3,7 @@ import { theme } from 'antd'
 import type { ThemeConfig } from 'antd'
 
 type ThemeStyle = 'dynamic' | 'classic'
-type LayoutMode = 'horizontal' | 'vertical' | 'mix'
+type LayoutMode = 'vertical' | 'horizontal' | 'mix'
 type UserActionsPosition = 'header' | 'sidebar'
 type LogoPosition = 'header' | 'sidebar'
 type ThemeMode = 'light' | 'dark' | 'system'
@@ -12,7 +12,7 @@ class ConfigStore {
   themeStyle: ThemeStyle = 'dynamic'
   themeMode: ThemeMode = 'system'
   isDarkMode: boolean = false
-  layoutMode: LayoutMode = 'mix'
+  layoutMode: LayoutMode = 'vertical'
   userActionsPosition: UserActionsPosition = 'header'
   logoPosition: LogoPosition = 'header'
   showLogo: boolean = true
@@ -110,21 +110,32 @@ class ConfigStore {
   }
 
   private checkViewportWidth = () => {
-    // 更新检查逻辑
-    if (window.innerWidth < 640) { // 小于 sm 断点时使用抽屉模式
+    // 所有布局模式下，当视口宽度小于 768px 时切换到抽屉模式
+    if (window.innerWidth < 768) {
+      // 切换到抽屉模式
       this.isDrawerMode = true
-      this.drawerVisible = false // 初始关闭抽屉
-    } else if (window.innerWidth < 768) { // 中等宽度时折叠 sidebar
+      this.drawerVisible = false
+      // 确保不会保持折叠状态
+      this.isAutoCollapsed = false
+      this.sidebarCollapsed = false
+    } else if (window.innerWidth < 1024) {
+      // 中等宽度时使用折叠模式
       this.isDrawerMode = false
       if (!this.sidebarCollapsed) {
         this.isAutoCollapsed = true
         this.sidebarCollapsed = true
       }
-    } else if (this.isAutoCollapsed) { // 宽度恢复时展开
-      this.isAutoCollapsed = false
-      this.sidebarCollapsed = false
+    } else {
+      // 恢复正常模式
       this.isDrawerMode = false
+      if (this.isAutoCollapsed) {
+        this.isAutoCollapsed = false
+        this.sidebarCollapsed = false
+      }
     }
+
+    // 保存当前状态
+    localStorage.setItem('sidebarCollapsed', String(this.sidebarCollapsed))
   }
 
   setThemeStyle = (style: ThemeStyle) => {
@@ -167,16 +178,40 @@ class ConfigStore {
   setLayoutMode = (mode: LayoutMode) => {
     this.layoutMode = mode
     localStorage.setItem('layoutMode', mode)
+    
+    // 根据布局模式调整其他设置
+    if (mode === 'vertical') {
+      // 垂直布局（顶部导航）时的默认设置
+      this.userActionsPosition = 'header'
+      this.logoPosition = 'header'
+    } else if (mode === 'horizontal') {
+      // 水平布局（侧边导航）时的默认设置
+      this.userActionsPosition = 'sidebar'
+      this.logoPosition = 'sidebar'
+    }
+    // mix 模式保持当前设置
+
+    // 重置状态并检查视口
+    this.isDrawerMode = window.innerWidth < 768
+    this.drawerVisible = false
+    this.isAutoCollapsed = false
+    this.sidebarCollapsed = false
+    this.checkViewportWidth()
   }
 
   toggleSidebar = () => {
-    this.isAutoCollapsed = false // 手动切换时清除自动折叠标记
-    this.sidebarCollapsed = !this.sidebarCollapsed
+    if (!this.isDrawerMode) {
+      this.isAutoCollapsed = false // 手动切换时清除自动折叠标记
+      this.sidebarCollapsed = !this.sidebarCollapsed
+      localStorage.setItem('sidebarCollapsed', String(this.sidebarCollapsed))
+    }
   }
 
   setSidebarCollapsed = (collapsed: boolean) => {
-    this.sidebarCollapsed = collapsed
-    localStorage.setItem('sidebarCollapsed', String(collapsed))
+    if (!this.isDrawerMode) {
+      this.sidebarCollapsed = collapsed
+      localStorage.setItem('sidebarCollapsed', String(collapsed))
+    }
   }
 
   setUserActionsPosition = (position: UserActionsPosition) => {
@@ -191,25 +226,25 @@ class ConfigStore {
 
   get showHeaderLogo() {
     return this.showLogo && (
-      this.layoutMode === 'horizontal' || 
+      this.layoutMode === 'vertical' || 
       (this.layoutMode === 'mix' && this.logoPosition === 'header')
     )
   }
 
   get showSidebarLogo() {
     return this.showLogo && (
-      this.layoutMode === 'vertical' || 
+      this.layoutMode === 'horizontal' || 
       (this.layoutMode === 'mix' && this.logoPosition === 'sidebar')
     )
   }
 
   get showHeaderUserActions() {
-    return this.layoutMode === 'horizontal' || 
+    return this.layoutMode === 'vertical' || 
       (this.layoutMode === 'mix' && this.userActionsPosition === 'header')
   }
 
   get showSidebarUserActions() {
-    return this.layoutMode === 'vertical' || 
+    return this.layoutMode === 'horizontal' || 
       (this.layoutMode === 'mix' && this.userActionsPosition === 'sidebar')
   }
 
@@ -225,7 +260,7 @@ class ConfigStore {
     this.settingDrawerVisible = true
   }
 
-  // 设置主题色
+  // 置主题色
   setThemeColor = (color: string) => {
     this.themeConfig = {
       ...this.themeConfig,

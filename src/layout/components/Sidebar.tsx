@@ -7,16 +7,16 @@ import { Layout } from 'antd'
 import CustomDrawer from '@/components/CustomDrawer'
 import { useSidebarControl } from '@/hooks/useSidebarControl'
 import React from 'react'
+import { useStore } from '@/store'
 
 const { Sider } = Layout
 
 const Sidebar = observer(() => {
+  const { ConfigStore } = useStore()
   const {
     isCollapsed,
     isDrawerMode,
     drawerVisible,
-    showLogo,
-    showUserActions,
     getCollapsedState,
     handleToggle,
     closeDrawer,
@@ -38,8 +38,8 @@ const Sidebar = observer(() => {
   )
 
   const sidebarContent = (
-    <div className="theme-style flex flex-col h-full" style={{height:'calc(100% - var(--header-margin-height))'}}>
-      {showLogo && (
+    <div className="theme-style flex flex-col h-full mr-0" style={{height:'calc(100% - var(--header-margin-height))'}}>
+      {ConfigStore.showSidebarLogo && (
         <Logo 
           collapsed={getCollapsedState('logo')} 
           className="p-4 h-14 shrink-0" 
@@ -53,7 +53,7 @@ const Sidebar = observer(() => {
         />
       </div>
 
-      {showUserActions && (
+      {ConfigStore.showSidebarUserActions && (
         <div className="mt-1 pt-2 border-t border-black/[0.02] dark:border-white/[0.02]">
           <div className="relative overflow-hidden m-2 rounded-2xl">
             <UserActions 

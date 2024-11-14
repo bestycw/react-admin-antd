@@ -10,19 +10,6 @@ export const useSidebarControl = () => {
   const isDynamic = ConfigStore.themeStyle === 'dynamic'
   const drawerVisible = ConfigStore.drawerVisible
 
-  // 显示控制
-  const showLogo = useMemo(() => (
-    ConfigStore.showLogo && (
-      ConfigStore.layoutMode === 'vertical' || 
-      (ConfigStore.layoutMode === 'mix' && ConfigStore.logoPosition === 'sidebar')
-    )
-  ), [ConfigStore.showLogo, ConfigStore.layoutMode, ConfigStore.logoPosition])
-
-  const showUserActions = useMemo(() => (
-    ConfigStore.layoutMode === 'vertical' || 
-    (ConfigStore.layoutMode === 'mix' && ConfigStore.userActionsPosition === 'sidebar')
-  ), [ConfigStore.layoutMode, ConfigStore.userActionsPosition])
-
   // 折叠状态控制
   const getCollapsedState = useCallback((component: 'menu' | 'logo' | 'userActions') => {
     if (isDrawerMode) return false
@@ -38,7 +25,7 @@ export const useSidebarControl = () => {
     }
   }, [isDrawerMode, ConfigStore])
 
-  // 按钮样式 - 更新为居中悬浮样式
+  // 按钮样式
   const toggleButtonClass = useMemo(() => `
     absolute -right-4 top-1/2 -translate-y-1/2
     w-8 h-8 flex items-center justify-center
@@ -56,17 +43,12 @@ export const useSidebarControl = () => {
     cursor-pointer
   `, [isDrawerMode, isDynamic])
 
-  // 抽屉模式下的按钮样式 - 移除这个，统一使用 toggleButtonClass
-  const drawerToggleButtonClass = useMemo(() => toggleButtonClass, [toggleButtonClass])
-
   return {
     // 状态
     isCollapsed,
     isDrawerMode,
     isDynamic,
     drawerVisible,
-    showLogo,
-    showUserActions,
     
     // 方法
     getCollapsedState,
@@ -75,6 +57,5 @@ export const useSidebarControl = () => {
     
     // 样式
     toggleButtonClass,
-    drawerToggleButtonClass,
   }
 } 
