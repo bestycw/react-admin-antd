@@ -20,6 +20,7 @@ const Header = observer(({ className = '', style }: HeaderProps) => {
   if( ConfigStore.effectiveLayoutMode === 'horizontal'){
     return null
   }
+  console.log('header',ConfigStore.showHeaderMenu)
   return (
     <header 
       className={`

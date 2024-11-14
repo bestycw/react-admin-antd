@@ -69,6 +69,10 @@ const SettingDrawer = observer(() => {
       value: 'sidebar',
       label: '侧边',
     },
+    {
+      value: 'mix',
+      label: '混合',
+    }
   ]
 
   return (
@@ -131,7 +135,7 @@ const SettingDrawer = observer(() => {
               <Segmented
                 block
                 value={ConfigStore.positions.logo}
-                options={positionOptions}
+                options={positionOptions.filter(opt => opt.value !== 'mix')}
                 onChange={(value) => ConfigStore.setPosition('logo', value as 'header' | 'sidebar')}
               />
             </div>
@@ -143,7 +147,7 @@ const SettingDrawer = observer(() => {
                 block
                 value={ConfigStore.positions.menu}
                 options={positionOptions}
-                onChange={(value) => ConfigStore.setPosition('menu', value as 'header' | 'sidebar')}
+                onChange={(value) => ConfigStore.setPosition('menu', value as MenuPosition)}
               />
             </div>
 
@@ -153,7 +157,7 @@ const SettingDrawer = observer(() => {
               <Segmented
                 block
                 value={ConfigStore.positions.userActions}
-                options={positionOptions}
+                options={positionOptions.filter(opt => opt.value !== 'mix')}
                 onChange={(value) => ConfigStore.setPosition('userActions', value as 'header' | 'sidebar')}
               />
             </div>

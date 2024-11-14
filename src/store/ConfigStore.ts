@@ -141,6 +141,21 @@ class ConfigStore {
     if (this.isDrawerMode) return false
     
     const isInPosition = this.positions[component] === position
+    const isMixMenu = component === 'menu' && this.positions.menu === 'mix'
+
+    // 菜单特殊处理
+    if (component === 'menu') {
+      // 混合显示模式
+      if (this.positions.menu === 'mix') {
+        return position === 'header' || position === 'sidebar'
+      }
+      // 普通显示模式
+      return (this.layoutMode === 'vertical' && position === 'header') || 
+             (this.layoutMode === 'horizontal' && position === 'sidebar') ||
+             (this.layoutMode === 'mix' && isInPosition)
+    }
+
+    // 其他组件
     const showInHeader = this.layoutMode === 'vertical' || 
       (this.layoutMode === 'mix' && isInPosition)
     const showInSidebar = this.layoutMode === 'horizontal' || 
