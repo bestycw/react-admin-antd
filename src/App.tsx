@@ -8,6 +8,7 @@ import { RemainingRoutes, StaticRoutes, DynamicRoutes } from './router'
 import GlobalConfig from './config/GlobalConfig'
 import { useStore } from './store'
 import { CoRouteObject } from './types/route'
+import React from 'react'
 
 function mergeRouteByPath(to: CoRouteObject[], from: CoRouteObject[]) {
     for (let i = 0; i < from.length; i++) {
@@ -68,7 +69,8 @@ const App = observer(() => {
 
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>
-            <Suspense>{useRoutes(routes as RouteObject[])}</Suspense>
+            {useRoutes(routes as RouteObject[])}
+            {/* <Suspense></Suspense> */}
         </ConfigProvider>
     )
 })

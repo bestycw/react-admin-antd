@@ -6,25 +6,31 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Content from './components/Content'
 import Tab from './components/Tab'
-import React from 'react'
+import React, { Suspense } from 'react'
 import SettingDrawer from '@/components/SettingDrawer'
-
-// const { Sider } = AntLayout
+// import PageLoading from '../components/PageLoading'
+// import PageTransition from '../components/PageTransition'
+// import { AnimatePresence } from 'framer-motion'
 
 const Layout = observer(() => {
   const { ConfigStore } = useStore()
   const { layoutMode } = ConfigStore
 
-  // const isHorizontal = ConfigStore.layoutMode === 'horizontal'
-  console.log(layoutMode)
   return (
     <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {(layoutMode !== 'vertical' || ConfigStore.isDrawerMode )&& <Sidebar />}
+      {(layoutMode !== 'vertical' || ConfigStore.isDrawerMode) && <Sidebar />}
       <AntLayout className="bg-gray-100 dark:bg-gray-900">
         {layoutMode !== 'horizontal' ? <Header style={{marginBottom: 0}}/> : null}
+        <Tab />
         <Content style={{ height: 'calc(100% - var(--header-margin-height))' }}>
-          <Tab></Tab>
-          <Outlet />
+       
+          {/* <AnimatePresence mode="wait"> */}
+            <Suspense>
+              {/* <PageTransition> */}
+                <Outlet />
+              {/* </PageTransition> */}
+            </Suspense>
+          {/* </AnimatePresence> */}
         </Content>
       </AntLayout>
       <SettingDrawer />

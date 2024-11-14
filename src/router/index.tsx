@@ -1,5 +1,6 @@
 
 
+import React from "react";
 import AuthBoundary from "../components/AuthBoundary";
 import HomePage from "../layout";
 import Login from "../pages/Login";
