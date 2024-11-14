@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { theme } from 'antd'
 import type { ThemeConfig } from 'antd'
-import { ThemeStyle, LayoutMode, UserActionsPosition, LogoPosition, ThemeMode } from '@/types/config'
+import { ThemeStyle, LayoutMode, UserActionsPosition, LogoPosition, ThemeMode, MenuPosition } from '@/types/config'
 
 class ConfigStore {
   themeStyle: ThemeStyle = 'dynamic'
@@ -13,6 +13,7 @@ class ConfigStore {
   showLogo: boolean = true
   sidebarCollapsed: boolean = false
   settingDrawerVisible: boolean = false
+  menuPosition: MenuPosition = 'sidebar'
 
   // antd 主题配置
   themeConfig: ThemeConfig = {
@@ -49,6 +50,7 @@ class ConfigStore {
     const savedPosition = localStorage.getItem('userActionsPosition') as UserActionsPosition
     const savedLogoPosition = localStorage.getItem('logoPosition') as LogoPosition
     const savedShowLogo = localStorage.getItem('showLogo') !== 'false'
+    const savedMenuPosition = localStorage.getItem('menuPosition') as MenuPosition
     
     if (savedTheme) {
       this.themeStyle = savedTheme
@@ -79,6 +81,10 @@ class ConfigStore {
 
     if (savedShowLogo !== null) {
       this.showLogo = savedShowLogo
+    }
+
+    if (savedMenuPosition) {
+      this.menuPosition = savedMenuPosition
     }
   }
 
@@ -313,23 +319,42 @@ class ConfigStore {
 
   // 添加一个计算属性来判断实际的布局模式
   get effectiveLayoutMode(): LayoutMode {
-    // 如果是 mix 模式，需要判断元素位置
     if (this.layoutMode === 'mix') {
       const logoInHeader = this.showLogo && this.logoPosition === 'header';
       const userActionsInHeader = this.userActionsPosition === 'header';
+      const menuInHeader = this.menuPosition === 'header';
       
-      // 当 Logo 和用户操作都在顶部时，使用垂直布局
-      if (logoInHeader && userActionsInHeader) {
+      // 当所有元素都在顶部时，使用垂直布局
+      if (logoInHeader && userActionsInHeader && menuInHeader) {
         return 'vertical';
       }
-      // 当 Logo 和用户操作都在侧栏或都不显示时，使用水平布局
+      // 当所有元素都在侧栏或不显示时，使用水平布局
       else if ((!this.showLogo || this.logoPosition === 'sidebar') && 
-               this.userActionsPosition === 'sidebar') {
+               this.userActionsPosition === 'sidebar' &&
+               this.menuPosition === 'sidebar') {
         return 'horizontal';
       }
     }
     
     return this.layoutMode;
+  }
+
+  // 新增计算属性
+  get showHeaderMenu() {
+    if (this.isDrawerMode) return false;
+    return this.layoutMode === 'vertical' || 
+      (this.layoutMode === 'mix' && this.menuPosition === 'header');
+  }
+
+  get showSidebarMenu() {
+    if (this.isDrawerMode) return false;
+    return this.layoutMode === 'horizontal' || 
+      (this.layoutMode === 'mix' && this.menuPosition === 'sidebar');
+  }
+
+  setMenuPosition = (position: MenuPosition) => {
+    this.menuPosition = position
+    localStorage.setItem('menuPosition', position)
   }
 }
 

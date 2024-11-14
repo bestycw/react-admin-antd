@@ -9,7 +9,7 @@ import {
   BarsOutlined,
 } from '@ant-design/icons'
 import CustomDrawer from '../CustomDrawer'
-import { LayoutMode, ThemeStyle, ThemeMode, LogoPosition, UserActionsPosition } from '@/types/config'
+import { LayoutMode, ThemeStyle, ThemeMode, LogoPosition, UserActionsPosition, MenuPosition } from '@/types/config'
 
 const SettingDrawer = observer(() => {
   const { ConfigStore } = useStore()
@@ -133,6 +133,17 @@ const SettingDrawer = observer(() => {
                 value={ConfigStore.logoPosition}
                 options={positionOptions}
                 onChange={(value) => ConfigStore.setLogoPosition(value as LogoPosition)}
+              />
+            </div>
+
+            {/* 菜单位置 */}
+            <div className="mt-6">
+              <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">菜单位置</div>
+              <Segmented
+                block
+                value={ConfigStore.menuPosition}
+                options={positionOptions}
+                onChange={(value) => ConfigStore.setMenuPosition(value as MenuPosition)}
               />
             </div>
 
