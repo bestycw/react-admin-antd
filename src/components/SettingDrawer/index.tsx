@@ -1,43 +1,60 @@
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
 import CustomDrawer from '../CustomDrawer'
+import { Switch, Tooltip } from 'antd'
 import {
   LayoutOutlined,
   BgColorsOutlined,
-  ControlOutlined,
-  LockOutlined,
+  CheckOutlined,
+  SunOutlined,
+  MoonOutlined,
+  DesktopOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons'
+import React from 'react'
 
-interface SettingDrawerProps {
-  open: boolean
-  onClose: () => void
-}
-
-const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
+const SettingDrawer = observer(() => {
   const { ConfigStore } = useStore()
-  // const isDynamic = ConfigStore.themeStyle === 'dynamic'
-  // const isDark = ConfigStore.isDarkMode
 
-  const buttonClass = `
-    px-3 py-1.5 rounded-full text-sm transition-colors
-    text-gray-700 dark:text-gray-200
-  `
+  // 样式类
+  const sectionTitleClass = "flex items-center gap-2 text-base font-medium mb-4"
+  const itemLabelClass = "text-sm text-gray-600 dark:text-gray-300"
 
-  const disabledButtonClass = `
-    px-3 py-1.5 rounded-full text-sm
-    text-gray-500 dark:text-gray-400
-    cursor-not-allowed opacity-60
-  `
+  // 主题模式选项
+  const themeModeOptions = [
+    { value: 'light', label: '浅色', icon: <SunOutlined /> },
+    { value: 'dark', label: '深色', icon: <MoonOutlined /> },
+    { value: 'system', label: '系统', icon: <DesktopOutlined /> }
+  ]
 
-  const sectionTitleClass = "flex items-center gap-2 text-base font-medium mb-4 text-gray-800 dark:text-gray-200"
-  const itemLabelClass = "text-gray-600 dark:text-gray-400"
-  const dividerClass = "h-px bg-gray-200 dark:bg-gray-700/50 my-6"
+  // 布局模式选项
+  const layoutOptions = [
+    { value: 'horizontal', label: '顶部导航', icon: <MenuUnfoldOutlined /> },
+    { value: 'vertical', label: '侧边导航', icon: <MenuFoldOutlined /> },
+    { value: 'mix', label: '混合导航', icon: <AppstoreOutlined /> }
+  ]
+
+  // 统一的设置处理函数，不自动关闭抽屉
+  const handleLayoutChange = (mode: 'horizontal' | 'vertical' | 'mix') => {
+    ConfigStore.setLayoutMode(mode)
+  }
+
+  const handleUserActionsPositionChange = (checked: boolean) => {
+    ConfigStore.setUserActionsPosition(checked ? 'header' : 'sidebar')
+  }
+
+  const handleLogoPositionChange = (checked: boolean) => {
+    ConfigStore.setLogoPosition(checked ? 'header' : 'sidebar')
+  }
 
   return (
-    <CustomDrawer
-      title="系统设置"
-      open={open}
-      onClose={onClose}
+    <CustomDrawer 
+      title="系统设置" 
+      open={ConfigStore.settingDrawerVisible}
+      onClose={ConfigStore.closeSettingDrawer}
+      maskClosable={false}
     >
       <div className="space-y-6 p-4">
         {/* 主题设置 */}
@@ -46,56 +63,45 @@ const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
             <BgColorsOutlined /> 主题设置
           </h3>
           <div className="space-y-4">
+            {/* 界面风格 */}
             <div className="flex justify-between items-center">
               <span className={itemLabelClass}>界面风格</span>
-              <button
-                onClick={() => ConfigStore.toggleTheme()}
-                className={buttonClass}
-              >
-                {ConfigStore.themeStyle === 'dynamic' ? '灵动' : '经典'}
-              </button>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span className={itemLabelClass}>外观模式</span>
-              <button
-                onClick={() => ConfigStore.toggleDarkMode()}
-                className={buttonClass}
-              >
-                {ConfigStore.isDarkMode ? '暗色模式' : '亮色模式'}
-              </button>
+              <Switch
+                checked={ConfigStore.themeStyle === 'dynamic'}
+                onChange={() => ConfigStore.toggleTheme()}
+                checkedChildren="灵动"
+                unCheckedChildren="经典"
+              />
             </div>
 
-            <div className="flex justify-between items-center">
-              <span className={itemLabelClass}>主题色</span>
-              <div className="flex gap-2">
-                {[
-                  { color: 'blue', value: '#1890ff' },
-                  { color: 'purple', value: '#722ed1' },
-                  { color: 'green', value: '#13c2c2' },
-                  { color: 'orange', value: '#fa8c16' }
-                ].map(({ color, value }) => (
-                  <button
-                    key={color}
-                    onClick={() => ConfigStore.setPrimaryColor(value)}
-                    className={`
-                      w-6 h-6 rounded-full border-2 transition-all
-                      ${color === 'blue' ? 'bg-blue-500' : 
-                        color === 'purple' ? 'bg-purple-500' :
-                        color === 'green' ? 'bg-cyan-500' : 'bg-orange-500'}
-                      ${ConfigStore.primaryColor === value 
-                        ? 'border-white/50 scale-110 shadow-lg' 
-                        : 'border-transparent hover:scale-110'
-                      }
-                    `}
-                  />
+            {/* 主题模式 */}
+            <div className="space-y-2">
+              <span className={itemLabelClass}>主题模式</span>
+              <div className="grid grid-cols-3 gap-2">
+                {themeModeOptions.map(option => (
+                  <Tooltip key={option.value} title={option.label}>
+                    <button
+                      onClick={() => ConfigStore.setThemeMode(option.value as 'light' | 'dark' | 'system')}
+                      className={`
+                        relative p-3 rounded-lg text-center transition-all
+                        ${ConfigStore.themeMode === option.value
+                          ? 'text-primary-500 bg-primary-50 dark:bg-primary-500/10'
+                          : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                        }
+                      `}
+                    >
+                      <div className="text-xl mb-1">{option.icon}</div>
+                      <div className="text-xs">{option.label}</div>
+                      {ConfigStore.themeMode === option.value && (
+                        <CheckOutlined className="absolute right-2 top-2 text-xs text-primary-500" />
+                      )}
+                    </button>
+                  </Tooltip>
                 ))}
               </div>
             </div>
           </div>
         </div>
-
-        <div className={dividerClass} />
 
         {/* 界面设置 */}
         <div>
@@ -103,134 +109,66 @@ const SettingDrawer = observer(({ open, onClose }: SettingDrawerProps) => {
             <LayoutOutlined /> 界面设置
           </h3>
           <div className="space-y-4">
+            {/* Logo 显示 */}
             <div className="flex justify-between items-center">
+              <span className={itemLabelClass}>显示 Logo</span>
+              <Switch
+                checked={ConfigStore.showLogo}
+                onChange={() => ConfigStore.toggleShowLogo()}
+              />
+            </div>
+
+            {/* 布局模式 */}
+            <div className="space-y-2">
               <span className={itemLabelClass}>布局模式</span>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => ConfigStore.setLayoutMode('horizontal')}
-                  className={`${buttonClass} ${
-                    ConfigStore.layoutMode === 'horizontal' ? 'bg-primary-50 dark:bg-primary-900/20' : ''
-                  }`}
-                >
-                  顶部导航
-                </button>
-                <button
-                  onClick={() => ConfigStore.setLayoutMode('vertical')}
-                  className={`${buttonClass} ${
-                    ConfigStore.layoutMode === 'vertical' ? 'bg-primary-50 dark:bg-primary-900/20' : ''
-                  }`}
-                >
-                  侧边导航
-                </button>
-                <button
-                  onClick={() => ConfigStore.setLayoutMode('mix')}
-                  className={`${buttonClass} ${
-                    ConfigStore.layoutMode === 'mix' ? 'bg-primary-50 dark:bg-primary-900/20' : ''
-                  }`}
-                >
-                  混合导航
-                </button>
+              <div className="grid grid-cols-3 gap-2">
+                {layoutOptions.map(option => (
+                  <Tooltip key={option.value} title={option.label}>
+                    <button
+                      onClick={() => handleLayoutChange(option.value as 'horizontal' | 'vertical' | 'mix')}
+                      className={`
+                        relative p-3 rounded-lg text-center transition-all
+                        ${ConfigStore.layoutMode === option.value
+                          ? 'text-primary-500 bg-primary-50 dark:bg-primary-500/10'
+                          : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                        }
+                      `}
+                    >
+                      <div className="text-xl mb-1">{option.icon}</div>
+                      <div className="text-xs">{option.label}</div>
+                      {ConfigStore.layoutMode === option.value && (
+                        <CheckOutlined className="absolute right-2 top-2 text-xs text-primary-500" />
+                      )}
+                    </button>
+                  </Tooltip>
+                ))}
               </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className={itemLabelClass}>内容区域</span>
-              <button className={buttonClass}>
-                流式布局
-              </button>
-            </div>
+
+            {/* Mix 布局特有设置 */}
             {ConfigStore.layoutMode === 'mix' && (
-              <>
+              <div className="space-y-4 mt-4">
                 <div className="flex justify-between items-center">
                   <span className={itemLabelClass}>Logo 位置</span>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => ConfigStore.setLogoPosition('header')}
-                      className={`${buttonClass} ${
-                        ConfigStore.logoPosition === 'header' ? 'bg-primary-50 dark:bg-primary-900/20' : ''
-                      }`}
-                    >
-                      顶部
-                    </button>
-                    <button
-                      onClick={() => ConfigStore.setLogoPosition('sidebar')}
-                      className={`${buttonClass} ${
-                        ConfigStore.logoPosition === 'sidebar' ? 'bg-primary-50 dark:bg-primary-900/20' : ''
-                      }`}
-                    >
-                      侧边
-                    </button>
-                  </div>
+                  <Switch
+                    checked={ConfigStore.logoPosition === 'header'}
+                    onChange={handleLogoPositionChange}
+                    checkedChildren="顶部"
+                    unCheckedChildren="侧边"
+                  />
                 </div>
 
                 <div className="flex justify-between items-center">
                   <span className={itemLabelClass}>用户操作区</span>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => ConfigStore.setUserActionsPosition('header')}
-                      className={`${buttonClass} ${
-                        ConfigStore.userActionsPosition === 'header' ? 'bg-primary-50 dark:bg-primary-900/20' : ''
-                      }`}
-                    >
-                      顶部
-                    </button>
-                    <button
-                      onClick={() => ConfigStore.setUserActionsPosition('sidebar')}
-                      className={`${buttonClass} ${
-                        ConfigStore.userActionsPosition === 'sidebar' ? 'bg-primary-50 dark:bg-primary-900/20' : ''
-                      }`}
-                    >
-                      侧边
-                    </button>
-                  </div>
+                  <Switch
+                    checked={ConfigStore.userActionsPosition === 'header'}
+                    onChange={handleUserActionsPositionChange}
+                    checkedChildren="顶部"
+                    unCheckedChildren="侧边"
+                  />
                 </div>
-              </>
+              </div>
             )}
-          </div>
-        </div>
-
-        <div className={dividerClass} />
-
-        {/* 系统设置 */}
-        <div>
-          <h3 className={sectionTitleClass}>
-            <ControlOutlined /> 系统设置
-          </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className={itemLabelClass}>固定头部</span>
-              <button className={buttonClass}>
-                已开启
-              </button>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className={itemLabelClass}>页面动画</span>
-              <button className={buttonClass}>
-                已开启
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className={dividerClass} />
-
-        {/* 权限设置 */}
-        <div>
-          <h3 className={sectionTitleClass}>
-            <LockOutlined /> 权限设置
-          </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className={itemLabelClass}>权限模式</span>
-              <button className={disabledButtonClass} disabled>
-                前端控制
-              </button>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className={itemLabelClass}>路由验证</span>
-              <button className={buttonClass}>
-                已开启
-              </button>
-            </div>
           </div>
         </div>
       </div>

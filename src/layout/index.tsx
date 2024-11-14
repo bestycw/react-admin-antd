@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar'
 import Content from './components/Content'
 import Tab from './components/Tab'
 import React from 'react'
+import SettingDrawer from '@/components/SettingDrawer'
 
 // const { Sider } = AntLayout
 
@@ -16,7 +17,7 @@ const Layout = observer(() => {
   const component = {
     horizontal: <>
       <Header />
-      <Content style={{ height: 'calc(100vh - var(--header-height) - var(--style-margin))', marginTop: 0,marginBottom: 0 }}>
+      <Content style={{ height: 'calc(100vh - var(--header-height) - var(--style-margin))', marginTop: 0, marginBottom: 0 }}>
         <Tab></Tab>
         <Outlet />
       </Content>
@@ -35,7 +36,7 @@ const Layout = observer(() => {
       <Sidebar />
       <AntLayout className="bg-gray-100 dark:bg-gray-900">
         <Header style={{ marginLeft: 0 }} />
-        <Content style={{ height: 'calc(100vh - var(--header-height) - var(--style-margin))',marginTop: 0, marginLeft: 0 }}>
+        <Content style={{ height: 'calc(100vh - var(--header-height) - var(--style-margin))', marginTop: 0, marginLeft: 0 }}>
           <Tab></Tab>
           <Outlet />
         </Content>
@@ -47,6 +48,7 @@ const Layout = observer(() => {
   return (
     <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
       {component[layoutMode]}
+      <SettingDrawer />
     </AntLayout>
   )
 })

@@ -14,16 +14,13 @@ import {
   BellOutlined,
   GlobalOutlined,
 } from '@ant-design/icons'
-import SettingDrawer from '@/components/SettingDrawer'
-import React from 'react'
 
 interface VerticalUserActionsProps {
-  collapsed?: boolean;
+  collapsed?: boolean
 }
 
 const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActionsProps) => {
   const { UserStore, ConfigStore } = useStore()
-  const [settingOpen, setSettingOpen] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   const toggleFullscreen = () => {
@@ -74,43 +71,30 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
     label: string
     badge?: number
     onClick?: () => void
-  }) => {
-    const button = (
-      <button 
-        className={`
-          flex items-center rounded-lg transition-all duration-200
-          hover:bg-black/5 dark:hover:bg-white/5 w-full
-          ${collapsed 
-            ? 'h-10 w-10' 
-            : 'h-10 w-full px-4 gap-3'
-          }
-        `}
-        onClick={onClick}
-      >
-        <div className={`
-          flex items-center justify-center text-lg
-          ${collapsed ? 'w-full' : ''}
-        `}>
-          {badge ? (
-            <Badge count={badge} size="small">
-              {icon}
-            </Badge>
-          ) : icon}
-        </div>
-        {!collapsed && (
-          <span className="text-sm text-gray-600 dark:text-gray-300">
-            {label}
-          </span>
-        )}
-      </button>
-    )
-
-    return collapsed ? (
-      <Tooltip title={label} placement="right">
-        {button}
-      </Tooltip>
-    ) : button
-  }
+  }) => (
+    <button 
+      className={`
+        flex items-center rounded-lg transition-all duration-200
+        hover:bg-black/5 dark:hover:bg-white/5
+        ${collapsed 
+          ? 'w-10 h-10 justify-center' 
+          : 'w-full gap-3 px-3 py-2'
+        }
+      `}
+      onClick={onClick}
+    >
+      <div className="flex items-center justify-center">
+        {badge ? (
+          <Badge count={badge} size="small">
+            {icon}
+          </Badge>
+        ) : icon}
+      </div>
+      {!collapsed && (
+        <span className="text-sm text-gray-600 dark:text-gray-300">{label}</span>
+      )}
+    </button>
+  )
 
   const userButton = (
     <div className={`
@@ -145,8 +129,7 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
       {/* Action Buttons */}
       <div className={`
         flex flex-col
-        ${collapsed ? 'px-0' : 'p-2'}
-        gap-1
+        ${collapsed ? 'px-1 py-2 gap-2' : 'p-2 gap-1'}
       `}>
         <ActionButton 
           icon={<BellOutlined className="text-gray-600 dark:text-gray-300" />}
@@ -182,9 +165,9 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
         </Dropdown>
 
         <ActionButton 
-          icon={<SettingOutlined className="text-gray-600 dark:text-gray-300" />}
+          icon={<SettingOutlined className="text-lg text-gray-600 dark:text-gray-300" />}
           label="系统设置"
-          onClick={() => setSettingOpen(true)}
+          onClick={() => ConfigStore.openSettingDrawer()}
         />
       </div>
 
@@ -205,11 +188,6 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
           ) : userButton}
         </Dropdown>
       </div>
-
-      <SettingDrawer 
-        open={settingOpen}
-        onClose={() => setSettingOpen(false)}
-      />
     </div>
   )
 })

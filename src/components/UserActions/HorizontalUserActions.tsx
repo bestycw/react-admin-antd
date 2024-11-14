@@ -131,10 +131,14 @@ const HorizontalUserActions = observer(() => {
         </Dropdown>
 
         {/* Settings */}
-        <ActionButton 
-          icon={<SettingOutlined className="text-lg" />}
-          onClick={() => setSettingOpen(true)}
-        />
+        <button 
+          onClick={() => ConfigStore.openSettingDrawer()}
+          className="w-8 h-8 flex items-center justify-center rounded-full
+            transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/10
+            text-gray-500 dark:text-gray-400"
+        >
+          <SettingOutlined className="text-lg" />
+        </button>
 
         {/* User Menu */}
         <Dropdown
