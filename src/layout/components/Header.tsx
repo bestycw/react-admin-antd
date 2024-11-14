@@ -42,7 +42,7 @@ const Header = observer(({ className = '', style }: HeaderProps) => {
 
       {/* User Actions */}
       {ConfigStore.showHeaderUserActions && (
-        <div className="ml-4">
+        <div className="ml-4 ml-auto">
           <UserActions mode="horizontal" />
         </div>
       )}
