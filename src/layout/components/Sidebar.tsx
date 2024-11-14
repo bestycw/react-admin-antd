@@ -16,20 +16,27 @@ const Sidebar = observer(() => {
   const {
     isCollapsed,
     isDrawerMode,
-    drawerVisible,
     getCollapsedState,
     handleToggle,
-    closeDrawer,
     toggleButtonClass,
   } = useSidebarControl()
+
+  // 处理折叠/展开和抽屉的切换
+  const handleSidebarToggle = () => {
+    if (isDrawerMode) {
+      ConfigStore.toggleDrawer('sidebar')
+    } else {
+      ConfigStore.toggleSidebar()
+    }
+  }
 
   // 折叠/抽屉 切换按钮
   const toggleButton = (
     <button
-      onClick={handleToggle}
+      onClick={handleSidebarToggle}
       className={toggleButtonClass}
     >
-      {(isDrawerMode && !drawerVisible) || isCollapsed ? (
+      {(isDrawerMode && !ConfigStore.drawerVisible) || isCollapsed ? (
         <MenuUnfoldOutlined className="text-sm text-gray-600 dark:text-gray-300" />
       ) : (
         <MenuFoldOutlined className="text-sm text-gray-600 dark:text-gray-300" />
@@ -106,7 +113,7 @@ const Sidebar = observer(() => {
         
         <CustomDrawer
           open={ConfigStore.drawerVisible}
-          onClose={ConfigStore.closeDrawer}
+          onClose={() => ConfigStore.closeDrawer('sidebar')}
           placement="left"
           showClose={false}
           showMask={true}
@@ -131,7 +138,7 @@ const Sidebar = observer(() => {
     <Sider 
       width={280} 
       collapsedWidth={80} 
-      collapsed={isCollapsed} 
+      collapsed={ConfigStore.sidebarCollapsed} 
       className="!bg-transparent group relative"
     >
       {sidebarContent}

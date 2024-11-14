@@ -121,7 +121,7 @@ const SettingDrawer = observer(() => {
             block
             value={ConfigStore.themeMode}
             options={themeModeOptions}
-            onChange={() => ConfigStore.toggleDarkMode()}
+            onChange={(value) => ConfigStore.setThemeMode(value as ThemeMode)}
           />
         </div>
 
