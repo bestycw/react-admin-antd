@@ -11,7 +11,7 @@ import {
   FullscreenOutlined,
   FullscreenExitOutlined,
   BellOutlined,
-  GlobalOutlined,
+  TranslationOutlined,
 } from '@ant-design/icons'
 import React from 'react'
 
@@ -26,6 +26,7 @@ export interface ActionItem {
 export const useUserActions = () => {
   const { UserStore, ConfigStore } = useStore()
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [currentLang, setCurrentLang] = useState('zh_CN')
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -58,11 +59,13 @@ export const useUserActions = () => {
   const languageItems: MenuProps['items'] = [
     {
       key: 'zh_CN',
-      label: '简体中文'
+      label: '简体中文',
+      onClick: () => setCurrentLang('zh_CN')
     },
     {
       key: 'en_US',
-      label: 'English'
+      label: 'English',
+      onClick: () => setCurrentLang('en_US')
     }
   ]
 
@@ -99,7 +102,7 @@ export const useUserActions = () => {
     },
     {
       key: 'language',
-      icon: <GlobalOutlined className="text-gray-600 dark:text-gray-300" />,
+      icon: <TranslationOutlined className="text-gray-600 dark:text-gray-300" />,
       label: '切换语言'
     },
     {
@@ -122,7 +125,8 @@ export const useUserActions = () => {
     userMenuItems,
     languageItems,
     handleUserMenuClick,
-    userInfo
+    userInfo,
+    currentLang
   }
 }
 

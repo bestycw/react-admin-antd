@@ -1,4 +1,4 @@
-import { Avatar, Dropdown, Badge } from 'antd'
+import { Avatar, Dropdown, Badge, Tooltip } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { UserOutlined } from '@ant-design/icons'
 import useUserActions from './BaseUserActions'
@@ -9,33 +9,69 @@ interface VerticalUserActionsProps {
 }
 
 const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActionsProps) => {
-  const { actionItems, userMenuItems, languageItems, handleUserMenuClick, userInfo } = useUserActions()
+  const { actionItems, userMenuItems, languageItems, handleUserMenuClick, userInfo, currentLang } = useUserActions()
 
   const ActionButton = ({ icon, label, badge, onClick }: {
     icon: React.ReactNode
     label: string
     badge?: number
     onClick?: () => void
-  }) => (
-    <button 
-      className={`
-        flex items-center h-9 rounded-lg transition-all duration-200
-        hover:bg-black/5 dark:hover:bg-white/5 w-full
-        ${collapsed ? 'justify-center px-2' : 'px-3 gap-3'}
-      `}
-      onClick={onClick}
-    >
-      <div className="flex items-center justify-center w-5">
-        {badge ? (
-          <Badge count={badge} size="small">
-            {icon}
-          </Badge>
-        ) : icon}
-      </div>
+  }) => {
+    const button = (
+      <button 
+        className={`
+          flex items-center h-9 rounded-lg transition-all duration-200
+          hover:bg-black/5 dark:hover:bg-white/5 w-full
+          ${collapsed ? 'justify-center px-2' : 'px-3 gap-3'}
+        `}
+        onClick={onClick}
+      >
+        <div className="flex items-center justify-center w-5">
+          {badge ? (
+            <Badge count={badge} size="small">
+              {icon}
+            </Badge>
+          ) : icon}
+        </div>
+        {!collapsed && (
+          <span className="text-sm text-gray-600 dark:text-gray-300">{label}</span>
+        )}
+      </button>
+    )
+
+    return collapsed ? (
+      <Tooltip title={label} placement="right">
+        {button}
+      </Tooltip>
+    ) : button
+  }
+
+  const UserButton = (
+    <div className={`
+      flex items-center h-9 cursor-pointer transition-colors
+      hover:bg-black/5 dark:hover:bg-white/5
+      ${collapsed 
+        ? 'justify-center px-2' 
+        : 'gap-3 mx-2 px-2 rounded-lg'
+      }
+    `}>
+      <Avatar 
+        size={24}
+        src={userInfo.avatar}
+        icon={<UserOutlined />}
+        className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-indigo-500"
+      />
       {!collapsed && (
-        <span className="text-sm text-gray-600 dark:text-gray-300">{label}</span>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+            {userInfo.username}
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+            {userInfo.email}
+          </div>
+        </div>
       )}
-    </button>
+    </div>
   )
 
   return (
@@ -50,17 +86,38 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
           item.key === 'language' ? (
             <Dropdown 
               key={item.key} 
-              menu={{ items: languageItems }} 
+              menu={{ 
+                items: languageItems,
+                style: { minWidth: '120px' }
+              }} 
+              
               trigger={['click']} 
-              placement="topRight"
-              getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+              placement={'topRight'}
+              arrow={{ pointAtCenter: true }}
             >
               <div className="w-full">
-                <ActionButton 
-                  icon={item.icon}
-                  label={item.label}
-                  badge={item.badge}
-                />
+                {collapsed ? (
+                  <Tooltip title={'切换语言'} placement="right">
+                    <button 
+                      className="flex items-center h-9 rounded-lg transition-all duration-200
+                        hover:bg-black/5 dark:hover:bg-white/5 w-full justify-center px-2"
+                    >
+                      <div className="flex items-center justify-center w-5">
+                        {item.icon}
+                      </div>
+                    </button>
+                  </Tooltip>
+                ) : (
+                  <button 
+                    className="flex items-center h-9 rounded-lg transition-all duration-200
+                      hover:bg-black/5 dark:hover:bg-white/5 w-full px-3 gap-3"
+                  >
+                    <div className="flex items-center justify-center w-5">
+                      {item.icon}
+                    </div>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">{item.label}</span>
+                  </button>
+                )}
               </div>
             </Dropdown>
           ) : (
@@ -80,34 +137,15 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
         <Dropdown
           menu={{ items: userMenuItems, onClick: handleUserMenuClick }}
           trigger={['click']}
-          placement="topRight"
-          getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+          placement={collapsed ? "rightTop" : "topRight"}
+          overlayStyle={{ minWidth: '160px' }}
+        //   getPopupContainer={node => node.parentElement || document.body}
         >
-          <div className={`
-            flex items-center h-9 cursor-pointer transition-colors
-            hover:bg-black/5 dark:hover:bg-white/5
-            ${collapsed 
-              ? 'justify-center px-2' 
-              : 'gap-3 mx-2 px-2 rounded-lg'
-            }
-          `}>
-            <Avatar 
-              size={24}
-              src={userInfo.avatar}
-              icon={<UserOutlined />}
-              className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-indigo-500"
-            />
-            {!collapsed && (
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
-                  {userInfo.username}
-                </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {userInfo.email}
-                </div>
-              </div>
-            )}
-          </div>
+          {collapsed ? (
+            <Tooltip title={userInfo.username} placement="right">
+              {UserButton}
+            </Tooltip>
+          ) : UserButton}
         </Dropdown>
       </div>
     </div>
