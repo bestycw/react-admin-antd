@@ -10,6 +10,7 @@ import React from 'react'
 const Sidebar = observer(() => {
   const { ConfigStore } = useStore()
   const isCollapsed = ConfigStore.sidebarCollapsed
+  const isDynamic = ConfigStore.themeStyle === 'dynamic'
   const showLogo = ConfigStore.showLogo && (
     ConfigStore.layoutMode === 'vertical' || 
     (ConfigStore.layoutMode === 'mix' && ConfigStore.logoPosition === 'sidebar')
@@ -47,12 +48,14 @@ const Sidebar = observer(() => {
             rounded-full
             transition-all duration-300 ease-in-out
             opacity-0 group-hover:opacity-100
-            bg-white dark:bg-gray-800
-            hover:bg-gray-50 dark:hover:bg-gray-700
+            z-50
+            ${isDynamic 
+              ? 'bg-white/80 hover:bg-white dark:bg-black/40 dark:hover:bg-black/60 backdrop-blur-md' 
+              : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'
+            }
             shadow-lg
             border border-black/[0.02] dark:border-white/[0.02]
             hover:scale-110
-            z-10
           `}
         >
           {isCollapsed ? (

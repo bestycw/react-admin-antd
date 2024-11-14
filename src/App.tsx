@@ -1,3 +1,5 @@
+import { ConfigProvider } from 'antd'
+import { observer } from 'mobx-react-lite'
 import { useRoutes, useNavigate, RouteObject } from 'react-router-dom'
 import './App.css'
 import './index.css'
@@ -30,12 +32,13 @@ function mergeRouteByPath(to: CoRouteObject[], from: CoRouteObject[]) {
 
 const routes = [...StaticRoutes, ...RemainingRoutes]
 
-function App() {
+const App = observer(() => {
     const { PermissionControl } = GlobalConfig
     const { UserStore, MenuStore } = useStore()
     const { isLogin } = UserStore
     const roles = UserStore.userInfo?.roles ?? []
     const navigate = useNavigate()
+    const { ConfigStore } = useStore()
 
     useEffect(() => {
         if (isLogin) {
@@ -63,7 +66,11 @@ function App() {
         }
     }, [isLogin])
 
-    return <Suspense>{useRoutes(routes as RouteObject[])}</Suspense>
-}
+    return (
+        <ConfigProvider theme={ConfigStore.themeConfig}>
+            <Suspense>{useRoutes(routes as RouteObject[])}</Suspense>
+        </ConfigProvider>
+    )
+})
 
 export default App

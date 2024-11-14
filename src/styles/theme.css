@@ -80,6 +80,8 @@
   --tab-hover-bg: var(--bg-hover);
   --tab-active-bg: var(--bg-active);
   --tab-border-color: transparent;
+  
+  --primary-color: var(--ant-color-primary);
 }
 
 /* 风格相关的样式类 */

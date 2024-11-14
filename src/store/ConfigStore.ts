@@ -1,4 +1,6 @@
 import { makeAutoObservable } from 'mobx'
+import { theme } from 'antd'
+import type { ThemeConfig } from 'antd'
 
 type ThemeStyle = 'dynamic' | 'classic'
 type LayoutMode = 'horizontal' | 'vertical' | 'mix'
@@ -16,6 +18,15 @@ class ConfigStore {
   showLogo: boolean = true
   sidebarCollapsed: boolean = false
   settingDrawerVisible: boolean = false
+
+  // antd 主题配置
+  themeConfig: ThemeConfig = {
+    token: {
+      colorPrimary: '#1890ff',
+      borderRadius: 6,
+    },
+    algorithm: theme.defaultAlgorithm,
+  }
 
   constructor() {
     makeAutoObservable(this, {}, {
@@ -115,6 +126,8 @@ class ConfigStore {
     this.isDarkMode = !this.isDarkMode
     document.documentElement.classList.toggle('dark', this.isDarkMode)
     localStorage.setItem('isDarkMode', String(this.isDarkMode))
+    // 同步更新 antd 主题算法
+    this.setThemeAlgorithm(this.isDarkMode)
   }
 
   setLayoutMode = (mode: LayoutMode) => {
@@ -176,6 +189,25 @@ class ConfigStore {
 
   openSettingDrawer = () => {
     this.settingDrawerVisible = true
+  }
+
+  // 设置主题色
+  setThemeColor = (color: string) => {
+    this.themeConfig = {
+      ...this.themeConfig,
+      token: {
+        ...this.themeConfig.token,
+        colorPrimary: color,
+      }
+    }
+  }
+
+  // 设置主题算法
+  setThemeAlgorithm = (isDark: boolean) => {
+    this.themeConfig = {
+      ...this.themeConfig,
+      algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+    }
   }
 }
 
