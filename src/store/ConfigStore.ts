@@ -1,12 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { theme } from 'antd'
 import type { ThemeConfig } from 'antd'
-
-type ThemeStyle = 'dynamic' | 'classic'
-type LayoutMode = 'vertical' | 'horizontal' | 'mix'
-type UserActionsPosition = 'header' | 'sidebar'
-type LogoPosition = 'header' | 'sidebar'
-type ThemeMode = 'light' | 'dark' | 'system'
+import { ThemeStyle, LayoutMode, UserActionsPosition, LogoPosition, ThemeMode } from '@/types/config'
 
 class ConfigStore {
   themeStyle: ThemeStyle = 'dynamic'

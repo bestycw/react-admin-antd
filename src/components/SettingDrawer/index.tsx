@@ -1,15 +1,15 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
-import { Divider, Switch, Segmented, theme } from 'antd'
+import { Divider, Switch, Segmented } from 'antd'
 import { 
-  MenuFoldOutlined, 
   MenuUnfoldOutlined, 
   LayoutOutlined,
   AppstoreOutlined,
   BarsOutlined,
 } from '@ant-design/icons'
 import CustomDrawer from '../CustomDrawer'
+import { LayoutMode, ThemeStyle, ThemeMode, LogoPosition, UserActionsPosition } from '@/types/config'
 
 const SettingDrawer = observer(() => {
   const { ConfigStore } = useStore()
@@ -78,6 +78,10 @@ const SettingDrawer = observer(() => {
       title="系统配置"
       placement="right"
       width={320}
+      showClose={true}
+      showMask={true}
+      maskClosable={true}
+      bodyStyle={{ padding: 0 }}
     >
       <div className="p-6 space-y-6">
         {/* 导航模式 */}
@@ -87,7 +91,7 @@ const SettingDrawer = observer(() => {
             block
             value={ConfigStore.layoutMode}
             options={layoutOptions}
-            onChange={(value) => ConfigStore.setLayoutMode(value as any)}
+            onChange={(value) => ConfigStore.setLayoutMode(value as LayoutMode)}
           />
         </div>
 
@@ -100,7 +104,7 @@ const SettingDrawer = observer(() => {
             block
             value={ConfigStore.themeStyle}
             options={themeStyleOptions}
-            onChange={(value) => ConfigStore.setThemeStyle(value as any)}
+            onChange={(value) => ConfigStore.setThemeStyle(value as ThemeStyle)}
           />
         </div>
 
@@ -113,7 +117,7 @@ const SettingDrawer = observer(() => {
             block
             value={ConfigStore.themeMode}
             options={themeModeOptions}
-            onChange={(value) => ConfigStore.setThemeMode(value as any)}
+            onChange={(value) => ConfigStore.setThemeMode(value as ThemeMode)}
           />
         </div>
 
@@ -128,7 +132,7 @@ const SettingDrawer = observer(() => {
                 block
                 value={ConfigStore.logoPosition}
                 options={positionOptions}
-                onChange={(value) => ConfigStore.setLogoPosition(value as any)}
+                onChange={(value) => ConfigStore.setLogoPosition(value as LogoPosition)}
               />
             </div>
 
@@ -139,7 +143,7 @@ const SettingDrawer = observer(() => {
                 block
                 value={ConfigStore.userActionsPosition}
                 options={positionOptions}
-                onChange={(value) => ConfigStore.setUserActionsPosition(value as any)}
+                onChange={(value) => ConfigStore.setUserActionsPosition(value as UserActionsPosition)}
               />
             </div>
           </>
