@@ -102,4 +102,4 @@ npm run lint
 
 ## 🤝 贡献
 
-欢迎提交 Issue 和 Pull Request，感谢您的贡献！
+欢迎提交 Issue 和 Pull Request，感谢您的贡献！同时欢迎 star 和 fork。后续会更加完善！
