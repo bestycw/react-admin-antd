@@ -3,17 +3,33 @@ import { theme } from 'antd'
 import type { ThemeConfig } from 'antd'
 import { ThemeStyle, LayoutMode, UserActionsPosition, LogoPosition, ThemeMode, MenuPosition } from '@/types/config'
 
+type ComponentPosition = {
+  logo: LogoPosition;
+  menu: MenuPosition;
+  userActions: UserActionsPosition;
+}
+
 class ConfigStore {
+  // 基础配置
   themeStyle: ThemeStyle = 'dynamic'
   themeMode: ThemeMode = 'system'
   isDarkMode: boolean = false
   layoutMode: LayoutMode = 'vertical'
-  userActionsPosition: UserActionsPosition = 'header'
-  logoPosition: LogoPosition = 'header'
   showLogo: boolean = true
+
+  // 组件位置配置
+  positions: ComponentPosition = {
+    logo: 'header',
+    menu: 'sidebar',
+    userActions: 'header'
+  }
+
+  // 侧边栏状态
   sidebarCollapsed: boolean = false
+  private isAutoCollapsed = false
+  isDrawerMode: boolean = false
+  drawerVisible: boolean = false
   settingDrawerVisible: boolean = false
-  menuPosition: MenuPosition = 'sidebar'
 
   // antd 主题配置
   themeConfig: ThemeConfig = {
@@ -24,18 +40,8 @@ class ConfigStore {
     algorithm: theme.defaultAlgorithm,
   }
 
-  // 添加一个标记来区分是自动折叠还是手动折叠
-  private isAutoCollapsed = false
-
-  // 添加抽屉模式状态
-  isDrawerMode: boolean = false
-  drawerVisible: boolean = false
-
   constructor() {
-    makeAutoObservable(this, {}, {
-      autoBind: true,
-      computedRequiresReaction: true,
-    })
+    makeAutoObservable(this)
     this.initSettings()
     this.initSystemTheme()
     this.initViewportListener()
@@ -43,49 +49,31 @@ class ConfigStore {
 
   private initSettings() {
     // 从本地存储恢复设置
-    const savedTheme = localStorage.getItem('themeStyle') as ThemeStyle
-    const savedThemeMode = localStorage.getItem('themeMode') as ThemeMode
-    const savedLayout = localStorage.getItem('layoutMode') as LayoutMode
-    const savedCollapsed = localStorage.getItem('sidebarCollapsed') === 'true'
-    const savedPosition = localStorage.getItem('userActionsPosition') as UserActionsPosition
-    const savedLogoPosition = localStorage.getItem('logoPosition') as LogoPosition
-    const savedShowLogo = localStorage.getItem('showLogo') !== 'false'
-    const savedMenuPosition = localStorage.getItem('menuPosition') as MenuPosition
-    
-    if (savedTheme) {
-      this.themeStyle = savedTheme
-      document.documentElement.classList.add(`theme-${savedTheme}`)
-    } else {
-      document.documentElement.classList.add('theme-dynamic')
-    }
-    
-    if (savedThemeMode) {
-      this.themeMode = savedThemeMode
+    const settings = {
+      themeStyle: localStorage.getItem('themeStyle') as ThemeStyle,
+      themeMode: localStorage.getItem('themeMode') as ThemeMode,
+      layoutMode: localStorage.getItem('layoutMode') as LayoutMode,
+      showLogo: localStorage.getItem('showLogo') !== 'false',
+      positions: {
+        logo: localStorage.getItem('logoPosition') as LogoPosition,
+        menu: localStorage.getItem('menuPosition') as MenuPosition,
+        userActions: localStorage.getItem('userActionsPosition') as UserActionsPosition,
+      }
     }
 
-    if (savedLayout) {
-      this.layoutMode = savedLayout
-    }
+    // 应用设置
+    Object.entries(settings).forEach(([key, value]) => {
+      if (value !== null) {
+        if (key === 'positions') {
+          this.positions = { ...this.positions, ...value }
+        } else {
+          this[key] = value
+        }
+      }
+    })
 
-    if (savedCollapsed !== null) {
-      this.sidebarCollapsed = savedCollapsed
-    }
-
-    if (savedPosition) {
-      this.userActionsPosition = savedPosition
-    }
-
-    if (savedLogoPosition) {
-      this.logoPosition = savedLogoPosition
-    }
-
-    if (savedShowLogo !== null) {
-      this.showLogo = savedShowLogo
-    }
-
-    if (savedMenuPosition) {
-      this.menuPosition = savedMenuPosition
-    }
+    // 初始化主题样式
+    document.documentElement.classList.add(`theme-${this.themeStyle || 'dynamic'}`)
   }
 
   private initSystemTheme() {
@@ -95,6 +83,7 @@ class ConfigStore {
       const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
         this.isDarkMode = e.matches
         document.documentElement.classList.toggle('dark', this.isDarkMode)
+        this.setThemeAlgorithm(this.isDarkMode)
       }
       
       darkModeMediaQuery.addEventListener('change', handleThemeChange)
@@ -103,60 +92,96 @@ class ConfigStore {
   }
 
   private initViewportListener() {
-    // 初始检查
-    this.checkViewportWidth()
-
-    // 添加resize监听
-    window.addEventListener('resize', this.checkViewportWidth)
-  }
-
-  private checkViewportWidth = () => {
-    // 所有布局模式下，当视口宽度小于 768px 时切换到抽屉模式
-    if (window.innerWidth < 768) {
-      // 切换到抽屉模式
-      this.isDrawerMode = true
-      this.drawerVisible = false
-      // 确保不会保持折叠状态
-      this.isAutoCollapsed = false
-      this.sidebarCollapsed = false
-    } else if (window.innerWidth < 1024) {
-      // 中等宽度时使用折叠模式
-      this.isDrawerMode = false
-      if (!this.sidebarCollapsed) {
-        this.isAutoCollapsed = true
-        this.sidebarCollapsed = true
-      }
-    } else {
-      // 恢复正常模式
-      this.isDrawerMode = false
-      if (this.isAutoCollapsed) {
+    const checkViewportWidth = () => {
+      if (window.innerWidth < 768) {
+        this.isDrawerMode = true
+        this.drawerVisible = false
         this.isAutoCollapsed = false
         this.sidebarCollapsed = false
+      } else if (window.innerWidth < 1024) {
+        this.isDrawerMode = false
+        if (!this.sidebarCollapsed) {
+          this.isAutoCollapsed = true
+          this.sidebarCollapsed = true
+        }
+      } else {
+        this.isDrawerMode = false
+        if (this.isAutoCollapsed) {
+          this.isAutoCollapsed = false
+          this.sidebarCollapsed = false
+        }
       }
     }
 
-    // 保存当前状态
-    localStorage.setItem('sidebarCollapsed', String(this.sidebarCollapsed))
+    // 初始检查
+    checkViewportWidth()
+
+    // 添加resize监听
+    window.addEventListener('resize', checkViewportWidth)
   }
 
-  setThemeStyle = (style: ThemeStyle) => {
-    this.themeStyle = style
-    document.documentElement.classList.remove('theme-dynamic', 'theme-classic')
-    document.documentElement.classList.add(`theme-${style}`)
-    localStorage.setItem('themeStyle', style)
+  // 重置抽屉状态
+  private resetDrawerState() {
+    this.isDrawerMode = window.innerWidth < 768
+    this.drawerVisible = false
+    this.isAutoCollapsed = false
+    this.sidebarCollapsed = false
   }
 
-  setThemeMode = (mode: ThemeMode) => {
-    this.themeMode = mode
-    localStorage.setItem('themeMode', mode)
-
-    if (mode === 'system') {
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      this.isDarkMode = isDark
-    } else {
-      this.isDarkMode = mode === 'dark'
+  // 设置主题算法
+  private setThemeAlgorithm(isDark: boolean) {
+    this.themeConfig = {
+      ...this.themeConfig,
+      algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
     }
-    document.documentElement.classList.toggle('dark', this.isDarkMode)
+  }
+
+  // 计算显示位置
+  private shouldShowInPosition(component: keyof ComponentPosition, position: 'header' | 'sidebar'): boolean {
+    if (this.isDrawerMode) return false
+    
+    const isInPosition = this.positions[component] === position
+    const showInHeader = this.layoutMode === 'vertical' || 
+      (this.layoutMode === 'mix' && isInPosition)
+    const showInSidebar = this.layoutMode === 'horizontal' || 
+      (this.layoutMode === 'mix' && isInPosition)
+
+    return position === 'header' ? showInHeader : showInSidebar
+  }
+
+  // 获取有效的布局模式
+  get effectiveLayoutMode(): LayoutMode {
+    if (this.layoutMode === 'mix') {
+      const allInHeader = Object.values(this.positions).every(pos => pos === 'header')
+      const allInSidebar = Object.values(this.positions).every(pos => pos === 'sidebar' || !this.showLogo)
+      
+      if (allInHeader) return 'vertical'
+      if (allInSidebar) return 'horizontal'
+    }
+    return this.layoutMode
+  }
+
+  // 组件显示状态
+  get showHeaderLogo() { return this.shouldShowInPosition('logo', 'header') && this.showLogo }
+  get showSidebarLogo() { return this.shouldShowInPosition('logo', 'sidebar') && this.showLogo }
+  get showHeaderMenu() { return this.shouldShowInPosition('menu', 'header') }
+  get showSidebarMenu() { return this.shouldShowInPosition('menu', 'sidebar') }
+  get showHeaderUserActions() { return this.shouldShowInPosition('userActions', 'header') }
+  get showSidebarUserActions() { return this.shouldShowInPosition('userActions', 'sidebar') }
+  get showDrawerLogo() { return this.isDrawerMode && this.showLogo }
+  get showDrawerMenu() { return this.isDrawerMode }
+  get showDrawerUserActions() { return this.isDrawerMode }
+
+  // 设置方法
+  setPosition(component: keyof ComponentPosition, position: 'header' | 'sidebar') {
+    this.positions[component] = position
+    localStorage.setItem(`${component}Position`, position)
+  }
+
+  setLayoutMode = (mode: LayoutMode) => {
+    this.layoutMode = mode
+    localStorage.setItem('layoutMode', mode)
+    this.resetDrawerState()
   }
 
   toggleShowLogo = () => {
@@ -164,42 +189,42 @@ class ConfigStore {
     localStorage.setItem('showLogo', String(this.showLogo))
   }
 
-  toggleTheme = () => {
-    this.setThemeStyle(this.themeStyle === 'dynamic' ? 'classic' : 'dynamic')
+  // 清理方法
+  dispose() {
+    window.removeEventListener('resize', this.initViewportListener)
   }
 
-  toggleDarkMode = () => {
-    this.isDarkMode = !this.isDarkMode
-    document.documentElement.classList.toggle('dark', this.isDarkMode)
-    localStorage.setItem('isDarkMode', String(this.isDarkMode))
-    // 同步更新 antd 主题算法
-    this.setThemeAlgorithm(this.isDarkMode)
-  }
-
-  setLayoutMode = (mode: LayoutMode) => {
-    this.layoutMode = mode
-    localStorage.setItem('layoutMode', mode)
-    
-    // 根据布局模式调整其他设置
-    if (mode === 'vertical') {
-      // 垂直布局（顶部导航）时的默认设置
-      this.userActionsPosition = 'header'
-      this.logoPosition = 'header'
-    } else if (mode === 'horizontal') {
-      // 水平布局（侧边导航）时的默认设置
-      this.userActionsPosition = 'sidebar'
-      this.logoPosition = 'sidebar'
+  // 抽屉控制方法
+  toggleDrawer = (drawerName: 'setting' | 'sidebar') => {
+    if (drawerName === 'setting') {
+      this.settingDrawerVisible = !this.settingDrawerVisible
+    } else if (drawerName === 'sidebar' && this.isDrawerMode) {
+      this.drawerVisible = !this.drawerVisible
     }
-    // mix 模式保持当前设置
-
-    // 重置状态并检查视口
-    this.isDrawerMode = window.innerWidth < 768
-    this.drawerVisible = false
-    this.isAutoCollapsed = false
-    this.sidebarCollapsed = false
-    this.checkViewportWidth()
   }
 
+  openDrawer = (drawerName: 'setting' | 'sidebar') => {
+    if (drawerName === 'setting') {
+      this.settingDrawerVisible = true
+    } else if (drawerName === 'sidebar' && this.isDrawerMode) {
+      this.drawerVisible = true
+    }
+  }
+
+  closeDrawer = (drawerName: 'setting' | 'sidebar') => {
+    if (drawerName === 'setting') {
+      this.settingDrawerVisible = false
+    } else if (drawerName === 'sidebar') {
+      this.drawerVisible = false
+    }
+  }
+
+  // 为了保持向后兼容，添加以下方法
+  toggleSettingDrawer = () => this.toggleDrawer('setting')
+  openSettingDrawer = () => this.openDrawer('setting')
+  closeSettingDrawer = () => this.closeDrawer('setting')
+
+  // 侧边栏控制方法
   toggleSidebar = () => {
     if (!this.isDrawerMode) {
       this.isAutoCollapsed = false // 手动切换时清除自动折叠标记
@@ -215,146 +240,35 @@ class ConfigStore {
     }
   }
 
-  setUserActionsPosition = (position: UserActionsPosition) => {
-    this.userActionsPosition = position
-    localStorage.setItem('userActionsPosition', position)
+  // 主题相关方法
+  setThemeStyle = (style: ThemeStyle) => {
+    this.themeStyle = style
+    document.documentElement.classList.remove('theme-dynamic', 'theme-classic')
+    document.documentElement.classList.add(`theme-${style}`)
+    localStorage.setItem('themeStyle', style)
   }
 
-  setLogoPosition = (position: LogoPosition) => {
-    this.logoPosition = position
-    localStorage.setItem('logoPosition', position)
+  setThemeMode = (mode: ThemeMode) => {
+    this.themeMode = mode
+    localStorage.setItem('themeMode', mode)
+    this.updateThemeMode()
   }
 
-  get showHeaderLogo() {
-    if (this.isDrawerMode) return false
-    
-    return this.showLogo && (
-      this.layoutMode === 'vertical' || 
-      (this.layoutMode === 'mix' && this.logoPosition === 'header')
-    )
+  toggleDarkMode = () => {
+    this.isDarkMode = !this.isDarkMode
+    document.documentElement.classList.toggle('dark', this.isDarkMode)
+    this.setThemeAlgorithm(this.isDarkMode)
   }
 
-  get showSidebarLogo() {
-    if (this.isDrawerMode) return false
-    
-    return this.showLogo && (
-      this.layoutMode === 'horizontal' || 
-      (this.layoutMode === 'mix' && this.logoPosition === 'sidebar')
-    )
-  }
-
-  get showHeaderUserActions() {
-    if (this.isDrawerMode) return false
-    
-    return this.layoutMode === 'vertical' || 
-      (this.layoutMode === 'mix' && this.userActionsPosition === 'header')
-  }
-
-  get showSidebarUserActions() {
-    if (this.isDrawerMode) return false
-    
-    return this.layoutMode === 'horizontal' || 
-      (this.layoutMode === 'mix' && this.userActionsPosition === 'sidebar')
-  }
-
-  toggleSettingDrawer = () => {
-    this.settingDrawerVisible = !this.settingDrawerVisible
-  }
-
-  closeSettingDrawer = () => {
-    this.settingDrawerVisible = false
-  }
-
-  openSettingDrawer = () => {
-    this.settingDrawerVisible = true
-  }
-
-  // 置主题色
-  setThemeColor = (color: string) => {
-    this.themeConfig = {
-      ...this.themeConfig,
-      token: {
-        ...this.themeConfig.token,
-        colorPrimary: color,
-      }
+  private updateThemeMode = () => {
+    if (this.themeMode === 'system') {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      this.isDarkMode = isDark
+    } else {
+      this.isDarkMode = this.themeMode === 'dark'
     }
-  }
-
-  // 设置主题算法
-  setThemeAlgorithm = (isDark: boolean) => {
-    this.themeConfig = {
-      ...this.themeConfig,
-      algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
-    }
-  }
-
-  // 清理方法
-  dispose() {
-    window.removeEventListener('resize', this.checkViewportWidth)
-  }
-
-  // 添加抽屉控制方法
-  toggleDrawer = () => {
-    if (this.isDrawerMode) {
-      this.drawerVisible = !this.drawerVisible
-    }
-  }
-
-  closeDrawer = () => {
-    this.drawerVisible = false
-  }
-
-  // 新增抽屉内容显示控制
-  get showDrawerLogo() {
-    return this.isDrawerMode && this.showLogo
-  }
-
-  get showDrawerUserActions() {
-    return this.isDrawerMode
-  }
-
-  get showDrawerMenu() {
-    return this.isDrawerMode
-  }
-
-  // 添加一个计算属性来判断实际的布局模式
-  get effectiveLayoutMode(): LayoutMode {
-    if (this.layoutMode === 'mix') {
-      const logoInHeader = this.showLogo && this.logoPosition === 'header';
-      const userActionsInHeader = this.userActionsPosition === 'header';
-      const menuInHeader = this.menuPosition === 'header';
-      
-      // 当所有元素都在顶部时，使用垂直布局
-      if (logoInHeader && userActionsInHeader && menuInHeader) {
-        return 'vertical';
-      }
-      // 当所有元素都在侧栏或不显示时，使用水平布局
-      else if ((!this.showLogo || this.logoPosition === 'sidebar') && 
-               this.userActionsPosition === 'sidebar' &&
-               this.menuPosition === 'sidebar') {
-        return 'horizontal';
-      }
-    }
-    
-    return this.layoutMode;
-  }
-
-  // 新增计算属性
-  get showHeaderMenu() {
-    if (this.isDrawerMode) return false;
-    return this.layoutMode === 'vertical' || 
-      (this.layoutMode === 'mix' && this.menuPosition === 'header');
-  }
-
-  get showSidebarMenu() {
-    if (this.isDrawerMode) return false;
-    return this.layoutMode === 'horizontal' || 
-      (this.layoutMode === 'mix' && this.menuPosition === 'sidebar');
-  }
-
-  setMenuPosition = (position: MenuPosition) => {
-    this.menuPosition = position
-    localStorage.setItem('menuPosition', position)
+    document.documentElement.classList.toggle('dark', this.isDarkMode)
+    this.setThemeAlgorithm(this.isDarkMode)
   }
 }
 

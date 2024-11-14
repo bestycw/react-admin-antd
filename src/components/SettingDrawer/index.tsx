@@ -130,9 +130,9 @@ const SettingDrawer = observer(() => {
               <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">Logo 位置</div>
               <Segmented
                 block
-                value={ConfigStore.logoPosition}
+                value={ConfigStore.positions.logo}
                 options={positionOptions}
-                onChange={(value) => ConfigStore.setLogoPosition(value as LogoPosition)}
+                onChange={(value) => ConfigStore.setPosition('logo', value as 'header' | 'sidebar')}
               />
             </div>
 
@@ -141,9 +141,9 @@ const SettingDrawer = observer(() => {
               <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">菜单位置</div>
               <Segmented
                 block
-                value={ConfigStore.menuPosition}
+                value={ConfigStore.positions.menu}
                 options={positionOptions}
-                onChange={(value) => ConfigStore.setMenuPosition(value as MenuPosition)}
+                onChange={(value) => ConfigStore.setPosition('menu', value as 'header' | 'sidebar')}
               />
             </div>
 
@@ -152,9 +152,9 @@ const SettingDrawer = observer(() => {
               <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">用户操作位置</div>
               <Segmented
                 block
-                value={ConfigStore.userActionsPosition}
+                value={ConfigStore.positions.userActions}
                 options={positionOptions}
-                onChange={(value) => ConfigStore.setUserActionsPosition(value as UserActionsPosition)}
+                onChange={(value) => ConfigStore.setPosition('userActions', value as 'header' | 'sidebar')}
               />
             </div>
           </>

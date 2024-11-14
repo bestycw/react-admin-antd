@@ -17,7 +17,7 @@ const Header = observer(({ className = '', style }: HeaderProps) => {
   if (ConfigStore.isDrawerMode) {
     return null
   }
-  if(ConfigStore.effectiveLayoutMode === 'horizontal'){
+  if( ConfigStore.effectiveLayoutMode === 'horizontal'){
     return null
   }
   return (
@@ -36,7 +36,7 @@ const Header = observer(({ className = '', style }: HeaderProps) => {
       )}
 
       {/* Menu */}
-      {ConfigStore.effectiveLayoutMode === 'vertical' && (
+      {ConfigStore.showHeaderMenu && (
         <div className="flex-1 ml-4">
           <Menu mode="horizontal" />
         </div>
