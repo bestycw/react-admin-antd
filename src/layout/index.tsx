@@ -13,23 +13,22 @@ import SettingDrawer from '@/components/SettingDrawer'
 // import { AnimatePresence } from 'framer-motion'
 
 const Layout = observer(() => {
-  const { ConfigStore } = useStore()
-  const { layoutMode } = ConfigStore
+  // const { ConfigStore } = useStore()
+  // const { layoutMode } = ConfigStore
 
   return (
     <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {(layoutMode !== 'vertical' || ConfigStore.isDrawerMode) && <Sidebar />}
-      <AntLayout className="bg-gray-100 dark:bg-gray-900">
-        {layoutMode !== 'horizontal' ? <Header style={{marginBottom: 0}}/> : null}
-        <Tab />
+      <Sidebar />     
+       <AntLayout className="bg-gray-100 dark:bg-gray-900">
+        <Header style={{ marginBottom: 0 }} />         <Tab />
         <Content style={{ height: 'calc(100% - var(--header-margin-height))' }}>
-       
+
           {/* <AnimatePresence mode="wait"> */}
-            <Suspense>
-              {/* <PageTransition> */}
-                <Outlet />
-              {/* </PageTransition> */}
-            </Suspense>
+          <Suspense>
+            {/* <PageTransition> */}
+            <Outlet />
+            {/* </PageTransition> */}
+          </Suspense>
           {/* </AnimatePresence> */}
         </Content>
       </AntLayout>
