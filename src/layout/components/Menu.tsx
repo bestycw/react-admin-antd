@@ -21,6 +21,18 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
         MenuStore.setSelectedKeys([currentPath]);
     }, [location.pathname]);
 
+    // 获取父级菜单的 key
+    const getParentKey = (path: string) => {
+        const menuItems = MenuStore.menuList || [];
+        const parent = menuItems.find(item => 
+            item.children?.some(child => {
+                if (typeof child === 'string') return child === path;
+                return child.key === path;
+            })
+        );
+        return parent?.key;
+    };
+
     const onClick: MenuProps['onClick'] = (e) => {
         const path = e.key;
         const menuItems = MenuStore.menuList || [];
@@ -44,25 +56,27 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     const getMenuItems = () => {
         const menuItems = MenuStore.menuList || [];
         const { effectiveLayoutMode, positions } = ConfigStore;
+        const currentPath = MenuStore.selectedKeys[0];
+        const parentKey = getParentKey(currentPath);
 
         // 如果菜单位置设置为混合模式
         if (positions.menu === 'mix') {
-            // 顶部显示一级菜单
+            // 顶部显示一级菜单，并处理选中状态
             if (mode === 'horizontal') {
                 return menuItems.map(item => ({
                     key: item.key,
                     label: item.label,
-                    icon: item.icon
+                    icon: item.icon,
+                    className: parentKey === item.key ? 'ant-menu-item-selected' : ''
                 }));
             }
             // 侧边栏显示当前选中一级菜单的子菜单
             if (mode === 'inline') {
-                const selectedKey = MenuStore.selectedKeys[0];
                 const currentRoot = menuItems.find(item => {
-                    if (item.key === selectedKey) return true;
+                    if (item.key === currentPath) return true;
                     return item.children?.some(child => {
-                        if (typeof child === 'string') return child === selectedKey;
-                        return child.key === selectedKey;
+                        if (typeof child === 'string') return child === currentPath;
+                        return child.key === currentPath;
                     });
                 });
                 return currentRoot?.children || [currentRoot];
