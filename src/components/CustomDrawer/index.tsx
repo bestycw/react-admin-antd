@@ -57,14 +57,14 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
         {/* 遮罩层 */}
         <div 
           className={`
-            absolute inset-0
+            absolute inset-0 backdrop:blur-md
             ${isDark ? 'bg-black/60' : 'bg-black/40'}
           `}
           onClick={onClose}
         />
 
         {/* 抽屉容器 */}
-        <div className="fixed top-0 right-0 h-full w-80">
+        <div className="fixed top-0 right-0 h-full w-80" style={{height: `calc(100vh - var(--header-margin-height))`}}>
           <div className="theme-style h-full">
             {/* 头部 */}
             <div className="flex items-center justify-between px-4 h-14">

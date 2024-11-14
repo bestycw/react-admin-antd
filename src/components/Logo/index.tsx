@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
 import logo from '@/assets/logo.svg'
 import GlobalConfig from '@/config/GlobalConfig'
+import React from 'react'
 
 interface LogoProps {
   collapsed?: boolean
