@@ -28,6 +28,13 @@ class ConfigStore {
     algorithm: theme.defaultAlgorithm,
   }
 
+  // 添加一个标记来区分是自动折叠还是手动折叠
+  private isAutoCollapsed = false
+
+  // 添加抽屉模式状态
+  isDrawerMode: boolean = false
+  drawerVisible: boolean = false
+
   constructor() {
     makeAutoObservable(this, {}, {
       autoBind: true,
@@ -35,6 +42,7 @@ class ConfigStore {
     })
     this.initSettings()
     this.initSystemTheme()
+    this.initViewportListener()
   }
 
   private initSettings() {
@@ -93,6 +101,32 @@ class ConfigStore {
     }
   }
 
+  private initViewportListener() {
+    // 初始检查
+    this.checkViewportWidth()
+
+    // 添加resize监听
+    window.addEventListener('resize', this.checkViewportWidth)
+  }
+
+  private checkViewportWidth = () => {
+    // 更新检查逻辑
+    if (window.innerWidth < 640) { // 小于 sm 断点时使用抽屉模式
+      this.isDrawerMode = true
+      this.drawerVisible = false // 初始关闭抽屉
+    } else if (window.innerWidth < 768) { // 中等宽度时折叠 sidebar
+      this.isDrawerMode = false
+      if (!this.sidebarCollapsed) {
+        this.isAutoCollapsed = true
+        this.sidebarCollapsed = true
+      }
+    } else if (this.isAutoCollapsed) { // 宽度恢复时展开
+      this.isAutoCollapsed = false
+      this.sidebarCollapsed = false
+      this.isDrawerMode = false
+    }
+  }
+
   setThemeStyle = (style: ThemeStyle) => {
     this.themeStyle = style
     document.documentElement.classList.remove('theme-dynamic', 'theme-classic')
@@ -136,8 +170,8 @@ class ConfigStore {
   }
 
   toggleSidebar = () => {
+    this.isAutoCollapsed = false // 手动切换时清除自动折叠标记
     this.sidebarCollapsed = !this.sidebarCollapsed
-    localStorage.setItem('sidebarCollapsed', String(this.sidebarCollapsed))
   }
 
   setSidebarCollapsed = (collapsed: boolean) => {
@@ -208,6 +242,22 @@ class ConfigStore {
       ...this.themeConfig,
       algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
     }
+  }
+
+  // 清理方法
+  dispose() {
+    window.removeEventListener('resize', this.checkViewportWidth)
+  }
+
+  // 添加抽屉控制方法
+  toggleDrawer = () => {
+    if (this.isDrawerMode) {
+      this.drawerVisible = !this.drawerVisible
+    }
+  }
+
+  closeDrawer = () => {
+    this.drawerVisible = false
   }
 }
 
