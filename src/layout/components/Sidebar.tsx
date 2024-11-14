@@ -121,6 +121,11 @@ const Sidebar = observer(() => {
     )
   }
 
+  // 如果是垂直布局，不显示侧边栏
+  if (ConfigStore.effectiveLayoutMode === 'vertical') {
+    return null
+  }
+
   // 常规 Sidebar 模式
   return (
     <Sider 

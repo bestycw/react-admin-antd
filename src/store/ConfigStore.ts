@@ -310,6 +310,27 @@ class ConfigStore {
   get showDrawerMenu() {
     return this.isDrawerMode
   }
+
+  // 添加一个计算属性来判断实际的布局模式
+  get effectiveLayoutMode(): LayoutMode {
+    // 如果是 mix 模式，需要判断元素位置
+    if (this.layoutMode === 'mix') {
+      const logoInHeader = this.showLogo && this.logoPosition === 'header';
+      const userActionsInHeader = this.userActionsPosition === 'header';
+      
+      // 当 Logo 和用户操作都在顶部时，使用垂直布局
+      if (logoInHeader && userActionsInHeader) {
+        return 'vertical';
+      }
+      // 当 Logo 和用户操作都在侧栏或都不显示时，使用水平布局
+      else if ((!this.showLogo || this.logoPosition === 'sidebar') && 
+               this.userActionsPosition === 'sidebar') {
+        return 'horizontal';
+      }
+    }
+    
+    return this.layoutMode;
+  }
 }
 
 export default new ConfigStore()
