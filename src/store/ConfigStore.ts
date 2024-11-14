@@ -225,6 +225,8 @@ class ConfigStore {
   }
 
   get showHeaderLogo() {
+    if (this.isDrawerMode) return false
+    
     return this.showLogo && (
       this.layoutMode === 'vertical' || 
       (this.layoutMode === 'mix' && this.logoPosition === 'header')
@@ -232,6 +234,8 @@ class ConfigStore {
   }
 
   get showSidebarLogo() {
+    if (this.isDrawerMode) return false
+    
     return this.showLogo && (
       this.layoutMode === 'horizontal' || 
       (this.layoutMode === 'mix' && this.logoPosition === 'sidebar')
@@ -239,11 +243,15 @@ class ConfigStore {
   }
 
   get showHeaderUserActions() {
+    if (this.isDrawerMode) return false
+    
     return this.layoutMode === 'vertical' || 
       (this.layoutMode === 'mix' && this.userActionsPosition === 'header')
   }
 
   get showSidebarUserActions() {
+    if (this.isDrawerMode) return false
+    
     return this.layoutMode === 'horizontal' || 
       (this.layoutMode === 'mix' && this.userActionsPosition === 'sidebar')
   }
@@ -293,6 +301,19 @@ class ConfigStore {
 
   closeDrawer = () => {
     this.drawerVisible = false
+  }
+
+  // 新增抽屉内容显示控制
+  get showDrawerLogo() {
+    return this.isDrawerMode && this.showLogo
+  }
+
+  get showDrawerUserActions() {
+    return this.isDrawerMode
+  }
+
+  get showDrawerMenu() {
+    return this.isDrawerMode
   }
 }
 

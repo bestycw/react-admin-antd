@@ -37,6 +37,36 @@ const Sidebar = observer(() => {
     </button>
   )
 
+  const drawerContent = (
+    <div className="theme-style flex flex-col" style={{ height: 'calc(100% - var(--header-margin-height))' }}>
+      {ConfigStore.showDrawerLogo && (
+        <Logo 
+          collapsed={false} 
+          className="p-4 h-14 shrink-0" 
+        />
+      )}
+
+      {ConfigStore.showDrawerMenu && (
+        <div className="flex-1 overflow-hidden py-4">
+          <Menu 
+            mode="inline" 
+            collapsed={false} 
+          />
+        </div>
+      )}
+      {ConfigStore.showDrawerUserActions && (
+        <div className="mt-1 pt-2 border-t border-black/[0.02] dark:border-white/[0.02]">
+          <div className="relative overflow-hidden m-2 rounded-2xl">
+            <UserActions 
+              mode="vertical" 
+              collapsed={false} 
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  )
+
   const sidebarContent = (
     <div className="theme-style flex flex-col h-full mr-0" style={{height:'calc(100% - var(--header-margin-height))'}}>
       {ConfigStore.showSidebarLogo && (
@@ -69,14 +99,14 @@ const Sidebar = observer(() => {
   )
 
   // 抽屉模式
-  if (isDrawerMode) {
+  if (ConfigStore.isDrawerMode) {
     return (
       <>
-        {!drawerVisible && toggleButton}
+        {!ConfigStore.drawerVisible && toggleButton}
         
         <CustomDrawer
-          open={drawerVisible}
-          onClose={closeDrawer}
+          open={ConfigStore.drawerVisible}
+          onClose={ConfigStore.closeDrawer}
           placement="left"
           showClose={false}
           showMask={true}
@@ -85,7 +115,7 @@ const Sidebar = observer(() => {
           width={280}
           className="!bg-transparent"
         >
-          {sidebarContent}
+          {drawerContent}
         </CustomDrawer>
       </>
     )

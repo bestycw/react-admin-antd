@@ -1,39 +1,52 @@
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
-import Menu from './Menu'
 import Logo from '@/components/Logo'
 import UserActions from '@/components/UserActions'
-import React, { CSSProperties } from 'react'
+import React from 'react'
+import Menu from './Menu'
 
 interface HeaderProps {
-  style?: CSSProperties;
+  className?: string
+  style?: React.CSSProperties
 }
 
-const Header = observer(({ style }: HeaderProps) => {
+const Header = observer(({ className = '', style }: HeaderProps) => {
   const { ConfigStore } = useStore()
 
+  // 抽屉模式下不显示 Header
+  if (ConfigStore.isDrawerMode) {
+    return null
+  }
+
   return (
-    <div className="theme-style" style={style}>
-      <div className="flex flex-col">
-        <div className="flex items-center h-14">
-          {ConfigStore.showHeaderLogo && (
-            <div className="shrink-0 mr-12">
-              <Logo />
-            </div>
-          )}
+    <header 
+      className={`
+        theme-style flex items-center justify-between h-14 px-4
+        border-b border-black/[0.02] dark:border-white/[0.02]
+        sticky top-0 z-10
+        ${className}
+      `}
+      style={style}
+    >
+      {/* Logo */}
+      {ConfigStore.showHeaderLogo && (
+        <Logo collapsed={false} className="h-14 py-4" />
+      )}
 
-          <div className="flex-1 overflow-hidden">
-            <Menu mode="horizontal" />
-          </div>
-
-          {ConfigStore.showHeaderUserActions && (
-            <div className="flex items-center shrink-0">
-              <UserActions mode="horizontal" />
-            </div>
-          )}
+      {/* Menu */}
+      {ConfigStore.layoutMode === 'vertical' && (
+        <div className="flex-1 ml-4">
+          <Menu mode="horizontal" />
         </div>
-      </div>
-    </div>
+      )}
+
+      {/* User Actions */}
+      {ConfigStore.showHeaderUserActions && (
+        <div className="ml-4">
+          <UserActions mode="horizontal" />
+        </div>
+      )}
+    </header>
   )
 })
 
