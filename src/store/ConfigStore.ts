@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { theme } from 'antd'
 import type { ThemeConfig } from 'antd'
 import { ThemeStyle, LayoutMode, UserActionsPosition, LogoPosition, ThemeMode, MenuPosition } from '@/types/config'
@@ -40,8 +40,11 @@ class ConfigStore {
     algorithm: theme.defaultAlgorithm,
   }
 
+  // 保存原始位置配置
+  private originalPositions: ComponentPosition | null = null
+
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable(this, {}, { autoBind: true })
     this.initSettings()
     this.initSystemTheme()
     this.initViewportListener()
@@ -94,30 +97,50 @@ class ConfigStore {
   private initViewportListener() {
     const checkViewportWidth = () => {
       if (window.innerWidth < 768) {
+        if (!this.isDrawerMode) {
+          // 进入抽屉模式时保存当前配置
+          this.originalPositions = { ...this.positions }
+          // 强制所有组件到侧边栏
+          this.positions = {
+            logo: 'sidebar',
+            menu: 'sidebar',
+            userActions: 'sidebar'
+          }
+        }
         this.isDrawerMode = true
         this.drawerVisible = false
         this.isAutoCollapsed = false
         this.sidebarCollapsed = false
-      } else if (window.innerWidth < 1024) {
-        this.isDrawerMode = false
-        if (!this.sidebarCollapsed) {
-          this.isAutoCollapsed = true
-          this.sidebarCollapsed = true
-        }
       } else {
+        if (this.isDrawerMode) {
+          // 退出抽屉模式时恢复原始配置
+          if (this.originalPositions) {
+            this.positions = { ...this.originalPositions }
+            this.originalPositions = null
+          }
+        }
         this.isDrawerMode = false
-        if (this.isAutoCollapsed) {
-          this.isAutoCollapsed = false
-          this.sidebarCollapsed = false
+        if (window.innerWidth < 1024) {
+          if (!this.sidebarCollapsed) {
+            this.isAutoCollapsed = true
+            this.sidebarCollapsed = true
+          }
+        } else {
+          if (this.isAutoCollapsed) {
+            this.isAutoCollapsed = false
+            this.sidebarCollapsed = false
+          }
         }
       }
     }
 
     // 初始检查
-    checkViewportWidth()
+   checkViewportWidth()
 
     // 添加resize监听
-    window.addEventListener('resize', checkViewportWidth)
+    window.addEventListener('resize', () => {
+      runInAction(checkViewportWidth)
+    })
   }
 
   // 重置抽屉状态
@@ -195,7 +218,6 @@ class ConfigStore {
   setPosition(component: keyof ComponentPosition, position: 'header' | 'sidebar') {
     if (this.isDrawerMode) {
       // 抽屉模式下不允许改变位置
-      this.positions[component] = 'sidebar'
       return
     }
     this.positions[component] = position
