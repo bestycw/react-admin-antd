@@ -9,7 +9,7 @@ import {
   BarsOutlined,
 } from '@ant-design/icons'
 import CustomDrawer from '../CustomDrawer'
-import { LayoutMode, ThemeStyle, ThemeMode, LogoPosition, UserActionsPosition, MenuPosition } from '@/types/config'
+import { LayoutMode, ThemeStyle, ThemeMode,  MenuPosition } from '@/types/config'
 
 const SettingDrawer = observer(() => {
   const { ConfigStore } = useStore()

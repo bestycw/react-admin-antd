@@ -141,7 +141,6 @@ class ConfigStore {
     if (this.isDrawerMode) return false
     
     const isInPosition = this.positions[component] === position
-    const isMixMenu = component === 'menu' && this.positions.menu === 'mix'
 
     // 菜单特殊处理
     if (component === 'menu') {
@@ -252,6 +251,15 @@ class ConfigStore {
     if (!this.isDrawerMode) {
       this.sidebarCollapsed = collapsed
       localStorage.setItem('sidebarCollapsed', String(collapsed))
+    }
+  }
+
+  // 添加新的方法
+  handleSidebarToggle = () => {
+    if (this.isDrawerMode) {
+      this.toggleDrawer('sidebar')
+    } else {
+      this.toggleSidebar()
     }
   }
 

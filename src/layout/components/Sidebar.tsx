@@ -17,26 +17,16 @@ const Sidebar = observer(() => {
     isCollapsed,
     isDrawerMode,
     getCollapsedState,
-    handleToggle,
     toggleButtonClass,
   } = useSidebarControl()
-
-  // 处理折叠/展开和抽屉的切换
-  const handleSidebarToggle = () => {
-    if (isDrawerMode) {
-      ConfigStore.toggleDrawer('sidebar')
-    } else {
-      ConfigStore.toggleSidebar()
-    }
-  }
 
   // 折叠/抽屉 切换按钮
   const toggleButton = (
     <button
-      onClick={handleSidebarToggle}
+      onClick={() => ConfigStore.handleSidebarToggle()}
       className={toggleButtonClass}
     >
-      {(isDrawerMode && !ConfigStore.drawerVisible) || isCollapsed ? (
+      {(isDrawerMode && !ConfigStore.drawerVisible) || ConfigStore.sidebarCollapsed ? (
         <MenuUnfoldOutlined className="text-sm text-gray-600 dark:text-gray-300" />
       ) : (
         <MenuFoldOutlined className="text-sm text-gray-600 dark:text-gray-300" />
