@@ -78,7 +78,7 @@ const SettingDrawer = observer(() => {
   return (
     <CustomDrawer
       open={ConfigStore.settingDrawerVisible}
-      onClose={ConfigStore.closeSettingDrawer}
+      onClose={() => ConfigStore.toggleDrawer('setting')}
       title="系统配置"
       placement="right"
       width={320}

@@ -108,7 +108,7 @@ export const useUserActions = () => {
       key: 'settings',
       icon: <SettingOutlined className="text-lg text-gray-600 dark:text-gray-300" />,
       label: '系统设置',
-      onClick: () => ConfigStore.openSettingDrawer()
+      onClick: () => ConfigStore.toggleDrawer('setting')
     }
   ]
 

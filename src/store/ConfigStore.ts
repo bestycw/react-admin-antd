@@ -138,7 +138,12 @@ class ConfigStore {
 
   // 计算显示位置
   private shouldShowInPosition(component: keyof ComponentPosition, position: 'header' | 'sidebar'): boolean {
-    if (this.isDrawerMode) return false
+    // 抽屉模式特殊处理
+    if (this.isDrawerMode) {
+ 
+      // 其他组件不在 header 和 sidebar 显示
+      return false
+    }
     
     const isInPosition = this.positions[component] === position
 
@@ -188,6 +193,11 @@ class ConfigStore {
 
   // 设置方法
   setPosition(component: keyof ComponentPosition, position: 'header' | 'sidebar') {
+    if (this.isDrawerMode) {
+      // 抽屉模式下不允许改变位置
+      this.positions[component] = 'sidebar'
+      return
+    }
     this.positions[component] = position
     localStorage.setItem(`${component}Position`, position)
   }
@@ -216,28 +226,6 @@ class ConfigStore {
       this.drawerVisible = !this.drawerVisible
     }
   }
-
-  openDrawer = (drawerName: 'setting' | 'sidebar') => {
-    if (drawerName === 'setting') {
-      this.settingDrawerVisible = true
-    } else if (drawerName === 'sidebar' && this.isDrawerMode) {
-      this.drawerVisible = true
-    }
-  }
-
-  closeDrawer = (drawerName: 'setting' | 'sidebar') => {
-    if (drawerName === 'setting') {
-      this.settingDrawerVisible = false
-    } else if (drawerName === 'sidebar') {
-      this.drawerVisible = false
-    }
-  }
-
-  // 为了保持向后兼容，添加以下方法
-  toggleSettingDrawer = () => this.toggleDrawer('setting')
-  openSettingDrawer = () => this.openDrawer('setting')
-  closeSettingDrawer = () => this.closeDrawer('setting')
-
   // 侧边栏控制方法
   toggleSidebar = () => {
     if (!this.isDrawerMode) {

@@ -103,7 +103,7 @@ const Sidebar = observer(() => {
         
         <CustomDrawer
           open={ConfigStore.drawerVisible}
-          onClose={() => ConfigStore.closeDrawer('sidebar')}
+          onClose={() => ConfigStore.toggleDrawer('sidebar')}
           placement="left"
           showClose={false}
           showMask={true}
