@@ -146,7 +146,7 @@ const Tab = observer(() => {
   }))
 
   return (
-    <div className="py-1 border-b border-black/[0.1] dark:border-white/[0.1] theme-style mb-0">
+    <div className="py-2 border-b border-black/[0.1] dark:border-white/[0.1] theme-style mb-1">
       <Tabs
         hideAdd
         type="editable-card"

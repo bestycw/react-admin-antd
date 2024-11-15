@@ -9,6 +9,7 @@
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  overflow: hidden;
 }
 
 /* 通用过渡效果 */

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useStore } from '@/store'
+// import { useStore } from '@/store'
 import logo from '@/assets/logo.svg'
 import GlobalConfig from '@/config/GlobalConfig'
 import React from 'react'
@@ -10,8 +10,8 @@ interface LogoProps {
 }
 
 const Logo = observer(({ collapsed = false, className = '' }: LogoProps) => {
-  const { ConfigStore } = useStore()
-  const isDynamic = ConfigStore.themeStyle === 'dynamic'
+  // const { ConfigStore } = useStore()
+  // const isDynamic = ConfigStore.themeStyle === 'dynamic'
   const {AdminName=''} = GlobalConfig
 
   return (
@@ -19,7 +19,6 @@ const Logo = observer(({ collapsed = false, className = '' }: LogoProps) => {
       <div className={`
         w-10 h-10 flex items-center justify-center
         p-2 rounded-lg transition-all duration-200
-        ${isDynamic ? 'dynamic-bg' : 'classic-bg'}
       `}>
         <img src={logo} alt="Logo" className="w-full h-full object-contain" />
       </div>

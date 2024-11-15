@@ -19,9 +19,10 @@ const Layout = observer(() => {
   return (
     <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Sidebar />     
-       <AntLayout className="bg-gray-100 dark:bg-gray-900">
-        <Header style={{ marginBottom: 0 }} />         <Tab />
-        <Content style={{ height: 'calc(100% - var(--header-margin-height))' }}>
+       <AntLayout className="bg-gray-100 dark:bg-gray-900 h-screen">
+        <Header style={{ marginBottom: 0 }} />        
+        <Tab />
+        <Content >
 
           {/* <AnimatePresence mode="wait"> */}
           <Suspense>

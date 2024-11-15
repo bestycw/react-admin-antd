@@ -51,7 +51,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ minHeight: '100%' }}>
       {/* 数据概览卡片 */}
       <Row gutter={[24, 24]}>
         <Col xs={24} sm={12} md={6}>
