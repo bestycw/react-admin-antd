@@ -1,10 +1,11 @@
-
-
 import React from "react";
 import AuthBoundary from "../components/AuthBoundary";
 import HomePage from "../layout";
 import Login from "../pages/Login";
 import { CoRouteObject } from "../types/route";
+import Forbidden from "../pages/error/403";
+import NotFound from "../pages/error/404";
+import { Navigate } from 'react-router-dom';
 const staticRoutesList: CoRouteObject[] = []
 const dynamicRoutesList: CoRouteObject[] = []
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,5 +72,17 @@ export const RemainingRoutes: CoRouteObject[] = [
         path: '/login',
         element: <Login />,
     },
+    {
+        path: '/403',
+        element: <Forbidden />,
+    },
+    {
+        path: '/404',
+        element: <NotFound />,
+    },
+    {
+        path: '/*',
+        element: <Navigate to="/404" replace />,
+    }
 ]
 
