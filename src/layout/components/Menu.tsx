@@ -110,8 +110,8 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
             <AntMenu
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
-                openKeys={MenuStore.openKeys}
-                onOpenChange={MenuStore.setOpenKeys}
+                // openKeys={MenuStore.openKeys}
+                // onOpenChange={MenuStore.setOpenKeys}
                 mode={mode}
                 inlineCollapsed={collapsed}
                 className="menu-component !border-none"

@@ -58,12 +58,12 @@ const App = observer(() => {
             const HomePageRoutes = finalRoutes.filter((item) => item.path === '/')[0]   
 
             // 更新菜单并获取第一个可用路径
-            const firstPath = MenuStore.updateMenuFromRoutes(HomePageRoutes.children || [])
-            console.log(firstPath)
-            // 如果当前在登录页或根路径，则导航到第一个可用路径
-            if (firstPath && (window.location.pathname === '/login' || window.location.pathname === '/')) {
-                navigate(firstPath)
-            }
+            MenuStore.routesToMenuItems(HomePageRoutes.children || [])
+            // console.log(firstPath)
+            // // 如果当前在登录页或根路径，则导航到第一个可用路径
+            // if (firstPath && (window.location.pathname === '/login' || window.location.pathname === '/')) {
+            //     navigate(firstPath)
+            // }
         }
     }, [isLogin])
 
