@@ -1,6 +1,6 @@
 import { ConfigProvider } from 'antd'
 import { observer } from 'mobx-react-lite'
-import { useRoutes, useNavigate, RouteObject } from 'react-router-dom'
+import { useRoutes, RouteObject } from 'react-router-dom'
 import './App.css'
 import './index.css'
 import { Suspense, useEffect } from 'react'
@@ -10,60 +10,84 @@ import { useStore } from './store'
 import { CoRouteObject } from './types/route'
 import React from 'react'
 import PageProgress from '@/components/PageProgress'
+import { authService } from '@/services/auth'
+import { message } from 'antd'
 
-function mergeRouteByPath(to: CoRouteObject[], from: CoRouteObject[]) {
-    for (let i = 0; i < from.length; i++) {
-        const fromItem = from[i];
-        const index = to.findIndex((toItem) => {
-            return toItem.path === fromItem.path
-        })
-        if (index > -1) {
-            const toItem = to[index]
-            if (!toItem.children) {
-                toItem.children = []
+// 合并路由方法
+function mergeRoutes(baseRoutes: CoRouteObject[], newRoutes: CoRouteObject[]) {
+    newRoutes.forEach(newRoute => {
+        const existingRoute = baseRoutes.find(route => route.path === newRoute.path)
+        if (existingRoute) {
+            if (newRoute.children) {
+                existingRoute.children = existingRoute.children || []
+                mergeRoutes(existingRoute.children, newRoute.children)
             }
-            if (fromItem.children ) {
-                mergeRouteByPath(toItem.children, fromItem.children)
-            }
-        }else{
-            to.push(fromItem)
+        } else {
+            baseRoutes.push(newRoute)
         }
-    }
-    if(from.length===0) return to
+    })
 }
-
-const routes = [...StaticRoutes, ...RemainingRoutes]
 
 const App = observer(() => {
     const { PermissionControl } = GlobalConfig
     const { UserStore, MenuStore } = useStore()
-    const { isLogin } = UserStore
     const { ConfigStore } = useStore()
 
-    useEffect(() => {
-        if (isLogin) {
-            let finalRoutes = routes
-            
-            if (!PermissionControl || PermissionControl === 'fontend') {
-                mergeRouteByPath(routes, DynamicRoutes)
-                finalRoutes = routes
-            } else if (PermissionControl === 'backend') {
-                // TODO: 从后端获取路由
-            } else if (PermissionControl === 'both') {
-                // TODO: 协同控制路由
-            }
-            const HomePageRoutes = finalRoutes.filter((item) => item.path === '/')[0]   
-
-            MenuStore.routesToMenuItems(HomePageRoutes.children || [])
+    // 初始化路由和菜单
+    const initRoutesAndMenu = (routes: CoRouteObject[]) => {
+        const homeRoute = routes.find(route => route.path === '/')
+        if (homeRoute?.children) {
+            MenuStore.routesToMenuItems(homeRoute.children)
             MenuStore.ensureSelectedKeys()
         }
-    }, [isLogin])
+    }
+
+    // 获取后端路由
+    const fetchBackendRoutes = async () => {
+        try {
+            const { data } = await authService.getDynamicRoutes()
+            console.log('后端路由', data)
+            if (data) {
+                const routes = [...StaticRoutes, ...RemainingRoutes]
+                mergeRoutes(routes, data)
+                initRoutesAndMenu(routes)
+            }
+        } catch (error) {
+            console.error('获取动态路由失败:', error)
+            message.error('获取动态路由失败')
+        }
+    }
+
+    useEffect(() => {
+        if (!UserStore.isLogin) return
+
+        const routes = [...StaticRoutes, ...RemainingRoutes]
+
+        switch (PermissionControl) {
+            case 'backend':
+                fetchBackendRoutes()
+                break
+
+            case 'both':
+                fetchBackendRoutes().then(() => {
+                    mergeRoutes(routes, DynamicRoutes)
+                    initRoutesAndMenu(routes)
+                })
+                break
+
+            case 'fontend':
+            default:
+                mergeRoutes(routes, DynamicRoutes)
+                initRoutesAndMenu(routes)
+                break
+        }
+    }, [UserStore.isLogin, PermissionControl])
 
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>
             <PageProgress />
             <Suspense>
-                {useRoutes(routes as RouteObject[])}
+                {useRoutes([...StaticRoutes, ...RemainingRoutes] as RouteObject[])}
             </Suspense>
         </ConfigProvider>
     )
