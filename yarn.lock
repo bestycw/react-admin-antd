@@ -1231,6 +1231,11 @@
   dependencies:
     "undici-types" "~6.19.8"
 
+"@types/nprogress@^0.2.3":
+  "integrity" "sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA=="
+  "resolved" "https://registry.npmmirror.com/@types/nprogress/-/nprogress-0.2.3.tgz"
+  "version" "0.2.3"
+
 "@types/prop-types@*":
   "integrity" "sha512-hCZTSvwbzWGvhqxp/RqVqwU999pBf2vp7hzIjiYOsl8wqOmUxkQ6ddw1cV3l8811+kdUFus/q4d1Y3E3SyEifA=="
   "resolved" "https://registry.npmmirror.com/@types/prop-types/-/prop-types-15.7.13.tgz"
@@ -3084,6 +3089,11 @@
   "integrity" "sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA=="
   "resolved" "https://registry.npmmirror.com/normalize-range/-/normalize-range-0.1.2.tgz"
   "version" "0.1.2"
+
+"nprogress@^0.2.0":
+  "integrity" "sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA=="
+  "resolved" "https://registry.npmmirror.com/nprogress/-/nprogress-0.2.0.tgz"
+  "version" "0.2.0"
 
 "object-assign@^4.0.1", "object-assign@^4.1.1":
   "integrity" "sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg=="
