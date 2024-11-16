@@ -9,6 +9,7 @@ import GlobalConfig from './config/GlobalConfig'
 import { useStore } from './store'
 import { CoRouteObject } from './types/route'
 import React from 'react'
+import PageProgress from '@/components/PageProgress'
 
 function mergeRouteByPath(to: CoRouteObject[], from: CoRouteObject[]) {
     for (let i = 0; i < from.length; i++) {
@@ -37,8 +38,6 @@ const App = observer(() => {
     const { PermissionControl } = GlobalConfig
     const { UserStore, MenuStore } = useStore()
     const { isLogin } = UserStore
-    const roles = UserStore.userInfo?.roles ?? []
-    const navigate = useNavigate()
     const { ConfigStore } = useStore()
 
     useEffect(() => {
@@ -46,28 +45,26 @@ const App = observer(() => {
             let finalRoutes = routes
             
             if (!PermissionControl || PermissionControl === 'fontend') {
-                console.log('前端控制路由')
                 mergeRouteByPath(routes, DynamicRoutes)
                 finalRoutes = routes
             } else if (PermissionControl === 'backend') {
-                console.log('后端控制路由')
                 // TODO: 从后端获取路由
             } else if (PermissionControl === 'both') {
-                console.log('协同控制路由')
+                // TODO: 协同控制路由
             }
             const HomePageRoutes = finalRoutes.filter((item) => item.path === '/')[0]   
 
-            // 更新菜单并获取第一个可用路径
             MenuStore.routesToMenuItems(HomePageRoutes.children || [])
-
             MenuStore.ensureSelectedKeys()
         }
     }, [isLogin])
 
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>
-            {useRoutes(routes as RouteObject[])}
-            {/* <Suspense></Suspense> */}
+            <PageProgress />
+            <Suspense>
+                {useRoutes(routes as RouteObject[])}
+            </Suspense>
         </ConfigProvider>
     )
 })

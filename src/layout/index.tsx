@@ -8,13 +8,11 @@ import Tab from './components/Tab'
 import React, { Suspense } from 'react'
 import SettingDrawer from '@/components/SettingDrawer'
 import PageTransition from '@/components/PageTransition'
-import PageProgress from '@/components/PageProgress'
 import { Spin } from 'antd'
 
 const Layout = observer(() => {
   return (
     <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <PageProgress />
       <Sidebar />     
       <AntLayout className="bg-gray-100 dark:bg-gray-900 h-screen">
         <Header style={{ marginBottom: 0 }} />        
