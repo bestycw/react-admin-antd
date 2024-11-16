@@ -1,15 +1,20 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
-import { Divider, Switch, Segmented } from 'antd'
+import { Segmented } from 'antd'
 import { 
   MenuUnfoldOutlined, 
   LayoutOutlined,
   AppstoreOutlined,
   BarsOutlined,
+  SunOutlined,
+  MoonOutlined,
+  DesktopOutlined,
+  PictureOutlined,
+  TagsOutlined
 } from '@ant-design/icons'
 import CustomDrawer from '../CustomDrawer'
-import { LayoutMode, ThemeStyle, ThemeMode,  MenuPosition } from '@/types/config'
+import { LayoutMode, ThemeStyle, ThemeMode, MenuPosition } from '@/types/config'
 
 const SettingDrawer = observer(() => {
   const { ConfigStore } = useStore()
@@ -35,7 +40,7 @@ const SettingDrawer = observer(() => {
   const themeStyleOptions = [
     {
       value: 'dynamic',
-      icon: <LayoutOutlined />,
+      icon: <PictureOutlined />,
       label: '动态',
     },
     {
@@ -48,14 +53,17 @@ const SettingDrawer = observer(() => {
   const themeModeOptions = [
     {
       value: 'light',
+      icon: <SunOutlined />,
       label: '亮色',
     },
     {
       value: 'dark',
+      icon: <MoonOutlined />,
       label: '暗色',
     },
     {
       value: 'system',
+      icon: <DesktopOutlined />,
       label: '跟随系统',
     },
   ]
@@ -87,104 +95,113 @@ const SettingDrawer = observer(() => {
       maskClosable={true}
       bodyStyle={{ padding: 0 }}
     >
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-8">
         {/* 导航模式 */}
         <div>
-          <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">导航模式</div>
+          <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">导航模式</div>
           <Segmented
             block
             value={ConfigStore.layoutMode}
             options={layoutOptions}
             onChange={(value) => ConfigStore.setLayoutMode(value as LayoutMode)}
+            className="w-full"
           />
         </div>
 
-        <Divider className="!my-6" />
-
         {/* 主题风格 */}
         <div>
-          <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">主题风格</div>
+          <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">主题风格</div>
           <Segmented
             block
             value={ConfigStore.themeStyle}
             options={themeStyleOptions}
             onChange={(value) => ConfigStore.setThemeStyle(value as ThemeStyle)}
+            className="w-full"
           />
         </div>
 
-        <Divider className="!my-6" />
-
         {/* 主题模式 */}
         <div>
-          <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">主题模式</div>
+          <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">主题模式</div>
           <Segmented
             block
             value={ConfigStore.themeMode}
             options={themeModeOptions}
             onChange={(value) => ConfigStore.setThemeMode(value as ThemeMode)}
+            className="w-full"
           />
         </div>
 
         {ConfigStore.layoutMode === 'mix' && (
           <>
-            <Divider className="!my-6" />
-            
             {/* Logo 位置 */}
             <div>
-              <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">Logo 位置</div>
+              <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">Logo 位置</div>
               <Segmented
                 block
                 value={ConfigStore.positions.logo}
                 options={positionOptions.filter(opt => opt.value !== 'mix')}
                 onChange={(value) => ConfigStore.setPosition('logo', value as 'header' | 'sidebar')}
+                className="w-full"
               />
             </div>
 
             {/* 菜单位置 */}
-            <div className="mt-6">
-              <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">菜单位置</div>
+            <div>
+              <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">菜单位置</div>
               <Segmented
                 block
                 value={ConfigStore.positions.menu}
                 options={positionOptions}
                 onChange={(value) => ConfigStore.setPosition('menu', value as MenuPosition)}
+                className="w-full"
               />
             </div>
 
             {/* 用户操作位置 */}
-            <div className="mt-6">
-              <div className="mb-3 text-sm text-gray-900 dark:text-gray-100">用户操作位置</div>
+            <div>
+              <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">用户操作位置</div>
               <Segmented
                 block
                 value={ConfigStore.positions.userActions}
                 options={positionOptions.filter(opt => opt.value !== 'mix')}
                 onChange={(value) => ConfigStore.setPosition('userActions', value as 'header' | 'sidebar')}
+                className="w-full"
               />
             </div>
           </>
         )}
 
-        <Divider className="!my-6" />
+        {/* 界面功能 */}
+        <div>
+          <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">界面功能</div>
+          <div className="space-y-4">
+            <div 
+              className="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+              onClick={ConfigStore.toggleShowLogo}
+            >
+              <div className="flex items-center space-x-3">
+                <LayoutOutlined className="text-lg text-gray-500" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">显示 Logo</span>
+              </div>
+              <div className={`w-10 h-5 rounded-full transition-colors duration-200 ease-in-out ${ConfigStore.showLogo ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                <div className={`w-4 h-4 rounded-full bg-white transform transition-transform duration-200 ease-in-out mt-0.5 ${ConfigStore.showLogo ? 'translate-x-5' : 'translate-x-1'}`} />
+              </div>
+            </div>
 
-        {/* 其他设置 */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-900 dark:text-gray-100">显示 Logo</span>
-            <Switch 
-              checked={ConfigStore.showLogo} 
-              onChange={ConfigStore.toggleShowLogo}
-              size="small"
-            />
+            <div 
+              className="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+              onClick={() => ConfigStore.setShowTabs(!ConfigStore.showTabs)}
+            >
+              <div className="flex items-center space-x-3">
+                <TagsOutlined className="text-lg text-gray-500" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">显示标签页</span>
+              </div>
+              <div className={`w-10 h-5 rounded-full transition-colors duration-200 ease-in-out ${ConfigStore.showTabs ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                <div className={`w-4 h-4 rounded-full bg-white transform transition-transform duration-200 ease-in-out mt-0.5 ${ConfigStore.showTabs ? 'translate-x-5' : 'translate-x-1'}`} />
+              </div>
+            </div>
           </div>
-        </div>
-
-        <Divider>标签页设置</Divider>
-        <div className="setting-item">
-          <span>显示标签页</span>
-          <Switch
-            checked={ConfigStore.showTabs}
-            onChange={ConfigStore.setShowTabs}
-          />
         </div>
       </div>
     </CustomDrawer>
