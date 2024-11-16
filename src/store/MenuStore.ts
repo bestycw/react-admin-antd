@@ -32,8 +32,6 @@ class MenuStore {
     // 展开的子菜单
     openKeys: string[] = []
 
-    // 菜单是否折叠
-    collapsed = false
 
     // 访问过的标签
     visitedTags: TagItem[] = []
@@ -42,14 +40,10 @@ class MenuStore {
     private initMenuState() {
         // 从本地存储恢复菜单状态
         const storedOpenKeys = localStorage.getItem('menuOpenKeys')
-        const storedCollapsed = localStorage.getItem('menuCollapsed')
+        // const storedCollapsed = localStorage.getItem('menuCollapsed')
 
         if (storedOpenKeys) {
             this.openKeys = JSON.parse(storedOpenKeys)
-        }
-
-        if (storedCollapsed) {
-            this.collapsed = JSON.parse(storedCollapsed)
         }
     }
 
@@ -75,18 +69,6 @@ class MenuStore {
     setOpenKeys(openKeys: string[]) {
         this.openKeys = openKeys
         localStorage.setItem('menuOpenKeys', JSON.stringify(openKeys))
-    }
-
-    // 切换菜单折叠状态
-    toggleCollapsed() {
-        this.collapsed = !this.collapsed
-        localStorage.setItem('menuCollapsed', JSON.stringify(this.collapsed))
-    }
-
-    // 设置菜单折叠状态
-    setCollapsed(collapsed: boolean) {
-        this.collapsed = collapsed
-        localStorage.setItem('menuCollapsed', JSON.stringify(collapsed))
     }
 
     // 根据路径查找菜单项
@@ -127,35 +109,13 @@ class MenuStore {
         return filter(this.menuList)
     }
 
-    // 获取面包屑
-    getBreadcrumbs(path: string): MenuItem[] {
-        const breadcrumbs: MenuItem[] = []
-        
-        const find = (items: MenuItem[], parent?: MenuItem) => {
-            for (const item of items) {
-                if (item.path === path) {
-                    if (parent) {
-                        breadcrumbs.push(parent)
-                    }
-                    breadcrumbs.push(item)
-                    return true
-                }
-                if (item.children && find(item.children, item)) {
-                    return true
-                }
-            }
-            return false
-        }
 
-        find(this.menuList)
-        return breadcrumbs
-    }
 
     // 重置菜单状态
     resetMenuState() {
         this.selectedKeys = []
         this.openKeys = []
-        this.collapsed = false
+        // this.collapsed = false
         localStorage.removeItem('menuOpenKeys')
         localStorage.removeItem('menuCollapsed')
     }
