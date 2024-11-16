@@ -42,9 +42,17 @@ class MenuStore {
     }
 
     ensureSelectedKeys() {
-        if (this.selectedKeys.length === 0 && this.menuList.length > 0) {
+        if(this.selectedKeys.length > 0) {
+            const currentMenu = this.findMenuByPath(this.selectedKeys[0])
+            if (currentMenu?.label) {
+                this.addTag({
+                    path: this.selectedKeys[0],
+                    title: currentMenu.label
+                })
+            }
+
+        }else if (this.selectedKeys.length === 0&& this.menuList.length > 0) {
             const firstPath = this.findFirstAvailablePath(this.menuList)
-            console.log(firstPath)
             if (firstPath) {
                 this.setSelectedKeys([firstPath])
                 const firstMenu = this.findMenuByPath(firstPath)

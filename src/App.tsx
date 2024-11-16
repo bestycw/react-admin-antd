@@ -59,11 +59,8 @@ const App = observer(() => {
 
             // 更新菜单并获取第一个可用路径
             MenuStore.routesToMenuItems(HomePageRoutes.children || [])
-            // console.log(firstPath)
-            // // 如果当前在登录页或根路径，则导航到第一个可用路径
-            // if (firstPath && (window.location.pathname === '/login' || window.location.pathname === '/')) {
-            //     navigate(firstPath)
-            // }
+
+            MenuStore.ensureSelectedKeys()
         }
     }, [isLogin])
 

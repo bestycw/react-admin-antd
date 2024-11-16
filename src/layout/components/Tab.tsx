@@ -130,7 +130,9 @@ const Tab = observer(() => {
       onClick: closeAll
     }
   ]
-
+  if(MenuStore.visitedTags.length === 0 ) {
+    return null
+  }
   // 将访问的标签转换为 Tabs 需要的格式
   const items = MenuStore.visitedTags.map(tag => ({
     key: tag.path,
