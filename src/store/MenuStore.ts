@@ -19,20 +19,30 @@ interface TagItem {
 class MenuStore {
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true })
-        // this.initMenuState()
+        this.initState()
     }
 
     menuList: MenuItem[] = []
     selectedKeys: string[] = []
-    // openKeys: string[] = []
     visitedTags: TagItem[] = []
+    showTabs: boolean = true
 
-    // private initMenuState() {
-    //     const storedOpenKeys = localStorage.getItem('menuOpenKeys')
-    //     if (storedOpenKeys) {
-    //         this.openKeys = JSON.parse(storedOpenKeys)
-    //     }
-    // }
+    private initState() {
+        const storedShowTabs = localStorage.getItem('showTabs')
+        if (storedShowTabs !== null) {
+            this.showTabs = JSON.parse(storedShowTabs)
+        }
+    }
+
+    toggleTabs() {
+        this.showTabs = !this.showTabs
+        localStorage.setItem('showTabs', JSON.stringify(this.showTabs))
+    }
+
+    setShowTabs(show: boolean) {
+        this.showTabs = show
+        localStorage.setItem('showTabs', JSON.stringify(show))
+    }
 
     setMenuList(menuList: MenuItem[]) {
         this.menuList = menuList
@@ -50,8 +60,7 @@ class MenuStore {
                     title: currentMenu.label
                 })
             }
-
-        }else if (this.selectedKeys.length === 0&& this.menuList.length > 0) {
+        }else if (this.selectedKeys.length === 0 && this.menuList.length > 0) {
             const firstPath = this.findFirstAvailablePath(this.menuList)
             if (firstPath) {
                 this.setSelectedKeys([firstPath])
@@ -92,11 +101,6 @@ class MenuStore {
         }
     }
 
-    // setOpenKeys(openKeys: string[]) {
-    //     this.openKeys = openKeys
-    //     localStorage.setItem('menuOpenKeys', JSON.stringify(openKeys))
-    // }
-
     findMenuByPath(path: string): MenuItem | undefined {
         const find = (items: MenuItem[]): MenuItem | undefined => {
             for (const item of items) {
@@ -132,9 +136,7 @@ class MenuStore {
 
     resetMenuState() {
         this.selectedKeys = []
-        // this.openKeys = []
         this.visitedTags = []
-        // localStorage.removeItem('menuOpenKeys')
         this.ensureSelectedKeys()
     }
 
@@ -152,7 +154,6 @@ class MenuStore {
             .filter(item => item.label)
         
         this.setMenuList(menuItems)
-        // console.log(this.openKeys)
         return menuItems
     }
 

@@ -177,6 +177,15 @@ const SettingDrawer = observer(() => {
             />
           </div>
         </div>
+
+        <Divider>标签页设置</Divider>
+        <div className="setting-item">
+          <span>显示标签页</span>
+          <Switch
+            checked={ConfigStore.showTabs}
+            onChange={ConfigStore.setShowTabs}
+          />
+        </div>
       </div>
     </CustomDrawer>
   )

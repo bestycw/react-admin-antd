@@ -43,6 +43,9 @@ class ConfigStore {
   // 保存原始位置配置
   private originalPositions: ComponentPosition | null = null
 
+  // 添加 Tab 显示控制
+  showTabs: boolean = true
+
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true })
     this.initSettings()
@@ -57,6 +60,7 @@ class ConfigStore {
       themeMode: localStorage.getItem('themeMode') as ThemeMode,
       layoutMode: localStorage.getItem('layoutMode') as LayoutMode,
       showLogo: localStorage.getItem('showLogo') !== 'false',
+      showTabs: localStorage.getItem('showTabs') !== 'false', // 添加 Tab 显示设置
       positions: {
         logo: localStorage.getItem('logoPosition') as LogoPosition,
         menu: localStorage.getItem('menuPosition') as MenuPosition,
@@ -302,6 +306,17 @@ class ConfigStore {
     }
     document.documentElement.classList.toggle('dark', this.isDarkMode)
     this.setThemeAlgorithm(this.isDarkMode)
+  }
+
+  // 添加 Tab 显示控制方法
+  toggleTabs = () => {
+    this.showTabs = !this.showTabs
+    localStorage.setItem('showTabs', String(this.showTabs))
+  }
+
+  setShowTabs = (show: boolean) => {
+    this.showTabs = show
+    localStorage.setItem('showTabs', String(show))
   }
 }
 
