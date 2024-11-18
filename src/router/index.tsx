@@ -10,7 +10,6 @@ const staticRoutesList: CoRouteObject[] = []
 const dynamicRoutesList: CoRouteObject[] = []
 //页面路由 用来后端动态路由匹配使用
 export const pagesRoutes = import.meta.glob("/src/pages/**/*.tsx");
-console.log(pagesRoutes)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const staticModules: Record<string, any> = import.meta.glob(
     ["./modules/static/*.tsx"],

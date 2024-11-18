@@ -155,7 +155,7 @@ class MenuStore {
             }))
             .filter(item => item.label)
         
-        this.setMenuList(menuItems)
+        // this.setMenuList(menuItems)
         // console.log(menuItems)  
         return menuItems
     }
@@ -186,7 +186,8 @@ class MenuStore {
     initRoutesAndMenu() {
         const rootRoute = this.finalRoutes.find(route => route.root)
         if (rootRoute?.children) {
-            this.routesToMenuItems(rootRoute.children)
+            const menu =    this.routesToMenuItems(rootRoute.children)
+            this.setMenuList(menu)
         }
     }
 }

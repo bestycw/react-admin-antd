@@ -15,6 +15,7 @@ import { message } from 'antd'
 
 // 合并路由方法
 function mergeRoutes(baseRoutes: CoRouteObject[], newRoutes: CoRouteObject[]) {
+   console.log('mergeRoutes', baseRoutes, newRoutes)
     newRoutes.forEach(newRoute => {
         const existingRoute = baseRoutes.find(route => route.path === newRoute.path)
         if (existingRoute) {
@@ -114,8 +115,7 @@ const App = observer(() => {
             case 'fontend':
             default:
                 mergeRoutes(StaticRoutes, DynamicRoutes)
-                // console.log(StaticRoutes)
-                console.log(DynamicRoutes)
+
                 RootRoutes.children = StaticRoutes
                 // initRoutesAndMenu(routes)
                 break
@@ -125,7 +125,6 @@ const App = observer(() => {
 
         //MenuStore缓存最终的routes
         formatRoutes(routes)
-        console.log(routes)
         MenuStore.setFinalRoutes(routes)
 
     }
