@@ -12,6 +12,7 @@ import { Spin } from 'antd'
 import { useStore } from '../store'
 
 const Layout = observer(() => {
+  console.log('layout init')
   const { MenuStore } = useStore()
   MenuStore.initRoutesAndMenu()
   return (

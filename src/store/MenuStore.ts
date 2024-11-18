@@ -1,5 +1,6 @@
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable, runInAction } from "mobx"
 import { CoRouteObject } from '../types/route'
+import { run } from "node:test"
 
 export interface MenuItem {
     key: string
@@ -46,24 +47,25 @@ class MenuStore {
     }
 
     setMenuList(menuList: MenuItem[]) {
-        this.menuList = menuList
+        runInAction(() => {
+            this.menuList = menuList
+        })
         if (this.selectedKeys.length === 0) {
             this.ensureSelectedKeys()
         }
     }
 
     ensureSelectedKeys() {
-        console.log(this.selectedKeys)
-        if(this.selectedKeys.length > 0) {
+        if (this.selectedKeys.length > 0) {
             const currentMenu = this.findMenuByPath(this.selectedKeys[0])
-            console.log(currentMenu)
+            // console.log(currentMenu)
             if (currentMenu?.label) {
                 this.addTag({
                     path: this.selectedKeys[0],
                     title: currentMenu.label
                 })
             }
-        }else if (this.selectedKeys.length === 0 && this.menuList.length > 0) {
+        } else if (this.selectedKeys.length === 0 && this.menuList.length > 0) {
             const firstPath = this.findFirstAvailablePath(this.menuList)
             if (firstPath) {
                 this.setSelectedKeys([firstPath])
@@ -106,8 +108,10 @@ class MenuStore {
     }
 
     setOpenKeys(path: string) {
+        runInAction(() => {
         const parentKeys = this.findParentKeys(path)
-        this.openKeys = parentKeys
+            this.openKeys = parentKeys
+        })
     }
 
     private findParentKeys(path: string): string[] {
@@ -151,11 +155,11 @@ class MenuStore {
                     return true
                 }
                 const hasPermission = item.roles.some(role => roles.includes(role))
-                
+
                 if (hasPermission && item.children) {
                     item.children = filter(item.children)
                 }
-                
+
                 return hasPermission
             })
         }
@@ -181,9 +185,6 @@ class MenuStore {
                 children: route.children ? this.routesToMenuItems(route.children) : undefined
             }))
             .filter(item => item.label)
-        
-        // this.setMenuList(menuItems)
-        // console.log(menuItems)  
         return menuItems
     }
 
@@ -191,7 +192,6 @@ class MenuStore {
         if (!this.visitedTags.find(t => t.path === tag.path)) {
             this.visitedTags.push(tag)
         }
-        // console.log(this.visitedTags)
     }
 
     removeTag(path: string) {
@@ -208,14 +208,20 @@ class MenuStore {
         }
     }
     setFinalRoutes(routes: CoRouteObject[]) {
-        this.finalRoutes = routes
+        runInAction(() => {
+            this.finalRoutes = routes
+        })
     }
     initRoutesAndMenu() {
-        const rootRoute = this.finalRoutes.find(route => route.root)
-        if (rootRoute?.children) {
-            const menu =    this.routesToMenuItems(rootRoute.children)
-            this.setMenuList(menu)
-        }
+        // 避免因为menuList的改变导致重新渲染
+        runInAction(() => {
+            // console.log(this.menuList.length)
+            const rootRoute = this.finalRoutes.find(route => route.root)
+            if (rootRoute?.children) {
+                const menu = this.routesToMenuItems(rootRoute.children)
+                this.setMenuList(menu)
+            }
+        })
     }
 }
 
