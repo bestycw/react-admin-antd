@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import React from 'react';
 
 interface IProps extends MenuProps {
     type?: string;
@@ -110,8 +111,8 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
             <AntMenu
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
-                // openKeys={MenuStore.openKeys}
-                // onOpenChange={MenuStore.setOpenKeys}
+                openKeys={mode === 'horizontal' ? [] : MenuStore.openKeys}
+                onOpenChange={(keys) => MenuStore.openKeys = keys}
                 mode={mode}
                 inlineCollapsed={collapsed}
                 className="menu-component !border-none"

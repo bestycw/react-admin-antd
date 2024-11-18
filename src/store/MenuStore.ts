@@ -26,6 +26,7 @@ class MenuStore {
     selectedKeys: string[] = []
     visitedTags: TagItem[] = []
     showTabs: boolean = true
+    openKeys: string[] = []
 
     private initState() {
         const storedShowTabs = localStorage.getItem('showTabs')
@@ -100,7 +101,32 @@ class MenuStore {
                 path: selectedKeys[0],
                 title: currentMenu.label
             })
+            this.setOpenKeys(selectedKeys[0])
         }
+    }
+
+    setOpenKeys(path: string) {
+        const parentKeys = this.findParentKeys(path)
+        this.openKeys = parentKeys
+    }
+
+    private findParentKeys(path: string): string[] {
+        const keys: string[] = []
+        const find = (items: MenuItem[], parent?: MenuItem) => {
+            for (const item of items) {
+                if (item.path === path && parent?.key) {
+                    keys.push(parent.key)
+                }
+                if (item.children) {
+                    find(item.children, item)
+                    if (keys.length > 0 && parent?.key) {
+                        keys.push(parent.key)
+                    }
+                }
+            }
+        }
+        find(this.menuList)
+        return [...new Set(keys)]
     }
 
     findMenuByPath(path: string): MenuItem | undefined {
@@ -139,6 +165,7 @@ class MenuStore {
     resetMenuState() {
         this.selectedKeys = []
         this.visitedTags = []
+        this.openKeys = []
         this.ensureSelectedKeys()
     }
 
@@ -164,7 +191,7 @@ class MenuStore {
         if (!this.visitedTags.find(t => t.path === tag.path)) {
             this.visitedTags.push(tag)
         }
-        console.log(this.visitedTags)
+        // console.log(this.visitedTags)
     }
 
     removeTag(path: string) {
