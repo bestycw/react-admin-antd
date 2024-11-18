@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useRoutes, RouteObject } from 'react-router-dom'
 import './App.css'
 import './index.css'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect } from 'react'
 import routes, { StaticRoutes, DynamicRoutes, pagesRoutes } from './router'
 import GlobalConfig from './config/GlobalConfig'
 import { useStore } from './store'
@@ -69,23 +69,25 @@ const App = observer(() => {
     const { PermissionControl } = GlobalConfig
     const { UserStore, MenuStore } = useStore()
     const { ConfigStore } = useStore()
-    console.log('app init')
+    // console.log('app init')
     // 初始化路由和菜单
 
     const RootRoutes = routes.find(route => route.root)
-
+    useEffect(() => {
+        console.log('app init')
+    }, [])
     // 获取后端路由
     const fetchBackendRoutes = async () => {
         try {
             const data = await authService.getDynamicRoutes()
             console.log('后端路由', data)
-            //处理后端提供的路由，符合动态路由格式 TODO   功能丰富
+            //处理后端提供的路由，符合动态路由格式 TODO 
             const backRoutes = formatBackendRoutes(data)
             console.log('后端路由', backRoutes)
 
             // const { data } = result
             if (backRoutes) {
-                mergeRoutes(StaticRoutes, DynamicRoutes)
+                mergeRoutes(StaticRoutes, backRoutes)
 
                 RootRoutes.children = StaticRoutes
                 // initRoutesAndMenu(routes)
@@ -95,11 +97,8 @@ const App = observer(() => {
             message.error('获取动态路由失败')
         }
     }
-    // useEffect(() => {
+    useLayoutEffect(() => {
     if (UserStore.isLogin) {
-
-        // const Root = routes.find(route => route.root) as CoRouteObject
-
         switch (PermissionControl) {
             case 'backend':
                 fetchBackendRoutes()
@@ -128,7 +127,7 @@ const App = observer(() => {
         MenuStore.setFinalRoutes(routes)
 
     }
-    // }, [UserStore.isLogin])
+    }, [UserStore.isLogin,routes])
     // console.log(routes[0].children)
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>
