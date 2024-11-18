@@ -1,5 +1,5 @@
 export default {
-    PermissionControl:'backend',//fontend backend both
+    PermissionControl:'fontend',//fontend backend both
     AdminName:'CoffeeAdmin',
     ApiUrl:'/'
 }

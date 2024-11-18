@@ -6,11 +6,11 @@ type PathWithSlash = `/${string}`
 // 扩展 RouteObject 类型，使 path 必须以 '/' 开头
 export interface CoRouteObject extends Omit<RouteObject, 'path'> {
   path?: PathWithSlash
+  root?: boolean
   meta?: {
     title?: string
     icon?: React.ReactNode
-    roles?: ('admin' | 'common' | 'superAdmin')[]
-    rolesValue?: number
+    roles?: string[]
   }
   children?: CoRouteObject[]
   hidden?: boolean
@@ -18,7 +18,7 @@ export interface CoRouteObject extends Omit<RouteObject, 'path'> {
 
 // 用于验证路径格式的类型守卫
 export function isValidPath(path: string): path is PathWithSlash {
-  return path.startsWith('/')
+  return path.startsWith('/') || path === '/'
 }
 
 // 用于创建路由配置的辅助函数

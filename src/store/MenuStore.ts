@@ -21,7 +21,7 @@ class MenuStore {
         makeAutoObservable(this, {}, { autoBind: true })
         this.initState()
     }
-
+    finalRoutes: CoRouteObject[] = []
     menuList: MenuItem[] = []
     selectedKeys: string[] = []
     visitedTags: TagItem[] = []
@@ -52,8 +52,10 @@ class MenuStore {
     }
 
     ensureSelectedKeys() {
+        console.log(this.selectedKeys)
         if(this.selectedKeys.length > 0) {
             const currentMenu = this.findMenuByPath(this.selectedKeys[0])
+            console.log(currentMenu)
             if (currentMenu?.label) {
                 this.addTag({
                     path: this.selectedKeys[0],
@@ -154,6 +156,7 @@ class MenuStore {
             .filter(item => item.label)
         
         this.setMenuList(menuItems)
+        // console.log(menuItems)  
         return menuItems
     }
 
@@ -175,6 +178,15 @@ class MenuStore {
             if (this.visitedTags.length === 0) {
                 this.ensureSelectedKeys()
             }
+        }
+    }
+    setFinalRoutes(routes: CoRouteObject[]) {
+        this.finalRoutes = routes
+    }
+    initRoutesAndMenu() {
+        const rootRoute = this.finalRoutes.find(route => route.root)
+        if (rootRoute?.children) {
+            this.routesToMenuItems(rootRoute.children)
         }
     }
 }

@@ -1,13 +1,16 @@
 import React from "react";
 import AuthBoundary from "../components/AuthBoundary";
 import HomePage from "../layout";
-import Login from "../pages/Login";
+import Login from "../pages/login";
 import { CoRouteObject } from "../types/route";
 import Forbidden from "../pages/error/403";
 import NotFound from "../pages/error/404";
 import { Navigate } from 'react-router-dom';
 const staticRoutesList: CoRouteObject[] = []
 const dynamicRoutesList: CoRouteObject[] = []
+//页面路由 用来后端动态路由匹配使用
+export const pagesRoutes = import.meta.glob("/src/pages/**/*.tsx");
+console.log(pagesRoutes)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const staticModules: Record<string, any> = import.meta.glob(
     ["./modules/static/*.tsx"],
@@ -23,8 +26,8 @@ const dynamicModules: Record<string, any> = import.meta.glob(
     }
 );
 
-export const staticFirstPathList: string[] = []
-export const dynamicFirstPathList: string[] = []
+ const staticFirstPathList: string[] = []
+ const dynamicFirstPathList: string[] = []
 function handleOriginRoute() {
     //静态路由处理
     Object.keys(staticModules).forEach(key => {
@@ -51,23 +54,17 @@ function getRouteFirstPath(pathList: string[], path: string) {
 }
 handleOriginRoute()
 //静态路由
-export const StaticRoutes: CoRouteObject[] = [
-    {
-        path: '/',
-        element: <AuthBoundary><HomePage /></AuthBoundary>,
-        children: staticRoutesList
-    }
-]
+export const StaticRoutes: CoRouteObject[] = staticRoutesList
 //动态路由
-export const DynamicRoutes: CoRouteObject[] = [
+export const DynamicRoutes: CoRouteObject[] = dynamicRoutesList
+//登录、错误页、根页面
+const routes: CoRouteObject[] = [
     {
         path: '/',
+        root: true,
         element: <AuthBoundary><HomePage /></AuthBoundary>,
-        children: dynamicRoutesList
-    }
-]
-//登录、错误页
-export const RemainingRoutes: CoRouteObject[] = [
+        children: []
+    },
     {
         path: '/login',
         element: <Login />,
@@ -86,3 +83,4 @@ export const RemainingRoutes: CoRouteObject[] = [
     }
 ]
 
+export default routes
