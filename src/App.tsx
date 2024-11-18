@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useRoutes, RouteObject } from 'react-router-dom'
 import './App.css'
 import './index.css'
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense } from 'react'
 import routes, { StaticRoutes, DynamicRoutes, pagesRoutes } from './router'
 import GlobalConfig from './config/GlobalConfig'
 import { useStore } from './store'
@@ -56,6 +56,14 @@ function formatBackendRoutes(data: CoRouteObject[]) {
     })
     return data
 }
+function formatRoutes(routes: CoRouteObject[]) {
+    
+    routes.forEach(route => {
+        if (!route.redirect && route.children && route.children.length > 0) {
+            route.redirect = route.children[0].path
+        }
+    })
+}
 const App = observer(() => {
     const { PermissionControl } = GlobalConfig
     const { UserStore, MenuStore } = useStore()
@@ -77,6 +85,7 @@ const App = observer(() => {
             // const { data } = result
             if (backRoutes) {
                 mergeRoutes(StaticRoutes, DynamicRoutes)
+
                 RootRoutes.children = StaticRoutes
                 // initRoutesAndMenu(routes)
             }
@@ -111,7 +120,12 @@ const App = observer(() => {
                 // initRoutesAndMenu(routes)
                 break
         }
+        //
+        // 处理最终的routes，增加redirect等属性
+
         //MenuStore缓存最终的routes
+        formatRoutes(routes)
+        console.log(routes)
         MenuStore.setFinalRoutes(routes)
 
     }

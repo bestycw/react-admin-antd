@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import { CoRouteObject } from "../../../types/route";
 import { DashboardOutlined } from "@ant-design/icons";
+import React from "react";
 /* eslint-disable react-refresh/only-export-components */
 const Dashboard = lazy(() => import('../../../pages/dashboard'))
 

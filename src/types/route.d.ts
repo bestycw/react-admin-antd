@@ -7,6 +7,7 @@ type PathWithSlash = `/${string}`
 export interface CoRouteObject extends Omit<RouteObject, 'path'> {
   path?: PathWithSlash
   root?: boolean
+  redirect?: string
   meta?: {
     title?: string
     icon?: React.ReactNode
