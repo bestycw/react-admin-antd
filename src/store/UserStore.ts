@@ -50,10 +50,10 @@ class UserStore {
         }
     }
     setDynamicRoutes(routes: CoRouteObject[]) {
-        runInAction(() => {
+        // runInAction(() => {
             this.dynamicRoutes = routes
             this.isInitDynamicRoutes = true
-        })
+        // })
     }
     setUserInfo(userInfo: UserInfo, remember = false) {
         runInAction(() => {
@@ -109,7 +109,7 @@ class UserStore {
             return formatBackendRoutes(this.dynamicRoutes)
         }
         if (getGlobalConfig('PermissionControl') === 'fontend') {
-            return DynamicRoutes
+            return this.dynamicRoutes
         }
         return []
     }
