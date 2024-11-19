@@ -111,17 +111,11 @@ const Login = observer(() => {
     try {
       // 1. 登录获取用户信息
       const userInfo = await authService.login(values);
-      
+      UserStore.setUserInfo(userInfo, values.remember);
+
       // 2. 获取动态路由
       const routes = await UserStore.getDynamicRoutes();
-      
-      // 3. 使用 runInAction 批量更新状态
-      runInAction(() => {
-        // 设置用户信息
-        UserStore.setUserInfo(userInfo, values.remember);
-        // 设置动态路由
-        UserStore.setDynamicRoutes(routes);
-      });
+      UserStore.setDynamicRoutes(routes);
 
       message.success(t('login.loginSuccess'));
       // 4. 使用 replace 进行导航，避免历史记录

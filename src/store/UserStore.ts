@@ -20,7 +20,7 @@ class UserStore {
     isLogin = false
     dynamicRoutes: CoRouteObject[] = []
     allRoutes: CoRouteObject[] = []
-
+    isInitDynamicRoutes = false
     private initUserInfo() {
         const storedUserInfo = localStorage.getItem('userInfo')
         const token = localStorage.getItem('token')
@@ -30,6 +30,7 @@ class UserStore {
             if (expiresAt && new Date().getTime() < parseInt(expiresAt)) {
                 this.userInfo = JSON.parse(storedUserInfo)
                 this.isLogin = true
+                this.isInitDynamicRoutes = true
                 if (dynamicRoutes) {
                     this.dynamicRoutes = JSON.parse(dynamicRoutes)
                 }
@@ -51,6 +52,7 @@ class UserStore {
     setDynamicRoutes(routes: CoRouteObject[]) {
         runInAction(() => {
             this.dynamicRoutes = routes
+            this.isInitDynamicRoutes = true
         })
     }
     setUserInfo(userInfo: UserInfo, remember = false) {
@@ -73,6 +75,7 @@ class UserStore {
     clearUserInfo() {
         this.userInfo = null
         this.isLogin = false
+        this.isInitDynamicRoutes = false    
         localStorage.removeItem('token')
         localStorage.removeItem('userInfo')
         localStorage.removeItem('tokenExpiresAt')

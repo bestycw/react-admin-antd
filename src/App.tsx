@@ -1,4 +1,4 @@
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, Spin } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { useRoutes, RouteObject } from 'react-router-dom'
 import './App.css'
@@ -20,6 +20,13 @@ const App = observer(() => {
     console.log(' app init')
 
     if (UserStore.isLogin) {
+        if (!UserStore.isInitDynamicRoutes) {
+           return(
+            <div>
+                <Spin />
+            </div>
+           )
+        }
         if (!UserStore.hasAllRoutes) {
             const dynamicRoutes: CoRouteObject[] = UserStore.realDynamicRoutes as CoRouteObject[]
             // console.log('dynamicRoutes', dynamicRoutes)
