@@ -2,7 +2,7 @@
 import { makeAutoObservable, runInAction } from "mobx"
 import { CoRouteObject } from "../types/route.d"
 import getGlobalConfig from "../config/GlobalConfig"
-import {  DynamicRoutes, fetchBackendRoutes, formatBackendRoutes, } from "../router"
+import { DynamicRoutes, fetchBackendRoutes, formatBackendRoutes, } from "../router"
 export interface UserInfo {
     username: string
     avatar?: string
@@ -38,27 +38,36 @@ class UserStore {
             }
         }
     }
-   async  setDynamicRoutes() {
-        const backRoutes = await fetchBackendRoutes() as CoRouteObject[]
-        console.log('backRoutes', backRoutes)
-        // localStorage.setItem('dynamicRoutes', JSON.stringify(backRoutes))
+    async getDynamicRoutes() {
+        try {
+            const backRoutes = await fetchBackendRoutes() as CoRouteObject[]
+            console.log('backRoutes', backRoutes)
+            return backRoutes
+        } catch (error) {
+            console.error('Failed to set dynamic routes:', error)
+            throw error
+        }
+    }
+    setDynamicRoutes(routes: CoRouteObject[]) {
         runInAction(() => {
-            this.dynamicRoutes = backRoutes
+            this.dynamicRoutes = routes
         })
     }
     setUserInfo(userInfo: UserInfo, remember = false) {
-        this.userInfo = userInfo
-        this.isLogin = true
+        runInAction(() => {
+            this.userInfo = userInfo
+            this.isLogin = true
 
-        localStorage.setItem('token', userInfo.accessToken)
+            localStorage.setItem('token', userInfo.accessToken)
 
-        if (remember) {
-            const expiresAt = new Date().getTime() + 7 * 24 * 60 * 60 * 1000
-            localStorage.setItem('tokenExpiresAt', expiresAt.toString())
-            localStorage.setItem('userInfo', JSON.stringify(userInfo))
-        } else {
-            sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
-        }
+            if (remember) {
+                const expiresAt = new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+                localStorage.setItem('tokenExpiresAt', expiresAt.toString())
+                localStorage.setItem('userInfo', JSON.stringify(userInfo))
+            } else {
+                sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
+            }
+        })
     }
 
     clearUserInfo() {
@@ -88,21 +97,23 @@ class UserStore {
         return this.userInfo?.roles ? roles.every(role => this.userInfo?.roles.includes(role)) : false
     }
     setAllRoutes(routes: CoRouteObject[]) {
-        this.allRoutes = routes
+        runInAction(() => {
+            this.allRoutes = routes
+        })
     }
     get realDynamicRoutes() {
-        if(getGlobalConfig('PermissionControl') === 'backend' && this.dynamicRoutes.length > 0){
+        if (getGlobalConfig('PermissionControl') === 'backend' && this.dynamicRoutes.length > 0) {
             return formatBackendRoutes(this.dynamicRoutes)
         }
-        if(getGlobalConfig('PermissionControl') === 'fontend'){
-            return  DynamicRoutes
+        if (getGlobalConfig('PermissionControl') === 'fontend') {
+            return DynamicRoutes
         }
         return []
     }
     get hasAllRoutes() {
         return this.allRoutes.length > 0
     }
-    
+
     get userRoleValue(): number {
         return this.userInfo?.rolesValue ?? -1
     }

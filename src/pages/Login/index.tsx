@@ -93,7 +93,7 @@ const Login = observer(() => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const isDynamic = ConfigStore.themeStyle === 'dynamic'
-
+  console.log('login init')
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
@@ -110,10 +110,13 @@ const Login = observer(() => {
     try {
       const userInfo = await authService.login(values);
       UserStore.setUserInfo(userInfo, values.remember);
-      UserStore.setDynamicRoutes().then(() => {
-        message.success(t('login.loginSuccess'));
-        navigate('/');
-      })
+      // console.log('userInfo', userInfo)
+      const routes = await UserStore.getDynamicRoutes();
+      console.log('routes', routes)
+      UserStore.setDynamicRoutes(routes)
+
+      message.success(t('login.loginSuccess'));
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('Login failed:', error);
       message.error(t('login.loginFailed'));

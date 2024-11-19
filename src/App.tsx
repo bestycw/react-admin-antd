@@ -22,7 +22,7 @@ const App = observer(() => {
     if (UserStore.isLogin) {
         if (!UserStore.hasAllRoutes) {
             const dynamicRoutes: CoRouteObject[] = UserStore.realDynamicRoutes as CoRouteObject[]
-            console.log('dynamicRoutes', dynamicRoutes)
+            // console.log('dynamicRoutes', dynamicRoutes)
             mergeRoutes(StaticRoutes, dynamicRoutes)
             if (RootRoutes) {
                 RootRoutes.children = StaticRoutes
