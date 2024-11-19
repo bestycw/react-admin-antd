@@ -1,6 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx"
 import { CoRouteObject } from '../types/route'
-import { run } from "node:test"
 
 export interface MenuItem {
     key: string
@@ -22,7 +21,8 @@ class MenuStore {
         makeAutoObservable(this, {}, { autoBind: true })
         this.initState()
     }
-    finalRoutes: CoRouteObject[] = []
+    // dynamicRoutes: CoRouteObject[] = []
+    
     menuList: MenuItem[] = []
     selectedKeys: string[] = []
     visitedTags: TagItem[] = []
@@ -207,16 +207,14 @@ class MenuStore {
             }
         }
     }
-    setFinalRoutes(routes: CoRouteObject[]) {
-        runInAction(() => {
-            this.finalRoutes = routes
-        })
-    }
-    initRoutesAndMenu() {
+
+    initRoutesAndMenu(routes: CoRouteObject[]) {
         // 避免因为menuList的改变导致重新渲染
+        console.log('init routes and menu',routes)
         runInAction(() => {
             // console.log(this.menuList.length)
-            const rootRoute = this.finalRoutes.find(route => route.root)
+            const rootRoute = routes.find(route => route.root)
+            // console.log('rootRoute', rootRoute)
             if (rootRoute?.children) {
                 const menu = this.routesToMenuItems(rootRoute.children)
                 this.setMenuList(menu)

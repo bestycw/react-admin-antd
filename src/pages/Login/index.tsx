@@ -8,13 +8,14 @@ import type { Engine, IOptions, RecursivePartial } from "tsparticles-engine";
 import { useCallback, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo.svg";
-import GlobalConfig from '../../config/GlobalConfig'
+import getGlobalConfig from '../../config/GlobalConfig'
 import TypeWriter from '../../components/TypeWriter';
 import Captcha from '../../components/Captcha';
 import { authService } from '../../services/auth';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitch from '../../components/LanguageSwitch';
 import './index.scss';
+import React from "react";
 
 interface LoginForm {
   username: string;
@@ -87,7 +88,7 @@ const ParticlesOptions:RecursivePartial<IOptions> = {
 }
 const Login = observer(() => {
   const { UserStore, ConfigStore } = useStore();
-  const { AdminName } = GlobalConfig;
+  // const { AdminName } = GlobalConfig;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
@@ -109,7 +110,7 @@ const Login = observer(() => {
     try {
       const userInfo = await authService.login(values);
       UserStore.setUserInfo(userInfo, values.remember);
-      
+      UserStore.setDynamicRoutes()
       message.success(t('login.loginSuccess'));
       navigate('/');
     } catch (error) {
@@ -154,7 +155,7 @@ const Login = observer(() => {
           <div className="text-center mb-8">
             <img src={logo} alt="Logo" className="h-16 mx-auto mb-4" />
             <TypeWriter
-              text={AdminName}
+              text={getGlobalConfig('AdminName')}
               className="artistic-text mb-2"
               loop={true}
               loopDelay={3000}

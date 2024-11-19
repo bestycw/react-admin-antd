@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { makeAutoObservable } from "mobx"
-
+import { makeAutoObservable, runInAction } from "mobx"
+import { CoRouteObject } from "../types/route.d"
+import getGlobalConfig from "../config/GlobalConfig"
+import {  DynamicRoutes, fetchBackendRoutes, formatBackendRoutes, } from "../router"
 export interface UserInfo {
     username: string
     avatar?: string
@@ -8,7 +10,6 @@ export interface UserInfo {
     accessToken: string
     rolesValue: number
 }
-
 class UserStore {
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true })
@@ -17,22 +18,30 @@ class UserStore {
 
     userInfo: UserInfo | null = null
     isLogin = false
-
+    dynamicRoutes: CoRouteObject[] = []
+    finalRoutes: CoRouteObject[] = []
     private initUserInfo() {
         const storedUserInfo = localStorage.getItem('userInfo')
         const token = localStorage.getItem('token')
         const expiresAt = localStorage.getItem('tokenExpiresAt')
-
+        const dynamicRoutes = localStorage.getItem('dynamicRoutes')
         if (storedUserInfo && token) {
             if (expiresAt && new Date().getTime() < parseInt(expiresAt)) {
                 this.userInfo = JSON.parse(storedUserInfo)
                 this.isLogin = true
+                if (dynamicRoutes) {
+                    this.dynamicRoutes = JSON.parse(dynamicRoutes)
+                }
             } else {
                 this.clearUserInfo()
             }
         }
     }
-
+   async  setDynamicRoutes() {
+        const backRoutes = await fetchBackendRoutes() as CoRouteObject[]
+        // localStorage.setItem('dynamicRoutes', JSON.stringify(backRoutes))
+        this.dynamicRoutes = backRoutes
+    }
     setUserInfo(userInfo: UserInfo, remember = false) {
         this.userInfo = userInfo
         this.isLogin = true
@@ -55,6 +64,7 @@ class UserStore {
         localStorage.removeItem('userInfo')
         localStorage.removeItem('tokenExpiresAt')
         sessionStorage.removeItem('userInfo')
+        localStorage.removeItem('dynamicRoutes')
     }
 
     logout() {
@@ -74,6 +84,14 @@ class UserStore {
         return this.userInfo?.roles ? roles.every(role => this.userInfo?.roles.includes(role)) : false
     }
 
+    get realDynamicRoutes() {
+        if(getGlobalConfig('PermissionControl') === 'backend'){
+            return formatBackendRoutes(this.dynamicRoutes)
+        }
+        if(getGlobalConfig('PermissionControl') === 'fontend'){
+            return  DynamicRoutes
+        }
+    }
     get userRoleValue(): number {
         return this.userInfo?.rolesValue ?? -1
     }

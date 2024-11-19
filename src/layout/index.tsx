@@ -9,12 +9,12 @@ import React, { Suspense } from 'react'
 import SettingDrawer from '@/components/SettingDrawer'
 import PageTransition from '@/components/PageTransition'
 import { Spin } from 'antd'
-import { useStore } from '../store'
+// import { useStore } from '../store'
 
 const Layout = observer(() => {
   console.log('layout init')
-  const { MenuStore } = useStore()
-  MenuStore.initRoutesAndMenu()
+  // const { MenuStore } = useStore()
+
   return (
     <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Sidebar />     

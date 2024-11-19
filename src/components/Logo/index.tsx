@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 // import { useStore } from '@/store'
 import logo from '@/assets/logo.svg'
-import GlobalConfig from '@/config/GlobalConfig'
+import getGlobalConfig from '@/config/GlobalConfig'
 import React from 'react'
 
 interface LogoProps {
@@ -12,7 +12,7 @@ interface LogoProps {
 const Logo = observer(({ collapsed = false, className = '' }: LogoProps) => {
   // const { ConfigStore } = useStore()
   // const isDynamic = ConfigStore.themeStyle === 'dynamic'
-  const {AdminName=''} = GlobalConfig
+  // const {AdminName=''} = GlobalConfig
 
   return (
     <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-4'} ${className}`}>
@@ -24,7 +24,7 @@ const Logo = observer(({ collapsed = false, className = '' }: LogoProps) => {
       </div>
       {!collapsed && (
         <span className="text-base font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
-          {AdminName}
+          {getGlobalConfig('AdminName')}
         </span>
       )}
     </div>

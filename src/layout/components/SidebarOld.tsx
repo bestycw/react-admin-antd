@@ -2,13 +2,13 @@ import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
 import Menu from './Menu'
 import logo from '@/assets/logo.svg'
-import GlobalConfig from '@/config/GlobalConfig'
+import getGlobalConfig from '@/config/GlobalConfig'
 import UserActions from '@/components/UserActions'
 
 const Sidebar = observer(() => {
   const { ConfigStore } = useStore()
   const isDynamic = ConfigStore.themeStyle === 'dynamic'
-  const {AdminName=''} = GlobalConfig
+  // const {AdminName=''} = GlobalConfig
 
   return (
 
@@ -23,7 +23,7 @@ const Sidebar = observer(() => {
           <img src={logo} alt="Logo" className="w-full h-full object-contain" />
         </div>
         <span className="text-base font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
-          {AdminName}
+          {getGlobalConfig('AdminName')}
         </span>
       </div>
 
