@@ -28,7 +28,7 @@ class MenuStore {
     visitedTags: TagItem[] = []
     showTabs: boolean = true
     openKeys: string[] = []
-
+    
     private initState() {
         const storedShowTabs = localStorage.getItem('showTabs')
         if (storedShowTabs !== null) {
@@ -96,15 +96,19 @@ class MenuStore {
     }
 
     setSelectedKeys(selectedKeys: string[]) {
-        this.selectedKeys = selectedKeys
-        const currentMenu = this.findMenuByPath(selectedKeys[0])
-        if (currentMenu?.label) {
-            this.addTag({
-                path: selectedKeys[0],
-                title: currentMenu.label
-            })
-            this.setOpenKeys(selectedKeys[0])
-        }
+        runInAction(() => {
+            if (this.selectedKeys[0] !== selectedKeys[0]) {
+                this.selectedKeys = selectedKeys;
+                const currentMenu = this.findMenuByPath(selectedKeys[0]);
+                if (currentMenu?.label) {
+                    this.addTag({
+                        path: selectedKeys[0],
+                        title: currentMenu.label
+                    });
+                    this.setOpenKeys(selectedKeys[0]);
+                }
+            }
+        });
     }
 
     setOpenKeys(path: string) {
@@ -210,11 +214,8 @@ class MenuStore {
 
     initRoutesAndMenu(routes: CoRouteObject[]) {
         // 避免因为menuList的改变导致重新渲染
-        console.log('init routes and menu',routes)
         runInAction(() => {
-            // console.log(this.menuList.length)
             const rootRoute = routes.find(route => route.root)
-            // console.log('rootRoute', rootRoute)
             if (rootRoute?.children) {
                 const menu = this.routesToMenuItems(rootRoute.children)
                 this.setMenuList(menu)

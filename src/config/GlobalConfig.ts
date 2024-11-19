@@ -1,5 +1,5 @@
 const GlobalConfig = {
-    PermissionControl:'backend',//fontend backend both
+    PermissionControl:'backend',//fontend backend mix
     AdminName:'CoffeeAdmin',
     ApiUrl:'/'
 }

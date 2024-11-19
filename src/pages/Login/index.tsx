@@ -110,9 +110,10 @@ const Login = observer(() => {
     try {
       const userInfo = await authService.login(values);
       UserStore.setUserInfo(userInfo, values.remember);
-      UserStore.setDynamicRoutes()
-      message.success(t('login.loginSuccess'));
-      navigate('/');
+      UserStore.setDynamicRoutes().then(() => {
+        message.success(t('login.loginSuccess'));
+        navigate('/');
+      })
     } catch (error) {
       console.error('Login failed:', error);
       message.error(t('login.loginFailed'));

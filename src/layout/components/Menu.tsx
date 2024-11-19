@@ -17,9 +17,12 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // 只在路径真正改变时更新选中状态
     useEffect(() => {
         const currentPath = location.pathname;
-        MenuStore.setSelectedKeys([currentPath]);
+        if (currentPath !== MenuStore.selectedKeys[0]) {
+            MenuStore.setSelectedKeys([currentPath]);
+        }
     }, [location.pathname]);
 
     // 获取父级菜单的 key

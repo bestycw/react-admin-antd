@@ -144,6 +144,10 @@ export const fetchBackendRoutes = async () => {
                     localStorage.setItem('dynamicRoutes', JSON.stringify(data))
                     return data
                 }
+            case 'mix':
+
+                break;
+                // return [...StaticRoutes, ...DynamicRoutes]
             case 'fontend':
                 return DynamicRoutes
             default:

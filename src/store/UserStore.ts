@@ -19,7 +19,8 @@ class UserStore {
     userInfo: UserInfo | null = null
     isLogin = false
     dynamicRoutes: CoRouteObject[] = []
-    finalRoutes: CoRouteObject[] = []
+    allRoutes: CoRouteObject[] = []
+
     private initUserInfo() {
         const storedUserInfo = localStorage.getItem('userInfo')
         const token = localStorage.getItem('token')
@@ -39,8 +40,11 @@ class UserStore {
     }
    async  setDynamicRoutes() {
         const backRoutes = await fetchBackendRoutes() as CoRouteObject[]
+        console.log('backRoutes', backRoutes)
         // localStorage.setItem('dynamicRoutes', JSON.stringify(backRoutes))
-        this.dynamicRoutes = backRoutes
+        runInAction(() => {
+            this.dynamicRoutes = backRoutes
+        })
     }
     setUserInfo(userInfo: UserInfo, remember = false) {
         this.userInfo = userInfo
@@ -83,15 +87,22 @@ class UserStore {
     hasAllRoles(roles: string[]): boolean {
         return this.userInfo?.roles ? roles.every(role => this.userInfo?.roles.includes(role)) : false
     }
-
+    setAllRoutes(routes: CoRouteObject[]) {
+        this.allRoutes = routes
+    }
     get realDynamicRoutes() {
-        if(getGlobalConfig('PermissionControl') === 'backend'){
+        if(getGlobalConfig('PermissionControl') === 'backend' && this.dynamicRoutes.length > 0){
             return formatBackendRoutes(this.dynamicRoutes)
         }
         if(getGlobalConfig('PermissionControl') === 'fontend'){
             return  DynamicRoutes
         }
+        return []
     }
+    get hasAllRoutes() {
+        return this.allRoutes.length > 0
+    }
+    
     get userRoleValue(): number {
         return this.userInfo?.rolesValue ?? -1
     }

@@ -28,15 +28,15 @@ const systemRoute: CoRouteObject =
         element: <User />,
         // lazy: () => import('@/pages/System/User'),
       },
-      // {
-      //   path: '/system/role',
-      //   meta: {
-      //     title: '角色管理',
-      //     // icon: <TeamOutlined />,
-      //   },
-      //   element: <Role />,
-      //   // lazy: () => import('@/pages/System/Role'),
-      // },
+      {
+        path: '/system/role',
+        meta: {
+          title: '角色管理',
+          // icon: <TeamOutlined />,
+        },
+        element: <Role />,
+        // lazy: () => import('@/pages/System/Role'),
+      },
     ],
   }
 ;
