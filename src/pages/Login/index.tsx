@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitch from '../../components/LanguageSwitch';
 import './index.scss';
 import React from "react";
+import { runInAction } from "mobx";
 
 interface LoginForm {
   username: string;
@@ -108,14 +109,22 @@ const Login = observer(() => {
     
     setLoading(true);
     try {
+      // 1. 登录获取用户信息
       const userInfo = await authService.login(values);
-      UserStore.setUserInfo(userInfo, values.remember);
-      // console.log('userInfo', userInfo)
+      
+      // 2. 获取动态路由
       const routes = await UserStore.getDynamicRoutes();
-      console.log('routes', routes)
-      UserStore.setDynamicRoutes(routes)
+      
+      // 3. 使用 runInAction 批量更新状态
+      runInAction(() => {
+        // 设置用户信息
+        UserStore.setUserInfo(userInfo, values.remember);
+        // 设置动态路由
+        UserStore.setDynamicRoutes(routes);
+      });
 
       message.success(t('login.loginSuccess'));
+      // 4. 使用 replace 进行导航，避免历史记录
       navigate('/', { replace: true });
     } catch (error) {
       console.error('Login failed:', error);
