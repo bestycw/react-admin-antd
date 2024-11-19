@@ -24,6 +24,7 @@ export interface GlobalConfigType {
     DefaultMenuPosition: MenuPosition
     DefaultHeaderPosition: HeaderPosition
     DefaultSidebarCollapsed: boolean
+    DefaultShowLogo: boolean
 }
 
 const GlobalConfig: GlobalConfigType = {
@@ -45,11 +46,12 @@ const GlobalConfig: GlobalConfigType = {
     DefaultShowFooter: true,
     DefaultMenuPosition: 'mix',
     DefaultHeaderPosition: 'fixed',
+    DefaultShowLogo: true,
     DefaultSidebarCollapsed: false
 }
 
-export function getGlobalConfig<T extends keyof GlobalConfigType>(key: T): GlobalConfigType[T] {
+ function getGlobalConfig<T extends keyof GlobalConfigType>(key: T): GlobalConfigType[T] {
     return GlobalConfig[key]
 }
 
-export default GlobalConfig
+export default getGlobalConfig
