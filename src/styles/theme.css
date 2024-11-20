@@ -102,7 +102,7 @@
   
   /* 背景效果 */
   --bg-opacity: 0.85;
-  --blur-amount: 12px;
+  --blur-amount: 4px;
   
   /* 边框效果 */
   /* --style-border: 1px solid rgba(255, 255, 255, 0.2); */

@@ -9,7 +9,7 @@ export interface UserInfo {
     avatar?: string
     roles: string[]
     accessToken: string
-    rolesValue: number
+    dynamicRoutesList: string[]
 }
 
 class UserStore {
