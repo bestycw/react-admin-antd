@@ -47,6 +47,7 @@ class MenuStore {
     }
 
     setMenuList(menuList: MenuItem[]) {
+        console.log(menuList)
         runInAction(() => {
             this.menuList = menuList
         })
@@ -178,6 +179,7 @@ class MenuStore {
     }
 
     routesToMenuItems(routes: CoRouteObject[]): MenuItem[] {
+        console.log(routes)
         const menuItems = routes
             .filter(route => !route.hidden)
             .map(route => ({
@@ -185,7 +187,7 @@ class MenuStore {
                 label: route.meta?.title || '',
                 icon: route.meta?.icon,
                 path: route.path,
-                roles: route.meta?.roles,
+                // roles: route.meta?.roles,
                 children: route.children ? this.routesToMenuItems(route.children) : undefined
             }))
             .filter(item => item.label)
@@ -216,6 +218,7 @@ class MenuStore {
         // 避免因为menuList的改变导致重新渲染
         runInAction(() => {
             const rootRoute = routes.find(route => route.root)
+            console.log(rootRoute)
             if (rootRoute?.children) {
                 const menu = this.routesToMenuItems(rootRoute.children)
                 this.setMenuList(menu)

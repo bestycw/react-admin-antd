@@ -13,7 +13,6 @@ import getGlobalConfig from "../config/GlobalConfig";
 // 首先定义页面路由
 export const pagesRoutes = import.meta.glob(["/src/pages/**/*.tsx"], {});
 export const pagesRoutesKeys = Object.keys(pagesRoutes)
-
 const staticRoutesList: CoRouteObject[] = []
 const dynamicRoutesList: CoRouteObject[] = []
 
@@ -62,6 +61,7 @@ handleOriginRoute()
 
 //静态路由
 export const StaticRoutes: CoRouteObject[] = staticRoutesList
+console.log(StaticRoutes)
 //动态路由
 export const DynamicRoutes: CoRouteObject[] = dynamicRoutesList
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Row, Col, Statistic, Progress, List, Button, Timeline, Tag, Tooltip, Alert, Calendar, Badge } from 'antd';
-import type { Dayjs } from 'dayjs';
+// import type { Dayjs } from 'dayjs';
 import { 
   ArrowUpOutlined, ArrowDownOutlined, UserOutlined, ShoppingCartOutlined, 
   FileTextOutlined, TeamOutlined, BellOutlined, ReloadOutlined,
@@ -273,5 +273,10 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
-
+// Dashboard.displayName = 'Dashboard'
+// Dashboard.meta = {
+//     title: 'Dashboard',
+//     icon: 'icon-dashboard',
+//     order: 1
+// }
 export default Dashboard; 

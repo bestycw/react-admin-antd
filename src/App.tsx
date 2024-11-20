@@ -33,6 +33,7 @@ const App = observer(() => {
             mergeRoutes(StaticRoutes, dynamicRoutes)
             if (RootRoutes) {
                 RootRoutes.children = StaticRoutes
+                // console.log(routes)
                 MenuStore.initRoutesAndMenu(routes)
             }
             UserStore.setAllRoutes(routes)
