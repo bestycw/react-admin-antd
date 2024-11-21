@@ -2,20 +2,30 @@ import { lazy } from 'react'
 import type { CoRouteObject, RouteConfig } from '../types/route'
 import * as Icons from '@ant-design/icons'
 import React from 'react'
+
+// 常量定义
 const CONFIG_FILE_REGEX = "index.config.tsx"
-// 获取所有页面文件，排除 index.config.ts 和 components 目录
-const pages = import.meta.glob(
-    ['@/pages/**/index.tsx', '@/pages/**/*.tsx', '!@/pages/**/components/**', '!@/pages/**/index.config.ts'], 
-    { eager: true }
-)
+
+// 获取所有页面文件
+const pages = import.meta.glob([
+    '@/pages/**/index.tsx',
+    '@/pages/**/*.tsx',
+    '!@/pages/**/components/**',
+    '!@/pages/**/*.config.ts'
+], { eager: true })
 
 // 获取配置文件
-const configs = import.meta.glob(
-    ['@/pages/**/index.config.tsx','@/pages/**/index.config.tsx' ],
-    { eager: true }
-)
+const configs = import.meta.glob([
+    '@/pages/**/index.config.tsx'
+], { eager: true })
 
-const PagesList = import.meta.glob(['@/pages/**/index.tsx', '@/pages/**/*.tsx', '!@/pages/**/components/**', '!@/pages/**/index.config.ts'], {  })
+const PagesList = import.meta.glob([
+    '@/pages/**/index.tsx',
+    '@/pages/**/*.tsx',
+    '!@/pages/**/components/**',
+    '!@/pages/**/*.config.ts'
+])
+
 // 图标映射
 const iconMap = new Map(
     Object.entries(Icons)
@@ -23,240 +33,221 @@ const iconMap = new Map(
         .map(([key, value]) => [key.replace('Outlined', '').toLowerCase(), value])
 )
 
-// 从路径中获取组件名称
-function getComponentName(path: string): string {
-    const parts = path.split('/')
-    // 如果是 index.tsx，使用父文件夹名称
-    if (parts[parts.length - 1] === 'index.tsx') {
-        return parts[parts.length - 2]
-    }
-    // 否则使用文件名（不含扩展名）
-    return parts[parts.length - 1].replace('.tsx', '')
-}
-
-// 获取组件的路由配置
-function getRouteConfig(component: any, path: string): RouteConfig {
-    // 先尝试获取组件自身的配置
-    const config = component.routeConfig || {}
-    
-    if (!config.title) {
-        // 尝试获取目录配置
-        const dirConfigPath = path.replace(/\/[^/]+$/, '/index.config.ts')
-        const dirConfig = configs[dirConfigPath]?.routeConfig
-
-        if (dirConfig) {
-            return dirConfig
-        }
-
-        // 如果都没有，使用默认配置
-        const name = getComponentName(path)
-        return {
-            title: name.charAt(0).toUpperCase() + name.slice(1),
-            icon: generateIcon(name),
-            layout: true,
-            auth: true
-        }
-    }
-
-    return config
-}
-
-// 生成图标组件
-function generateIcon(iconName: string) {
-    const Icon = iconMap.get(iconName.toLowerCase())
-    return Icon ? React.createElement(Icon) : null
-}
-
-// 处理路由路径
-function formatRoutePath(parts: string[]): string {
-    // 移除最后的 index.tsx
-    if (parts[parts.length - 1] === 'index.tsx') {
-        parts.pop()
-    } else {
-        // 将最后一个元素的 .tsx 去掉
-        parts[parts.length - 1] = parts[parts.length - 1].replace('.tsx', '')
-    }
-    return '/' + parts.join('/')
-}
-
-// 从完整路径中获取相对路径部分
-function getRelativePath(fullPath: string): string[] {
-    // 移除开头的 @/pages/ 或 /src/pages/
-    const relativePath = fullPath
-        .replace(/^@\/pages\//, '')
-        .replace(/^\/src\/pages\//, '')
-    return relativePath.split('/')
-}
-
-// 路由排序
-function sortRoutes(routes: CoRouteObject[]): CoRouteObject[] {
-    return routes
-        .sort((a, b) => (a.meta?.sort || 0) - (b.meta?.sort || 0))
-        .map(route => ({
-            ...route,
-            children: route.children ? sortRoutes(route.children) : undefined
-        }))
-}
-
-// 创建路由树节点
+// 路由节点类型
 interface RouteNode extends CoRouteObject {
     children?: RouteNode[]
     isFile?: boolean
 }
 
-// 获取目录配置
-function getDirConfig(parts: string[]): RouteConfig {
-    // 从当前层级往上查找配置文件
-    for (let i = parts.length - 1; i >= 0; i--) {
-        const configPath = `/src/pages/${parts.slice(0, i + 1).join('/')}/${CONFIG_FILE_REGEX}`
-        const dirConfig = configs[configPath]?.routeConfig
-        if (dirConfig) {
-            return dirConfig
-        }
-    }
+// 路由工具函数
+const routeUtils = {
+    // 获取组件名称
+    getComponentName(path: string): string {
+        const parts = path.split('/')
+        return parts[parts.length - 1] === 'index.tsx'
+            ? parts[parts.length - 2]
+            : parts[parts.length - 1].replace('.tsx', '')
+    },
 
-    // 如果没有找到配置，使用默认配置
-    const name = parts[parts.length - 1]
-    return {
-        title: name.charAt(0).toUpperCase() + name.slice(1),
-        icon: generateIcon(name)
+    // 生成图标
+    generateIcon(iconName: string) {
+        const Icon = iconMap.get(iconName.toLowerCase())
+        return Icon ? React.createElement(Icon) : null
+    },
+
+    // 格式化路径
+    formatRoutePath(parts: string[]): string {
+        return '/' + parts
+            .filter(part => part !== 'index.tsx')
+            .map(part => part.replace('.tsx', ''))
+            .join('/')
+    },
+
+    // 获取相对路径
+    getRelativePath(fullPath: string): string[] {
+        return fullPath
+            .replace(/^@\/pages\//, '')
+            .replace(/^\/src\/pages\//, '')
+            .split('/')
+    },
+
+    // 判断是否是同级路由
+    isSameLevel(fileName: string, parentName: string): boolean {
+        return fileName === 'index.tsx' || fileName.replace('.tsx', '') === parentName
     }
 }
 
-// 创建路由树
-function createRouteTree(paths: string[]): RouteNode[] {
-    const tree: RouteNode[] = []
-    const moduleMap = new Map<string, RouteNode>()
+// 路由配置处理函数
+const routeConfigHandler = {
+    // 获取组件配置
+    getRouteConfig(component: any, path: string): RouteConfig {
+        // 1. 优先使用组件内部配置
+        if (component.routeConfig) {
+            return component.routeConfig
+        }
 
-    paths.forEach(path => {
-        const parts = getRelativePath(path)
+        // 2. 尝试获取目录配置文件
+        const pathParts = path.split('/')
+        let currentPath = ''
+        
+        // 从当前层级往上查找配置文件
+        for (let i = pathParts.length - 1; i >= 0; i--) {
+            currentPath = pathParts.slice(0, i).join('/')
+            const configPath = `/src/pages/${currentPath}/${CONFIG_FILE_REGEX}`
+            const dirConfig = configs[configPath]?.routeConfig
+
+            if (dirConfig) {
+                return {
+                    ...dirConfig,
+                    // 如果是子路由，使用自己的标题
+                    title: i === pathParts.length - 1 ? dirConfig.title : 
+                        routeUtils.getComponentName(path).charAt(0).toUpperCase() + 
+                        routeUtils.getComponentName(path).slice(1)
+                }
+            }
+        }
+
+        // 3. 使用默认配置
+        const name = routeUtils.getComponentName(path)
+        return {
+            title: name.charAt(0).toUpperCase() + name.slice(1),
+            icon: routeUtils.generateIcon(name),
+            layout: true,
+            auth: true
+        }
+    },
+
+    // 创建路由节点
+    createRouteNode(path: string, config: RouteConfig): RouteNode {
+        const component = lazy(() => PagesList[path]())
+        return {
+            path: routeUtils.formatRoutePath(routeUtils.getRelativePath(path)),
+
+            element: React.createElement(component),
+            meta: {
+                title: config.title,
+                icon: config.icon,
+                roles: config.roles,
+                sort: config.sort,
+                layout: config.layout,
+                auth: config.auth
+            },
+            hidden: config.hidden,
+            isFile: true
+        }
+    }
+}
+
+// 路由树处理函数
+const routeTreeHandler = {
+    // 创建路由树
+    createRouteTree(paths: string[]): RouteNode[] {
+        const tree: RouteNode[] = []
+        const moduleMap = new Map<string, RouteNode>()
+
+        // 处理所有路由
+        paths.forEach(path => {
+            if (path.endsWith('.config.ts') || path.endsWith('.config.tsx')) return
+
+            const parts = routeUtils.getRelativePath(path)
+            const config = routeConfigHandler.getRouteConfig(pages[path], path)
+            const route = routeConfigHandler.createRouteNode(path, config)
+
+            // 处理路由层级
+            this.handleRouteLevels(route, parts, tree, moduleMap)
+        })
+
+        return this.sortRoutes(tree)
+    },
+
+    // 处理路由层级
+    handleRouteLevels(route: RouteNode, parts: string[], tree: RouteNode[], moduleMap: Map<string, RouteNode>) {
         const fileName = parts[parts.length - 1]
+        const isFirstLevel = parts.length === 1 || 
+            (parts.length === 2 && routeUtils.isSameLevel(fileName, parts[0]))
 
-        // 跳过配置文件
-        if (fileName === CONFIG_FILE_REGEX) {
+        if (isFirstLevel) {
+            tree.push(route)
             return
         }
 
-        const config = getRouteConfig(pages[path], path)
+        // 处理多级路由
+        let currentPath = ''
+        let currentParent: RouteNode | undefined
+        
+        // 逐级创建或获取父级路由
+        for (let i = 0; i < parts.length - 1; i++) {
+            const parentPath = parts.slice(0, i + 1).join('/')
+            currentPath = parentPath
 
-        // 判断是否是同级路由
-        const isSameLevel = fileName === 'index.tsx' || 
-            fileName.replace('.tsx', '') === parts[parts.length - 2]
-            
-        // 处理文件节点
-        if (parts.length === 1 || (parts.length === 2 && isSameLevel)) {
-            // 一级路由
-            const Comp = lazy(() => PagesList[path]())
-            const route: RouteNode = {
-                path: formatRoutePath(parts),
-                element: React.createElement(Comp),
-                meta: {
-                    title: config.title,
-                    icon: config.icon,
-                    roles: config.roles,
-                    sort: config.sort,
-                    layout: config.layout,
-                    auth: config.auth
-                },
-                hidden: config.hidden,
-                isFile: true
-            }
-            tree.push(route)
-        } else {
-            // 处理多级路由
-            const pathParts = parts.slice(0, -1) // 移除文件名，获取目录路径
-            let currentLevel = tree
-            let currentPath: string[] = []
-
-            // 逐级创建或获取路由节点
-            for (let i = 0; i < pathParts.length; i++) {
-                currentPath.push(pathParts[i])
-                const dirConfig = getDirConfig(currentPath)
-                const routePath = `/${currentPath.join('/')}`
-
-                let moduleRoute = moduleMap.get(routePath)
-                if (!moduleRoute) {
-                    moduleRoute = {
-                        path: routePath,
-                        meta: {
-                            title: dirConfig.title,
-                            icon: dirConfig.icon,
-                            roles: dirConfig.roles,
-                            sort: dirConfig.sort,
-                            layout: dirConfig.layout,
-                            auth: dirConfig.auth
-                        },
-                        hidden: dirConfig.hidden,
-                        children: []
-                    }
-                    moduleMap.set(routePath, moduleRoute)
-                    
-                    // 只在当前层级添加路由
-                    if (i === 0) {
-                        tree.push(moduleRoute)
-                    } else {
-                        const parentPath = `/${currentPath.slice(0, -1).join('/')}`
-                        const parent = moduleMap.get(parentPath)
-                        if (parent && parent.children) {
-                            parent.children.push(moduleRoute)
-                        }
-                    }
+            if (!moduleMap.has(parentPath)) {
+                // 尝试获取父级配置
+                const configPath = `/src/pages/${parentPath}/${CONFIG_FILE_REGEX}`
+                const parentConfig = configs[configPath]?.routeConfig || {
+                    title: parts[i].charAt(0).toUpperCase() + parts[i].slice(1),
+                    icon: routeUtils.generateIcon(parts[i])
                 }
 
-                currentLevel = moduleRoute.children as RouteNode[]
-            }
-
-            // 创建文件路由
-            const Comp = lazy(() => PagesList[path]())
-            const fileRoute: RouteNode = {
-                path: formatRoutePath(parts),
-                element: React.createElement(Comp),
-                meta: {
-                    title: config.title,
-                    icon: config.icon,
-                    roles: config.roles,
-                    sort: config.sort,
-                    layout: config.layout,
-                    auth: config.auth
-                },
-                hidden: config.hidden,
-                isFile: true
-            }
-
-            // 如果是同级路由，添加到父级的同级
-            if (isSameLevel) {
-                const parentPath = `/${currentPath.slice(0, -1).join('/')}`
-                const parentLevel = parentPath === '' ? tree : moduleMap.get(parentPath)?.children as RouteNode[]
-                if (parentLevel) {
-                    parentLevel.push(fileRoute)
+                const parentRoute: RouteNode = {
+                    path: `/${parentPath}`,
+                    meta: {
+                        title: parentConfig.title,
+                        icon: parentConfig.icon,
+                        roles: parentConfig.roles,
+                        sort: parentConfig.sort,
+                        layout: parentConfig.layout,
+                        auth: parentConfig.auth
+                    },
+                    hidden: parentConfig.hidden,
+                    children: []
                 }
-            } else {
-                currentLevel.push(fileRoute)
+
+                moduleMap.set(parentPath, parentRoute)
+
+                if (i === 0) {
+                    // 一级路由直接添加到树中
+                    tree.push(parentRoute)
+                } else if (currentParent?.children) {
+                    // 将当前路由添加到父路由的子路由中
+                    currentParent.children.push(parentRoute)
+                }
             }
+
+            currentParent = moduleMap.get(parentPath)
         }
-    })
 
-    return sortRoutes(tree)
+        // 将当前路由添加到最后一级父路由的子路由中
+        if (currentParent?.children) {
+            currentParent.children.push(route)
+        }
+    },
+
+    // 路由排序
+    sortRoutes(routes: RouteNode[]): RouteNode[] {
+        return routes
+            .sort((a, b) => (a.meta?.sort || 0) - (b.meta?.sort || 0))
+            .map(route => ({
+                ...route,
+                children: route.children ? this.sortRoutes(route.children) : undefined
+            }))
+    }
 }
 
 // 生成路由配置
 export function generateRoutes(): { layoutRoutes: CoRouteObject[], independentRoutes: CoRouteObject[] } {
-    const allRoutes = createRouteTree(Object.keys(pages))
-    const layoutRoutes: CoRouteObject[] = []
-    const independentRoutes: CoRouteObject[] = []
-
+    const allRoutes = routeTreeHandler.createRouteTree(Object.keys(pages))
+    
     // 分离布局路由和独立路由
-    allRoutes.forEach(route => {
+    return allRoutes.reduce((acc, route) => {
         if (route.meta?.layout === false) {
-            independentRoutes.push(route)
+            acc.independentRoutes.push(route)
         } else {
-            layoutRoutes.push(route)
+            acc.layoutRoutes.push(route)
         }
+        return acc
+    }, { layoutRoutes: [], independentRoutes: [] } as { 
+        layoutRoutes: CoRouteObject[], 
+        independentRoutes: CoRouteObject[] 
     })
-
-    return {
-        layoutRoutes,
-        independentRoutes
-    }
 }
 
