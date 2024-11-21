@@ -214,15 +214,15 @@ class MenuStore {
         }
     }
 
-    initRoutesAndMenu(routes: CoRouteObject[]) {
+    initRoutesAndMenu(rootRoute: CoRouteObject) {
         // 避免因为menuList的改变导致重新渲染
-        runInAction(() => {
-            const rootRoute = routes.find(route => route.root)
+        // runInAction(() => {
+            // const rootRoute = routes.find(route => route.root)
             if (rootRoute?.children) {
                 const menu = this.routesToMenuItems(rootRoute.children)
                 this.setMenuList(menu)
             }
-        })
+
     }
 }
 

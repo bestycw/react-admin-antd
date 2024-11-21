@@ -10,7 +10,7 @@ export const routeConfig: RouteConfig = {
     icon: <StopOutlined />,
     layout: false,
     auth: false,
-    hidden: true // 在菜单中隐藏
+    // hidden: true // 在菜单中隐藏
 }
 
 const Forbidden: React.FC = () => {

@@ -11,7 +11,7 @@ import Layout from '../layout'
 export  function createRoutes(): CoRouteObject[] {
     // 生成动态路由
     const { layoutRoutes, independentRoutes } =  generateRoutes()
-    console.log('routes init',layoutRoutes,independentRoutes)
+    // console.log('routes init',layoutRoutes,independentRoutes)
     const rootRoute: CoRouteObject = {
         path: '/',
         root: true,

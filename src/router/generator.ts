@@ -91,9 +91,9 @@ export function generateRoutes(): { layoutRoutes: CoRouteObject[], independentRo
     for (const [path, module] of Object.entries(pages)) {
         const parts = getRelativePath(path)
         const config = getRouteConfig(module, path)
-        console.log('config', PagesList[path])
+        // console.log('config', PagesList[path])
         // 创建路由对象
-        console.log('module', module)
+        // console.log('module', module)
         const Comp = lazy(() => PagesList[path]())
         const route: CoRouteObject = {
             path: formatRoutePath(parts),

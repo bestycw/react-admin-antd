@@ -102,9 +102,9 @@ class UserStore {
     }
 
     setAllRoutes(routes: CoRouteObject[]) {
-        runInAction(() => {
+        // runInAction(() => {
             this.allRoutes = routes
-        })
+        // })
     }
 
     // get realDynamicRoutes() {
@@ -148,6 +148,47 @@ class UserStore {
     logout() {
         this.clearUserInfo()
         window.location.href = '/login'
+    }
+
+    // 根据用户角色过滤路由
+    filterRoutesByRoles(routes: CoRouteObject[]): CoRouteObject[] {
+        return routes.map(route => {
+            // 创建新的路由对象，避免修改原对象
+            const newRoute = { ...route }
+
+            // 检查路由是否需要权限控制
+            if (newRoute.meta?.roles?.length) {
+                // 如果用户没有该路由所需的任何角色，则隐藏该路由
+                if (!this.hasAnyRole(newRoute.meta.roles)) {
+                    newRoute.hidden = true
+                }
+            }
+
+            // 递归处理子路由
+            if (newRoute.children) {
+                newRoute.children = this.filterRoutesByRoles(newRoute.children)
+                
+                // 如果所有子路由都被隐藏，则也隐藏父路由
+                if (newRoute.children.every(child => child.hidden)) {
+                    newRoute.hidden = true
+                }
+            }
+
+            return newRoute
+        }).filter(route => {
+            // 过滤掉不需要显示的路由
+            if (route.hidden) {
+                return false
+            }
+
+            // 如果是根路由或没有子路由，直接返回
+            if (route.root || !route.children) {
+                return true
+            }
+
+            // 如果有子路由，确保至少有一个可见的子路由
+            return route.children.some(child => !child.hidden)
+        })
     }
 }
 
