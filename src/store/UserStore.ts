@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from "mobx"
 import { CoRouteObject } from "../types/route.d"
-import getGlobalConfig from "../config/GlobalConfig"
-import { fetchBackendRoutes, formatBackendRoutes } from "../router/old_index"
+// import getGlobalConfig from "../config/GlobalConfig"
+// import { fetchBackendRoutes, formatBackendRoutes } from "../router/old_index"
 
 export interface UserInfo {
     username: string
@@ -28,7 +28,7 @@ class UserStore {
         const storedUserInfo = localStorage.getItem('userInfo')
         const token = localStorage.getItem('token')
         const expiresAt = localStorage.getItem('tokenExpiresAt')
-        
+        // console.log('storedUserInfo', storedUserInfo)
         if (storedUserInfo && token) {
             if (expiresAt && new Date().getTime() < parseInt(expiresAt)) {
                 runInAction(() => {
@@ -69,6 +69,7 @@ class UserStore {
     }
 
     setUserInfo(userInfo: UserInfo, remember = false) {
+        // console.log('setUserInfo', userInfo)
         runInAction(() => {
             this.userInfo = userInfo
             this.isLogin = true
@@ -119,10 +120,6 @@ class UserStore {
         return this.allRoutes.length > 0
     }
 
-    get userRoleValue(): number {
-        return this.userInfo?.rolesValue ?? -1
-    }
-
     get userName(): string {
         return this.userInfo?.username ?? ''
     }
@@ -136,7 +133,10 @@ class UserStore {
     }
 
     hasAnyRole(roles: string[]): boolean {
-        return this.userInfo?.roles?.some(role => roles.includes(role)) ?? false
+        if (!roles?.length) return true // 如果没有指定角色要求，则默认有权限
+        return this.userInfo?.roles?.some(userRole => 
+            roles.includes(userRole)
+        ) ?? false
     }
 
     hasAllRoles(roles: string[]): boolean {
@@ -158,7 +158,7 @@ class UserStore {
 
             // 检查路由是否需要权限控制
             if (newRoute.meta?.roles?.length) {
-                // 如果用户没有该路由所需的任何角色，则隐藏该路由
+                // 如果用户没有该路由所需的任意一个角色，则隐藏该路由
                 if (!this.hasAnyRole(newRoute.meta.roles)) {
                     newRoute.hidden = true
                 }
