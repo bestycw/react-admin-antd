@@ -124,8 +124,8 @@ const Login = observer(() => {
       UserStore.setUserInfo(userInfo, values.remember);
 
       // 2. 获取动态路由
-      const routes = await UserStore.getDynamicRoutes();
-      UserStore.setDynamicRoutes(routes);
+      // const routes = await UserStore.getDynamicRoutes();
+      // UserStore.setDynamicRoutes(routes);
 
       message.success(t('login.loginSuccess'));
       // 4. 使用 replace 进行导航，避免历史记录

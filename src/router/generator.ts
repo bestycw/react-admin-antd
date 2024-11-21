@@ -7,7 +7,7 @@ import React from 'react'
 const pages = import.meta.glob(['@/pages/**/index.tsx', '@/pages/**/*.tsx', '!@/pages/**/components/**'], {  
     eager: true
 })
-const PagesList = import.meta.glob(['@/pages/**/index.tsx', '@/pages/**/*.tsx', '!@/pages/**/components/**'])
+// const PagesList = import.meta.glob(['@/pages/**/index.tsx', '@/pages/**/*.tsx', '!@/pages/**/components/**'])
 
 // 图标映射
 const iconMap = new Map(
@@ -91,11 +91,13 @@ export function generateRoutes(): { layoutRoutes: CoRouteObject[], independentRo
     for (const [path, module] of Object.entries(pages)) {
         const parts = getRelativePath(path)
         const config = getRouteConfig(module, path)
-        console.log('config', PagesList[path])
+        // console.log('config', PagesList[path])
         // 创建路由对象
+        const Comp = lazy(module.default)
         const route: CoRouteObject = {
             path: formatRoutePath(parts),
-            element: lazy(PagesList[path]),
+            // element: lazy(PagesList[path]),
+            element:  React.createElement(Comp),
             meta: {
                 title: config.title,
                 icon: config.icon,
@@ -106,7 +108,7 @@ export function generateRoutes(): { layoutRoutes: CoRouteObject[], independentRo
             },
             hidden: config.hidden
         }
-
+        // route.element = React.createElement(Comp)
         // 判断是否需要布局
         if (config.layout === false) {
             // 独立路由
