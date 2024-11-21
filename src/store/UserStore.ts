@@ -69,7 +69,7 @@ class UserStore {
     }
 
     setUserInfo(userInfo: UserInfo, remember = false) {
-        // console.log('setUserInfo', userInfo)
+        console.log('Setting user info:', userInfo)
         runInAction(() => {
             this.userInfo = userInfo
             this.isLogin = true
@@ -133,6 +133,10 @@ class UserStore {
     }
 
     hasAnyRole(roles: string[]): boolean {
+        console.log('Checking roles:', {
+            userRoles: this.userInfo?.roles,
+            requiredRoles: roles
+        })
         if (!roles?.length) return true // 如果没有指定角色要求，则默认有权限
         return this.userInfo?.roles?.some(userRole => 
             roles.includes(userRole)
@@ -153,12 +157,15 @@ class UserStore {
     // 根据用户角色过滤路由
     filterRoutesByRoles(routes: CoRouteObject[]): CoRouteObject[] {
         return routes.map(route => {
-            // 创建新的路由对象，避免修改原对象
             const newRoute = { ...route }
 
             // 检查路由是否需要权限控制
             if (newRoute.meta?.roles?.length) {
-                // 如果用户没有该路由所需的任意一个角色，则隐藏该路由
+                console.log('Checking route:', {
+                    path: newRoute.path,
+                    roles: newRoute.meta.roles,
+                    hasAccess: this.hasAnyRole(newRoute.meta.roles)
+                })
                 if (!this.hasAnyRole(newRoute.meta.roles)) {
                     newRoute.hidden = true
                 }
