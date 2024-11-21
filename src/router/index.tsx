@@ -1,6 +1,6 @@
 import { generateRoutes } from './generator'
 import { CoRouteObject } from '../types/route.d'
-import { lazy } from 'react'
+// import { lazy } from 'react'
 import React from 'react'
 import Layout from '../layout'
 
@@ -14,6 +14,7 @@ export  function createRoutes(): CoRouteObject[] {
     console.log('routes init',layoutRoutes,independentRoutes)
     const rootRoute: CoRouteObject = {
         path: '/',
+        root: true,
         element: <Layout></Layout>,
         children: layoutRoutes
     }
