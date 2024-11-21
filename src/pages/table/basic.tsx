@@ -85,7 +85,7 @@ const BasicTable: React.FC = observer(() => {
     }, [])
 
     return (
-        <div className="p-6">
+        <div>
             <Card title="基础表格">
                 <Table
                     columns={columns}

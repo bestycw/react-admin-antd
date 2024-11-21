@@ -322,7 +322,7 @@ const AdvanceTable: React.FC = observer(() => {
     }, [])
 
     return (
-        <div className="p-6">
+        <div >
             {/* 搜索表单 */}
             <Card className="mb-4">
                 <Form
