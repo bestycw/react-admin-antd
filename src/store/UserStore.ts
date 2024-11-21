@@ -133,10 +133,10 @@ class UserStore {
     }
 
     hasAnyRole(roles: string[]): boolean {
-        console.log('Checking roles:', {
-            userRoles: this.userInfo?.roles,
-            requiredRoles: roles
-        })
+        // console.log('Checking roles:', {
+        //     userRoles: this.userInfo?.roles,
+        //     requiredRoles: roles
+        // })
         if (!roles?.length) return true // 如果没有指定角色要求，则默认有权限
         return this.userInfo?.roles?.some(userRole => 
             roles.includes(userRole)
@@ -161,11 +161,11 @@ class UserStore {
 
             // 检查路由是否需要权限控制
             if (newRoute.meta?.roles?.length) {
-                console.log('Checking route:', {
-                    path: newRoute.path,
-                    roles: newRoute.meta.roles,
-                    hasAccess: this.hasAnyRole(newRoute.meta.roles)
-                })
+                // console.log('Checking route:', {
+                //     path: newRoute.path,
+                //     roles: newRoute.meta.roles,
+                //     hasAccess: this.hasAnyRole(newRoute.meta.roles)
+                // })
                 if (!this.hasAnyRole(newRoute.meta.roles)) {
                     newRoute.hidden = true
                 }
