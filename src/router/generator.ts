@@ -94,11 +94,11 @@ export function generateRoutes(): { layoutRoutes: CoRouteObject[], independentRo
         console.log('config', PagesList[path])
         // 创建路由对象
         console.log('module', module)
-        const Comp = lazy(PagesList[path])
+        const Comp = lazy(() => PagesList[path]())
         const route: CoRouteObject = {
             path: formatRoutePath(parts),
             // element: lazy(PagesList[path]),
-            element:  React.createElement(Comp),
+            element: React.createElement(Comp),
             meta: {
                 title: config.title,
                 icon: config.icon,
