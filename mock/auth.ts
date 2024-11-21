@@ -1,4 +1,4 @@
-import { DynamicRoutes } from '../src/router'
+// import { DynamicRoutes } from '../src/router'
 import Mock from 'mockjs'
 
 const { Random } = Mock
@@ -59,7 +59,7 @@ Mock.mock('/api/auth/routes', 'get', (options) => {
     return {
       code: 200,
       message: 'success',
-      data: DynamicRoutes
+      data: []
     }
 //   }
 //   return {

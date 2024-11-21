@@ -218,7 +218,6 @@ class MenuStore {
         // 避免因为menuList的改变导致重新渲染
         runInAction(() => {
             const rootRoute = routes.find(route => route.root)
-            console.log(rootRoute)
             if (rootRoute?.children) {
                 const menu = this.routesToMenuItems(rootRoute.children)
                 this.setMenuList(menu)

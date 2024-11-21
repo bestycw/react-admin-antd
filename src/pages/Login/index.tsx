@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../store";
 import { Form, Input, Button, Checkbox, message } from 'antd';
-import { UserOutlined, LockOutlined, SunOutlined, MoonOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, SunOutlined, MoonOutlined, LoginOutlined } from '@ant-design/icons';
 import Particles from "react-particles";
 import { loadSlim } from "tsparticles-slim";
 import type { Engine, IOptions, RecursivePartial } from "tsparticles-engine";
@@ -17,6 +17,16 @@ import LanguageSwitch from '../../components/LanguageSwitch';
 import './index.scss';
 import React from "react";
 import { runInAction } from "mobx";
+import type { RouteConfig } from '@/types/route'
+
+// 路由配置
+export const routeConfig: RouteConfig = {
+    title: '登录',
+    icon: <LoginOutlined />,
+    layout: false,
+    auth: false,
+    sort: 999 // 放在最后
+}
 
 interface LoginForm {
   username: string;

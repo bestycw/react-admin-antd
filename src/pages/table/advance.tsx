@@ -9,10 +9,21 @@ import {
     SearchOutlined, ReloadOutlined, PlusOutlined,
     EditOutlined, DeleteOutlined, ExportOutlined,
     ImportOutlined, SettingOutlined, DownloadOutlined,
-    EyeOutlined
+    EyeOutlined, TableOutlined
 } from '@ant-design/icons'
+import type { RouteConfig } from '@/types/route'
 
 const { RangePicker } = DatePicker
+
+// 路由配置
+export const routeConfig: RouteConfig = {
+    title: '高级表格',
+    icon: <TableOutlined />,
+    layout: true,
+    auth: true,
+    sort: 2,
+    roles: ['admin'] // 可以添加权限控制
+}
 
 // 定义表格数据类型
 interface TableItem {

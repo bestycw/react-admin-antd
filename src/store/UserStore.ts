@@ -2,7 +2,7 @@
 import { makeAutoObservable, runInAction } from "mobx"
 import { CoRouteObject } from "../types/route.d"
 import getGlobalConfig from "../config/GlobalConfig"
-import { fetchBackendRoutes, formatBackendRoutes } from "../router"
+import { fetchBackendRoutes, formatBackendRoutes } from "../router/old_index"
 
 export interface UserInfo {
     username: string
@@ -47,19 +47,19 @@ class UserStore {
         }
     }
 
-    async getDynamicRoutes() {
-        try {
-            const backRoutes = await fetchBackendRoutes()
-            if (backRoutes) {
-                // 缓存动态路由
-                localStorage.setItem('dynamicRoutes', JSON.stringify(backRoutes))
-            }
-            return backRoutes
-        } catch (error) {
-            console.error('Failed to get dynamic routes:', error)
-            throw error
-        }
-    }
+    // async getDynamicRoutes() {
+    //     try {
+    //         const backRoutes = await fetchBackendRoutes()
+    //         if (backRoutes) {
+    //             // 缓存动态路由
+    //             localStorage.setItem('dynamicRoutes', JSON.stringify(backRoutes))
+    //         }
+    //         return backRoutes
+    //     } catch (error) {
+    //         console.error('Failed to get dynamic routes:', error)
+    //         throw error
+    //     }
+    // }
 
     setDynamicRoutes(routes: CoRouteObject[]) {
         runInAction(() => {
@@ -107,13 +107,13 @@ class UserStore {
         })
     }
 
-    get realDynamicRoutes() {
-        if (!this.dynamicRoutes.length) return []
+    // get realDynamicRoutes() {
+    //     if (!this.dynamicRoutes.length) return []
         
-        return getGlobalConfig('PermissionControl') === 'backend' 
-            ? formatBackendRoutes(this.dynamicRoutes)
-            : this.dynamicRoutes
-    }
+    //     return getGlobalConfig('PermissionControl') === 'backend' 
+    //         ? formatBackendRoutes(this.dynamicRoutes)
+    //         : this.dynamicRoutes
+    // }
 
     get hasAllRoutes() {
         return this.allRoutes.length > 0

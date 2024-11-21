@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { Table, Card } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { observer } from 'mobx-react-lite'
+import { TableOutlined } from '@ant-design/icons'
+import type { RouteConfig } from '@/types/route'
+
+// 在组件内部定义路由配置
+export const routeConfig: RouteConfig = {
+    title: '基础表格',
+    icon: <TableOutlined />,
+    layout: true,
+    auth: true,
+    sort: 1
+}
 
 // 定义表格数据类型
 interface TableItem {
