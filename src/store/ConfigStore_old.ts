@@ -8,16 +8,6 @@ type ComponentPosition = {
   menu: MenuPosition;
   userActions: UserActionsPosition;
 }
-
-const INIT_LAYOUT = 0x011111101
-const LAYOUT = {
-    'mix':0x011111101,
-    'vertical':0x011011011,
-    'horizontal':0x101101101,
-}
-const LogoSite = 0x000000101
-const MenuSite = 0x000111000
-const UserActionsSite = 0x011000000
 class ConfigStore {
   // 基础配置
   themeStyle: ThemeStyle = 'dynamic'
