@@ -24,13 +24,14 @@ const App = observer(() => {
 
         console.log('UserStore.hasAllRoutes', UserStore.hasAllRoutes)
         if (!UserStore.hasAllRoutes) {
-            console.log('Filtering routes for user:', {
-                before: routes,
-                userRoles: UserStore.userRoles
-            })
+            // console.log('Filtering routes for user:', {
+            //     before: routes,
+            //     userRoles: UserStore.userRoles
+            // })
             renderRoutes = UserStore.filterRoutesByRoles(routes)
-            console.log('Routes after filtering:', renderRoutes)
+            // console.log('Routes after filtering:', renderRoutes)
             const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
+            console.log('rootRoute', rootRoute)
             runInAction(() => {
                 UserStore.setAllRoutes(renderRoutes)
                 MenuStore.initRoutesAndMenu(rootRoute)

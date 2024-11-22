@@ -108,14 +108,18 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
 
         return menuItems;
     };
-
+    const MenuOptions = mode === 'inline' ? {
+        openKeys: MenuStore.openKeys,
+        onOpenChange: (keys: string[]) => MenuStore.openKeys = keys
+    }:{}
     return (
         <div className="flex-1 overflow-hidden">
             <AntMenu
+                {...MenuOptions}
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
-                openKeys={mode === 'horizontal' ? [] : MenuStore.openKeys}
-                onOpenChange={(keys) => MenuStore.openKeys = keys}
+                // openKeys={ MenuStore.openKeys}
+                // onOpenChange={(keys) => MenuStore.openKeys = keys}
                 mode={mode}
                 inlineCollapsed={collapsed}
                 className="menu-component !border-none"
