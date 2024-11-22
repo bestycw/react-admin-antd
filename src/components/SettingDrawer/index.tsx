@@ -101,7 +101,7 @@ const SettingDrawer = observer(() => {
           <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">导航模式</div>
           <Segmented
             block
-            value={!ConfigStore.isDrawerMode?ConfigStore.currentLayoutMode : 'HORIZONTAL'}
+            value={ConfigStore.currentLayoutMode }
             options={layoutOptions}
             onChange={(value) => ConfigStore.setLayoutMode(value as LayoutMode)}
             className="w-full"
