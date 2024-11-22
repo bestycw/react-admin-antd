@@ -22,6 +22,9 @@ export interface CoRouteObject extends Omit<RouteObject, 'path'> {
     title?: string
     icon?: React.ReactNode
     roles?: string[]
+    sort?: number
+    layout?: boolean
+    auth?: boolean
   }
   children?: CoRouteObject[]
   hidden?: boolean
