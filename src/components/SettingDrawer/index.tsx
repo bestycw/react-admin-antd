@@ -11,11 +11,10 @@ import {
   MoonOutlined,
   DesktopOutlined,
   PictureOutlined,
-  TagsOutlined,
-  SettingOutlined
+
 } from '@ant-design/icons'
 import CustomDrawer from '../CustomDrawer'
-import { LayoutMode, ThemeStyle, ThemeMode, MenuPosition } from '@/types/config'
+import { LayoutMode, ThemeStyle, ThemeMode } from '@/types/config'
 
 const SettingDrawer = observer(() => {
   const { ConfigStore } = useStore()
@@ -174,28 +173,32 @@ const SettingDrawer = observer(() => {
         )}
 
         {/* 其他设置 */}
-        <div className="setting-item">
-          <h4 className="mb-4 flex items-center">
-            <SettingOutlined className="mr-2" />
-            其他设置
-          </h4>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <div className="flex items-center justify-between">
-              <span>显示 Logo</span>
-              <Switch
-                checked={ConfigStore.showLogo}
-                onChange={() => ConfigStore.toggleLogo()}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <span>显示页签</span>
-              <Switch
-                checked={ConfigStore.showTabs}
-                onChange={() => ConfigStore.toggleTabs()}
-              />
-            </div>
-          </Space>
-        </div>
+        <div >
+        <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">其他设置</div>
+
+          {/* <div className="setting-item-content"> */}
+            <Space direction="vertical" style={{ width: '100%' }}>
+              {/* Logo显示控制 */}
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[rgba(0,0,0,.88)]">显示 Logo</span>
+                <Switch
+                  checked={ConfigStore.showLogo}
+                  onChange={(checked) => ConfigStore.toggleComponentShow('LOGO',checked)}
+                  className="ml-auto"
+                />
+              </div>
+              {/* 页签显示控制 */}
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[rgba(0,0,0,.88)]">显示页签</span>
+                <Switch
+                  checked={ConfigStore.showTabs}
+                  onChange={() => ConfigStore.toggleTabs()}
+                  className="ml-auto"
+                />
+              </div>
+            </Space>
+          </div> 
+        {/* </div> */}
 
       </div>
     </CustomDrawer>

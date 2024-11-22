@@ -119,7 +119,7 @@ class ConfigStore {
     // 初始化系统主题监听
     private initSystemTheme = () => {
         const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-        
+
         const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
             if (this.themeMode === 'system') {
                 this.updateThemeMode()
@@ -134,7 +134,7 @@ class ConfigStore {
 
     // 更新主题模式
     private updateThemeMode = () => {
-        const isDark = this.themeMode === 'dark' || 
+        const isDark = this.themeMode === 'dark' ||
             (this.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
 
         document.documentElement.classList.toggle('dark', isDark)
@@ -199,8 +199,11 @@ class ConfigStore {
      */
     toggleComponentPosition = (
         component: keyof typeof LayoutFlags,
-        position: 'IN_HEADER' | 'IN_SIDEBAR'
+
+        position: 'IN_HEADER' | 'IN_SIDEBAR' | 'MIX',
+        // isShow: boolean = true
     ) => {
+
         // 获取组件的位移量
         const shift = LayoutFlags[`${component}_SHIFT`]
         // 获取位置的位标记
@@ -212,7 +215,20 @@ class ConfigStore {
         console.log(this.layoutState)
         localStorage.setItem('layoutState', String(this.layoutState))
     }
-
+    toggleComponentShow = (
+        component: keyof typeof LayoutFlags,
+        isShow: boolean
+    ) => {
+        // 获取组件的位移量
+        const shift = LayoutFlags[`${component}_SHIFT`]
+        // 创建掩码 (11 << shift)
+        const mask = 0b11 << shift
+        // 设置新的位值
+        const newBits = isShow ? 0b11 : 0b00
+        // 更新状态
+        this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
+        localStorage.setItem('layoutState', String(this.layoutState))
+    }
     // 主题控制方法
     setThemeStyle = (style: 'dynamic' | 'classic') => {
         this.themeStyle = style
@@ -238,7 +254,7 @@ class ConfigStore {
 
     // 计算属性 - 主题配置
     get themeConfig(): ThemeConfig {
-        const isDark = this.themeMode === 'dark' || 
+        const isDark = this.themeMode === 'dark' ||
             (this.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
 
         return {
@@ -249,7 +265,7 @@ class ConfigStore {
 
     // 计算属性 - 是否暗色模式
     get isDark(): boolean {
-        return this.themeMode === 'dark' || 
+        return this.themeMode === 'dark' ||
             (this.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
     }
 
@@ -288,9 +304,9 @@ class ConfigStore {
         if (this.isDrawerMode) {
             return false
         }
-        return this.showHeaderLogo || 
-               this.showHeaderMenu || 
-               this.showHeaderUserActions
+        return this.showHeaderLogo ||
+            this.showHeaderMenu ||
+            this.showHeaderUserActions
     }
 
     // 计算属性 - 是否显示 Sidebar
@@ -306,23 +322,21 @@ class ConfigStore {
 
         // 非抽屉模式下，如果有任何组件需要在侧边显示，就显示侧边栏
         return this.showSidebarLogo ||
-               this.showSidebarMenu ||
-               this.showSidebarUserActions
+            this.showSidebarMenu ||
+            this.showSidebarUserActions
     }
 
     // 获取组件在当前布局下的位置
     getComponentPosition(component: keyof typeof LayoutFlags): 'IN_HEADER' | 'IN_SIDEBAR' | 'MIX' | undefined {
         const shift = LayoutFlags[`${component}_SHIFT`]
         const componentBits = (this.layoutState & (0b11 << shift)) >> shift
-        // console.log(component,componentBits)
-        // 检查组件在 header 和 sidebar 的显示状态
+
         const inHeader = (componentBits & LayoutFlags.IN_HEADER) !== 0
         const inSidebar = (componentBits & LayoutFlags.IN_SIDEBAR) !== 0
-        // console.log(component,inHeader,inSidebar)
         if (inHeader && inSidebar) return 'MIX'
         if (inHeader) return 'IN_HEADER'
         if (inSidebar) return 'IN_SIDEBAR'
-        return 
+        return
         // return 'none'
     }
 }
