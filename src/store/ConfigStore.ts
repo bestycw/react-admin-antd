@@ -197,6 +197,7 @@ class ConfigStore {
         const mask = 0b11 << shift
         // 设置新的位值
         this.layoutState = (this.layoutState & ~mask) | (positionBit << shift)
+        console.log(this.layoutState)
         localStorage.setItem('layoutState', String(this.layoutState))
     }
 
