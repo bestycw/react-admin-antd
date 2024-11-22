@@ -67,6 +67,7 @@ class ConfigStore {
 
         // 从本地存储加载其他配置
         const savedThemeStyle = localStorage.getItem('themeStyle')
+        console.log('savedThemeStyle', savedThemeStyle)
         if (savedThemeStyle === 'dynamic' || savedThemeStyle === 'classic') {
             this.themeStyle = savedThemeStyle
         }
