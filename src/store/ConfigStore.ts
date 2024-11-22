@@ -7,12 +7,12 @@ import getGlobalConfig from '../config/GlobalConfig'
 export const LayoutFlags = {
     // 组件位置标记 (每个组件占用2位)
     USER_ACTIONS: 0b110000, // 位 5-4
-    MENU:        0b001100, // 位 3-2
-    LOGO:        0b000011, // 位 1-0
+    MENU: 0b001100, // 位 3-2
+    LOGO: 0b000011, // 位 1-0
 
     // 位置标记 (每个组件的2位中)
-    IN_SIDEBAR:  0b10, // 第二位
-    IN_HEADER:   0b01, // 第一位
+    IN_SIDEBAR: 0b10, // 第二位
+    IN_HEADER: 0b01, // 第一位
 
     // 位移量
     USER_ACTIONS_SHIFT: 4,
@@ -22,9 +22,9 @@ export const LayoutFlags = {
 
 // 预定义布局模式
 export const LayoutModes = {
-    VERTICAL:   0b010101, // UserActions、Menu、Logo 都在 header
+    VERTICAL: 0b010101, // UserActions、Menu、Logo 都在 header
     HORIZONTAL: 0b101010, // UserActions、Menu、Logo 都在 sidebar
-    MIX:        0b111111  // UserActions、Menu、Logo 都在两个位置
+    MIX: 0b111111  // UserActions、Menu、Logo 都在两个位置
 } as const
 
 export type LayoutMode = keyof typeof LayoutModes
@@ -36,7 +36,7 @@ class ConfigStore {
     // 主题配置
     themeStyle: 'dynamic' | 'classic' = getGlobalConfig('DefaultThemeStyle')
     isDarkMode: boolean = getGlobalConfig('DefaultDarkMode')
-    
+
     // 其他状态
     sidebarCollapsed: boolean = false
     isDrawerMode: boolean = false
@@ -61,22 +61,25 @@ class ConfigStore {
         if (savedState && !isNaN(Number(savedState))) {
             this.layoutState = Number(savedState)
         } else {
-            // 设置默认布局模式
-            this.layoutState = LayoutModes.MIX // 使用默认的混合布局
+            this.layoutState = LayoutModes.MIX
         }
 
-        // 从本地存储加载其他配置
+        // 初始化主题风格
         const savedThemeStyle = localStorage.getItem('themeStyle')
-        console.log('savedThemeStyle', savedThemeStyle)
         if (savedThemeStyle === 'dynamic' || savedThemeStyle === 'classic') {
-            this.themeStyle = savedThemeStyle
+            this.setThemeStyle(savedThemeStyle)
+        } else {
+            this.setThemeStyle(this.themeStyle) // 使用默认值初始化
         }
 
+        // 初始化暗色模式
         const savedDarkMode = localStorage.getItem('darkMode')
         if (savedDarkMode !== null) {
             this.isDarkMode = savedDarkMode === 'true'
+            document.documentElement.classList.toggle('dark', this.isDarkMode)
         }
 
+        // 初始化标签页显示
         const savedShowTabs = localStorage.getItem('showTabs')
         if (savedShowTabs !== null) {
             this.showTabs = savedShowTabs === 'true'
@@ -112,7 +115,7 @@ class ConfigStore {
     // 初始化系统主题监听
     private initSystemTheme = () => {
         const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-        
+
         const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
             this.isDarkMode = e.matches
             document.documentElement.classList.toggle('dark', this.isDarkMode)
@@ -243,6 +246,34 @@ class ConfigStore {
             default:
                 return 'MIX'
         }
+    }
+
+    // 计算属性 - 是否显示 Header
+    get showHeader(): boolean {
+        console.log('showHeader',this.showHeaderLogo,this.showHeaderMenu,this.showHeaderUserActions)
+        if (this.isDrawerMode) {
+            return false
+        }
+        return this.showHeaderLogo || 
+               this.showHeaderMenu || 
+               this.showHeaderUserActions
+    }
+
+    // 计算属性 - 是否显示 Sidebar
+    get showSidebar(): boolean {
+        // // 抽屉模式下，如果有任何组件需要在侧边显示，就显示抽屉
+        if (this.isDrawerMode) {
+            return this.drawerVisible && (
+                this.showSidebarLogo ||
+                this.showSidebarMenu ||
+                this.showSidebarUserActions
+            )
+        }
+
+        // 非抽屉模式下，如果有任何组件需要在侧边显示，就显示侧边栏
+        return this.showSidebarLogo ||
+               this.showSidebarMenu ||
+               this.showSidebarUserActions
     }
 }
 
