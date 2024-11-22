@@ -36,22 +36,22 @@ const Sidebar = observer(() => {
 
   const drawerContent = (
     <div className="theme-style flex flex-col m-0" style={{ height: 'calc(100% - var(--header-margin-height))' }}>
-      {ConfigStore.showDrawerLogo && (
+      {/* {ConfigStore.showDrawerLogo && ( */}
         <Logo 
           collapsed={false} 
           className="p-4 h-14 shrink-0" 
         />
-      )}
+      {/* )} */}
 
-      {ConfigStore.showDrawerMenu && (
+      {/* {ConfigStore.showDrawerMenu && ( */}
         <div className="flex-1 overflow-hidden py-4">
           <Menu 
             mode="inline" 
             collapsed={false} 
           />
         </div>
-      )}
-      {ConfigStore.showDrawerUserActions && (
+      {/* )} */}
+      {/* {ConfigStore.showDrawerUserActions && ( */}
         <div className="mt-1 pt-2 border-t border-black/[0.02] dark:border-white/[0.02]">
           <div className="relative overflow-hidden m-2 rounded-2xl">
             <UserActions 
@@ -60,7 +60,7 @@ const Sidebar = observer(() => {
             />
           </div>
         </div>
-      )}
+      {/* )} */}
     </div>
   )
 

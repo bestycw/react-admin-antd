@@ -173,7 +173,9 @@ class ConfigStore {
                     break
             }
         }
-
+        if (this.isDrawerMode) {
+            newBits = 0b10
+        }
         this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
         StorageManager.set(STORAGE_KEYS.LAYOUT_STATE, this.layoutState)
     }
@@ -186,6 +188,7 @@ class ConfigStore {
                 this.isDrawerMode = true
                 this.drawerVisible = false
                 this.sidebarCollapsed = false
+                this.setLayoutMode('HORIZONTAL')
             } else {
                 this.isDrawerMode = false
                 this.sidebarCollapsed = StorageManager.get(STORAGE_KEYS.SIDEBAR_COLLAPSED, width < 1024)
@@ -254,7 +257,7 @@ class ConfigStore {
 
     // 设置布局模式
     setLayoutMode = (mode: LayoutMode) => {
-        this.layoutState = LayoutModes[mode]
+        this.layoutState = this.isDrawerMode ? LayoutModes.HORIZONTAL : LayoutModes[mode]
         StorageManager.set(STORAGE_KEYS.LAYOUT_STATE, this.layoutState)
     }
 
