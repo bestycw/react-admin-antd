@@ -29,13 +29,16 @@ export const LayoutModes = {
 
 export type LayoutMode = keyof typeof LayoutModes
 
+// 主题模式类型
+type ThemeMode = 'light' | 'dark' | 'system'
+
 class ConfigStore {
     // 布局状态 (6位二进制，从左到右每2位分别控制 UserActions、Menu、Logo)
     private layoutState: number = LayoutModes.MIX
 
     // 主题配置
     themeStyle: 'dynamic' | 'classic' = getGlobalConfig('DefaultThemeStyle')
-    isDarkMode: boolean = getGlobalConfig('DefaultDarkMode')
+    themeMode: ThemeMode = 'system'
 
     // 其他状态
     sidebarCollapsed: boolean = false
@@ -72,11 +75,12 @@ class ConfigStore {
             this.setThemeStyle(this.themeStyle) // 使用默认值初始化
         }
 
-        // 初始化暗色模式
-        const savedDarkMode = localStorage.getItem('darkMode')
-        if (savedDarkMode !== null) {
-            this.isDarkMode = savedDarkMode === 'true'
-            document.documentElement.classList.toggle('dark', this.isDarkMode)
+        // 初始化主题模式
+        const savedThemeMode = localStorage.getItem('themeMode') as ThemeMode
+        if (savedThemeMode) {
+            this.setThemeMode(savedThemeMode)
+        } else {
+            this.setThemeMode('system')
         }
 
         // 初始化标签页显示
@@ -115,22 +119,30 @@ class ConfigStore {
     // 初始化系统主题监听
     private initSystemTheme = () => {
         const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
+        
         const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
-            this.isDarkMode = e.matches
-            document.documentElement.classList.toggle('dark', this.isDarkMode)
-            this.updateThemeAlgorithm()
+            if (this.themeMode === 'system') {
+                this.updateThemeMode()
+            }
         }
 
         darkModeMediaQuery.addEventListener('change', handleThemeChange)
-        handleThemeChange(darkModeMediaQuery) // 初始化时执行一次
+        handleThemeChange(darkModeMediaQuery)
 
-        // 返回清理函数
         return () => darkModeMediaQuery.removeEventListener('change', handleThemeChange)
     }
 
+    // 更新主题模式
+    private updateThemeMode = () => {
+        const isDark = this.themeMode === 'dark' || 
+            (this.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+
+        document.documentElement.classList.toggle('dark', isDark)
+        this.updateThemeAlgorithm(isDark)
+    }
+
     // 更新主题算法
-    private updateThemeAlgorithm() {
+    private updateThemeAlgorithm = (isDark: boolean) => {
         this.themeToken = {
             colorPrimary: getGlobalConfig('DefaultColorPrimary'),
             borderRadius: getGlobalConfig('DefaultBorderRadius'),
@@ -210,32 +222,35 @@ class ConfigStore {
         localStorage.setItem('themeStyle', style)
     }
 
-    toggleDarkMode = () => {
-        this.isDarkMode = !this.isDarkMode
-        // 更新 DOM 类名
-        document.documentElement.classList.toggle('dark', this.isDarkMode)
-        localStorage.setItem('darkMode', String(this.isDarkMode))
+    // toggleDarkMode = () => {
+    //     this.isDarkMode = !this.isDarkMode
+    //     // 更新 DOM 类名
+    //     document.documentElement.classList.toggle('dark', this.isDarkMode)
+    //     localStorage.setItem('darkMode', String(this.isDarkMode))
+    // }
+
+    // 设置主题模式
+    setThemeMode = (mode: ThemeMode) => {
+        this.themeMode = mode
+        localStorage.setItem('themeMode', mode)
+        this.updateThemeMode()
     }
 
     // 计算属性 - 主题配置
     get themeConfig(): ThemeConfig {
-        const isDynamic = this.themeStyle === 'dynamic'
+        const isDark = this.themeMode === 'dark' || 
+            (this.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+
         return {
             token: this.themeToken,
-            algorithm: this.isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-            components: isDynamic ? {
-                Menu: {
-                    itemBg: 'transparent',
-                    subMenuItemBg: 'transparent',
-                    itemSelectedBg: 'transparent',
-                },
-                Layout: {
-                    bodyBg: 'transparent',
-                    headerBg: 'transparent',
-                    siderBg: 'transparent',
-                }
-            } : undefined
+            algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
         }
+    }
+
+    // 计算属性 - 是否暗色模式
+    get isDark(): boolean {
+        return this.themeMode === 'dark' || 
+            (this.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
     }
 
     // 组件显示状态
@@ -267,7 +282,7 @@ class ConfigStore {
         }
     }
 
-    // 计算属性 - 是否显示 Header
+    // 计算属性 - 否显示 Header
     get showHeader(): boolean {
         if (this.isDrawerMode) {
             return false

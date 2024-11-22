@@ -85,11 +85,11 @@ export const useUserActions = () => {
     },
     {
       key: 'theme',
-      icon: ConfigStore.isDarkMode ? 
+      icon: ConfigStore.isDark ? 
         <SunOutlined className="text-amber-500" /> : 
         <MoonOutlined className="text-blue-500" />,
-      label: ConfigStore.isDarkMode ? "亮色模式" : "暗色模式",
-      onClick: () => ConfigStore.toggleDarkMode()
+      label: ConfigStore.isDark ? "亮色模式" : "暗色模式",
+      onClick: () => ConfigStore.setThemeMode(ConfigStore.isDark ? 'light' : 'dark')
     },
     {
       key: 'fullscreen',

@@ -158,9 +158,9 @@ const Login = observer(() => {
               }
               text-secondary
             `}
-            onClick={() => ConfigStore.toggleDarkMode()}
+            onClick={() => ConfigStore.setThemeMode(ConfigStore.isDark ? 'light' : 'dark')}
           >
-            {ConfigStore.isDarkMode ? (
+            {ConfigStore.isDark ? (
               <SunOutlined className="text-lg text-amber-500" />
             ) : (
               <MoonOutlined className="text-lg text-blue-500" />
