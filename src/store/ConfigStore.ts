@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx'
 import { theme } from 'antd'
 import type { ThemeConfig } from 'antd'
 import getGlobalConfig from '../config/GlobalConfig'
-
+import StorageManager from '../utils/storageManager'
 // 布局位标记（从左到右：UserActions、Menu、Logo）
 export const LayoutFlags = {
     // 组件位置标记 (每个组件占用2位)
@@ -32,26 +32,35 @@ export type LayoutMode = keyof typeof LayoutModes
 // 主题模式类型
 type ThemeMode = 'light' | 'dark' | 'system'
 
+// 存储键定义
+const STORAGE_KEYS = {
+    LAYOUT_STATE: 'layoutState',
+    THEME_MODE: 'themeMode',
+    THEME_STYLE: 'themeStyle',
+    SHOW_TABS: 'showTabs',
+    SIDEBAR_COLLAPSED: 'sidebarCollapsed',
+    DRAWER_VISIBLE: 'drawerVisible',
+    SETTING_DRAWER_VISIBLE: 'settingDrawerVisible'
+} as const
+
 class ConfigStore {
-    // 布局状态 (6位二进制，从左到右每2位分别控制 UserActions、Menu、Logo)
+    // 布局状态
     private layoutState: number = LayoutModes.MIX
 
-    // 主题配置
+    // 主题相关状态
     themeStyle: 'dynamic' | 'classic' = getGlobalConfig('DefaultThemeStyle')
     themeMode: ThemeMode = 'system'
-
-    // 其他状态
-    sidebarCollapsed: boolean = false
-    isDrawerMode: boolean = false
-    drawerVisible: boolean = false
-    settingDrawerVisible: boolean = false
-    showTabs: boolean = true
-
-    // 主题相关状态
     private themeToken = {
         colorPrimary: getGlobalConfig('DefaultColorPrimary'),
         borderRadius: getGlobalConfig('DefaultBorderRadius'),
     }
+
+    // 其他状态
+    showTabs: boolean = true
+    sidebarCollapsed: boolean = false
+    isDrawerMode: boolean = false
+    drawerVisible: boolean = false
+    settingDrawerVisible: boolean = false
 
     constructor() {
         makeAutoObservable(this)
@@ -59,40 +68,114 @@ class ConfigStore {
     }
 
     private initConfig() {
-        // 从本地存储加载配置
-        const savedState = localStorage.getItem('layoutState')
-        if (savedState && !isNaN(Number(savedState))) {
-            this.layoutState = Number(savedState)
-        } else {
-            this.layoutState = LayoutModes.MIX
-        }
+        // 初始化布局状态
+        this.layoutState = StorageManager.get(
+            STORAGE_KEYS.LAYOUT_STATE,
+            LayoutModes.MIX
+        )
 
         // 初始化主题风格
-        const savedThemeStyle = localStorage.getItem('themeStyle')
-        if (savedThemeStyle === 'dynamic' || savedThemeStyle === 'classic') {
-            this.setThemeStyle(savedThemeStyle)
-        } else {
-            this.setThemeStyle(this.themeStyle) // 使用默认值初始化
-        }
+        const savedThemeStyle = StorageManager.get(
+            STORAGE_KEYS.THEME_STYLE,
+            getGlobalConfig('DefaultThemeStyle')
+        )
+        this.setThemeStyle(savedThemeStyle)
 
         // 初始化主题模式
-        const savedThemeMode = localStorage.getItem('themeMode') as ThemeMode
-        if (savedThemeMode) {
-            this.setThemeMode(savedThemeMode)
-        } else {
-            this.setThemeMode('system')
-        }
+        const savedThemeMode = StorageManager.get<ThemeMode>(
+            STORAGE_KEYS.THEME_MODE,
+            'system'
+        )
+        this.setThemeMode(savedThemeMode)
 
         // 初始化标签页显示
-        const savedShowTabs = localStorage.getItem('showTabs')
-        if (savedShowTabs !== null) {
-            this.showTabs = savedShowTabs === 'true'
+        this.showTabs = StorageManager.get(
+            STORAGE_KEYS.SHOW_TABS,
+            true
+        )
+
+        // 初始化侧边栏状态
+        this.sidebarCollapsed = StorageManager.get(
+            STORAGE_KEYS.SIDEBAR_COLLAPSED,
+            false
+        )
+
+        // 初始化响应式布局和系统主题
+        this.initViewportListener()
+        this.initSystemTheme()
+    }
+
+    // 设置主题模式
+    setThemeMode = (mode: ThemeMode) => {
+        this.themeMode = mode
+        StorageManager.set(STORAGE_KEYS.THEME_MODE, mode)
+        this.updateThemeMode()
+    }
+
+    // 设置主题风格
+    setThemeStyle = (style: 'dynamic' | 'classic') => {
+        this.themeStyle = style
+        StorageManager.set(STORAGE_KEYS.THEME_STYLE, style)
+        document.documentElement.classList.remove('theme-dynamic', 'theme-classic')
+        document.documentElement.classList.add(`theme-${style}`)
+    }
+
+    // 切换标签页显示
+    toggleTabs = () => {
+        this.showTabs = !this.showTabs
+        StorageManager.set(STORAGE_KEYS.SHOW_TABS, this.showTabs)
+    }
+
+    // 切换侧边栏折叠状态
+    toggleSidebar = () => {
+        if (!this.isDrawerMode) {
+            this.sidebarCollapsed = !this.sidebarCollapsed
+            StorageManager.set(STORAGE_KEYS.SIDEBAR_COLLAPSED, this.sidebarCollapsed)
+        }
+    }
+
+    // 切换组件位置
+    toggleComponentPosition = (
+        component: keyof typeof LayoutFlags,
+        position: 'IN_HEADER' | 'IN_SIDEBAR'
+    ) => {
+        // 获取组件的位移量
+        const shift = LayoutFlags[`${component}_SHIFT`]
+        // 获取位置的位标记
+        const positionBit = LayoutFlags[position]
+        // 创建掩码 (11 << shift)
+        const mask = 0b11 << shift
+        // 设置新的位值
+        this.layoutState = (this.layoutState & ~mask) | (positionBit << shift)
+        // this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
+        StorageManager.set(STORAGE_KEYS.LAYOUT_STATE, this.layoutState)
+    }
+
+    // 切换组件显示状态
+    toggleComponentShow = (
+        component: keyof typeof LayoutFlags,
+        isShow: boolean
+    ) => {
+        const shift = LayoutFlags[`${component}_SHIFT`]
+        const mask = 0b11 << shift
+
+        let newBits = 0b00
+        if (isShow) {
+            switch (this.currentLayoutMode) {
+                case 'VERTICAL':
+                    newBits = 0b01 // 只在 header 显示
+                    break
+                case 'HORIZONTAL':
+                    newBits = 0b10 // 只在 sidebar 显示
+                    break
+                case 'MIX':
+                    newBits = 0b11 // 在两个位置都显示
+                    break
+            }
         }
 
-        // 初始化响应式布局
-        this.initViewportListener()
-        // 初始化系统主题监听
-        this.initSystemTheme()
+        this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
+        StorageManager.set(STORAGE_KEYS.LAYOUT_STATE, this.layoutState)
     }
 
     // 初始化视口监听器
@@ -105,14 +188,13 @@ class ConfigStore {
                 this.sidebarCollapsed = false
             } else {
                 this.isDrawerMode = false
-                this.sidebarCollapsed = width < 1024
+                this.sidebarCollapsed = StorageManager.get(STORAGE_KEYS.SIDEBAR_COLLAPSED, width < 1024)
             }
         }
 
         window.addEventListener('resize', handleResize)
         handleResize() // 初始化时执行一次
 
-        // 返回清理函数
         return () => window.removeEventListener('resize', handleResize)
     }
 
@@ -120,14 +202,14 @@ class ConfigStore {
     private initSystemTheme = () => {
         const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
-        const handleThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
+        const handleThemeChange = () => {
             if (this.themeMode === 'system') {
                 this.updateThemeMode()
             }
         }
 
         darkModeMediaQuery.addEventListener('change', handleThemeChange)
-        handleThemeChange(darkModeMediaQuery)
+        handleThemeChange() // 初始化时执行一次
 
         return () => darkModeMediaQuery.removeEventListener('change', handleThemeChange)
     }
@@ -138,11 +220,11 @@ class ConfigStore {
             (this.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
 
         document.documentElement.classList.toggle('dark', isDark)
-        this.updateThemeAlgorithm(isDark)
+        this.updateThemeAlgorithm()
     }
 
     // 更新主题算法
-    private updateThemeAlgorithm = (isDark: boolean) => {
+    private updateThemeAlgorithm = () => {
         this.themeToken = {
             colorPrimary: getGlobalConfig('DefaultColorPrimary'),
             borderRadius: getGlobalConfig('DefaultBorderRadius'),
@@ -159,112 +241,21 @@ class ConfigStore {
         }
     }
 
-    // 标签页控制
-    toggleTabs = () => {
-        this.showTabs = !this.showTabs
-        localStorage.setItem('showTabs', String(this.showTabs))
-    }
-
     // 抽屉控制
     toggleDrawer = (type: 'setting' | 'sidebar') => {
         if (type === 'setting') {
             this.settingDrawerVisible = !this.settingDrawerVisible
+            StorageManager.set(STORAGE_KEYS.SETTING_DRAWER_VISIBLE, this.settingDrawerVisible)
         } else if (type === 'sidebar' && this.isDrawerMode) {
             this.drawerVisible = !this.drawerVisible
+            StorageManager.set(STORAGE_KEYS.DRAWER_VISIBLE, this.drawerVisible)
         }
     }
 
-    // 布局模式控制
+    // 设置布局模式
     setLayoutMode = (mode: LayoutMode) => {
         this.layoutState = LayoutModes[mode]
-        localStorage.setItem('layoutState', String(this.layoutState))
-    }
-
-    /**
-     * 设置组件在指定位置的显示状态
-     * @param component - 要设置的组件（'MENU' | 'LOGO' | 'USER_ACTIONS'）
-     * @param position - 要设置的位置（'IN_HEADER' | 'IN_SIDEBAR'）
-     * 
-     * 实现原理：
-     * 1. 获取组件的位移量（每个组件占用2位）
-     * 2. 获取位置的位标记（IN_HEADER: 01, IN_SIDEBAR: 10）
-     * 3. 创建掩码，用于清除原有位置信息
-     * 4. 将新的位值设置到对应位置
-     * 
-     * 示例：
-     * MENU 组件（占用第3、4位）设置为 header 位置
-     * 原状态：      00|10|00 (MENU在sidebar显示)
-     * 掩码：        11|00|11
-     * 新位值：      00|01|00 (MENU改为在header显示)
-     */
-    toggleComponentPosition = (
-        component: keyof typeof LayoutFlags,
-
-        position: 'IN_HEADER' | 'IN_SIDEBAR' | 'MIX',
-        // isShow: boolean = true
-    ) => {
-
-        // 获取组件的位移量
-        const shift = LayoutFlags[`${component}_SHIFT`]
-        // 获取位置的位标记
-        const positionBit = LayoutFlags[position]
-        // 创建掩码 (11 << shift)
-        const mask = 0b11 << shift
-        // 设置新的位值
-        this.layoutState = (this.layoutState & ~mask) | (positionBit << shift)
-        console.log(this.layoutState)
-        localStorage.setItem('layoutState', String(this.layoutState))
-    }
-    toggleComponentShow = (
-        component: keyof typeof LayoutFlags,
-        isShow: boolean
-    ) => {
-        // 获取组件的位移量
-        const shift = LayoutFlags[`${component}_SHIFT`]
-        // 创建掩码 (11 << shift)
-        const mask = 0b11 << shift
-        
-        // 根据布局模式决定显示位置
-        let newBits = 0b00
-        if (isShow) {
-            switch (this.currentLayoutMode) {
-                case 'VERTICAL':
-                    newBits = 0b01 // 只在 header 显示
-                    break
-                case 'HORIZONTAL':
-                    newBits = 0b10 // 只在 sidebar 显示
-                    break
-                case 'MIX':
-                    newBits = 0b10 // 在两个位置都显示
-                    break
-            }
-        }
-
-        // 更新状态
-        this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
-        localStorage.setItem('layoutState', String(this.layoutState))
-    }
-    // 主题控制方法
-    setThemeStyle = (style: 'dynamic' | 'classic') => {
-        this.themeStyle = style
-        // 更新 DOM 类名
-        document.documentElement.classList.remove('theme-dynamic', 'theme-classic')
-        document.documentElement.classList.add(`theme-${style}`)
-        localStorage.setItem('themeStyle', style)
-    }
-
-    // toggleDarkMode = () => {
-    //     this.isDarkMode = !this.isDarkMode
-    //     // 更新 DOM 类名
-    //     document.documentElement.classList.toggle('dark', this.isDarkMode)
-    //     localStorage.setItem('darkMode', String(this.isDarkMode))
-    // }
-
-    // 设置主题模式
-    setThemeMode = (mode: ThemeMode) => {
-        this.themeMode = mode
-        localStorage.setItem('themeMode', mode)
-        this.updateThemeMode()
+        StorageManager.set(STORAGE_KEYS.LAYOUT_STATE, this.layoutState)
     }
 
     // 计算属性 - 主题配置
@@ -326,7 +317,7 @@ class ConfigStore {
 
     // 计算属性 - 是否显示 Sidebar
     get showSidebar(): boolean {
-        // // 抽屉模式下，如果有任何组件需要在侧边显示，就显示抽屉
+        // // 抽屉模式下，果有任何组件需要在侧边显示，就显示抽屉
         if (this.isDrawerMode) {
             return this.drawerVisible && (
                 this.showSidebarLogo ||
@@ -353,6 +344,13 @@ class ConfigStore {
         if (inSidebar) return 'IN_SIDEBAR'
         return
         // return 'none'
+    }
+
+    // 清除所有配置
+    clearConfig = () => {
+        Object.values(STORAGE_KEYS).forEach(key => {
+            StorageManager.remove(key)
+        })
     }
 }
 

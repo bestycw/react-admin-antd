@@ -97,14 +97,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
             return mode === 'inline' ? menuItems : [];
         }
 
-        // // 混合布局 - 非混合菜单模式
-        // if (effectiveLayoutMode === 'mix') {
-        //     if ((mode === 'horizontal' && positions.menu === 'header') ||
-        //         (mode === 'inline' && positions.menu === 'sidebar')) {
-        //         return menuItems;
-        //     }
-        //     return [];
-        // }
+
 
         return menuItems;
     };
