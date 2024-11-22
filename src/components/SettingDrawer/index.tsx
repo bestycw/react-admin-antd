@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
-import { Segmented } from 'antd'
+import { Segmented, Space, Switch } from 'antd'
 import { 
   MenuUnfoldOutlined, 
   LayoutOutlined,
@@ -11,7 +11,8 @@ import {
   MoonOutlined,
   DesktopOutlined,
   PictureOutlined,
-  TagsOutlined
+  TagsOutlined,
+  SettingOutlined
 } from '@ant-design/icons'
 import CustomDrawer from '../CustomDrawer'
 import { LayoutMode, ThemeStyle, ThemeMode, MenuPosition } from '@/types/config'
@@ -172,37 +173,30 @@ const SettingDrawer = observer(() => {
           </>
         )}
 
-        {/* 界面功能 */}
-        <div>
-          <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">界面功能</div>
-          <div className="space-y-4">
-            <div 
-              className="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-              onClick={ConfigStore.toggleShowLogo}
-            >
-              <div className="flex items-center space-x-3">
-                <LayoutOutlined className="text-lg text-gray-500" />
-                <span className="text-sm text-gray-700 dark:text-gray-300">显示 Logo</span>
-              </div>
-              <div className={`w-10 h-5 rounded-full transition-colors duration-200 ease-in-out ${ConfigStore.showLogo ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'}`}>
-                <div className={`w-4 h-4 rounded-full bg-white transform transition-transform duration-200 ease-in-out mt-0.5 ${ConfigStore.showLogo ? 'translate-x-5' : 'translate-x-1'}`} />
-              </div>
+        {/* 其他设置 */}
+        <div className="setting-item">
+          <h4 className="mb-4 flex items-center">
+            <SettingOutlined className="mr-2" />
+            其他设置
+          </h4>
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <div className="flex items-center justify-between">
+              <span>显示 Logo</span>
+              <Switch
+                checked={ConfigStore.showLogo}
+                onChange={() => ConfigStore.toggleLogo()}
+              />
             </div>
-
-            <div 
-              className="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-              onClick={() => ConfigStore.setShowTabs(!ConfigStore.showTabs)}
-            >
-              <div className="flex items-center space-x-3">
-                <TagsOutlined className="text-lg text-gray-500" />
-                <span className="text-sm text-gray-700 dark:text-gray-300">显示标签页</span>
-              </div>
-              <div className={`w-10 h-5 rounded-full transition-colors duration-200 ease-in-out ${ConfigStore.showTabs ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'}`}>
-                <div className={`w-4 h-4 rounded-full bg-white transform transition-transform duration-200 ease-in-out mt-0.5 ${ConfigStore.showTabs ? 'translate-x-5' : 'translate-x-1'}`} />
-              </div>
+            <div className="flex items-center justify-between">
+              <span>显示页签</span>
+              <Switch
+                checked={ConfigStore.showTabs}
+                onChange={() => ConfigStore.toggleTabs()}
+              />
             </div>
-          </div>
+          </Space>
         </div>
+
       </div>
     </CustomDrawer>
   )

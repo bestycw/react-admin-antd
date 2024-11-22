@@ -260,7 +260,8 @@ class ConfigStore {
     get showSidebarMenu() { return this.checkComponentPosition('MENU', 'IN_SIDEBAR') }
     get showHeaderUserActions() { return this.checkComponentPosition('USER_ACTIONS', 'IN_HEADER') }
     get showSidebarUserActions() { return this.checkComponentPosition('USER_ACTIONS', 'IN_SIDEBAR') }
-
+    get showLogo() { return this.showHeaderLogo || this.showSidebarLogo }
+    // get showTabs() { return this.showHeaderMenu || this.showSidebarMenu }
     private checkComponentPosition(
         component: keyof typeof LayoutFlags,
         position: 'IN_HEADER' | 'IN_SIDEBAR'
