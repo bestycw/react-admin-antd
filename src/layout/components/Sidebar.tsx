@@ -23,7 +23,7 @@ const Sidebar = observer(() => {
   // 折叠/抽屉 切换按钮
   const toggleButton = (
     <button
-      onClick={() => ConfigStore.handleSidebarToggle()}
+      onClick={() => ConfigStore.toggleVisible('sidebar')}
       className={toggleButtonClass}
     >
       {(isDrawerMode && !ConfigStore.drawerVisible) || ConfigStore.sidebarCollapsed ? (
