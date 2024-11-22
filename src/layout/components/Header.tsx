@@ -17,9 +17,9 @@ const Header = observer(({ className = '', style }: HeaderProps) => {
   if (ConfigStore.isDrawerMode) {
     return null
   }
-  if( ConfigStore.effectiveLayoutMode === 'horizontal'){
-    return null
-  }
+  // if( ConfigStore.effectiveLayoutMode === 'horizontal'){
+  //   return null
+  // }
   console.log('header',ConfigStore.showHeaderMenu)
   return (
     <header 
