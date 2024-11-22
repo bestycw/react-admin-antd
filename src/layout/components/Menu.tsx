@@ -85,6 +85,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
                 });
                 return currentRoot?.children || [currentRoot];
             }
+
         }
 
         // 垂直布局（顶部导航）
@@ -101,10 +102,11 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
 
         return menuItems;
     };
-    const MenuOptions = mode === 'inline' ? {
+    const MenuOptions = mode === 'inline' && !collapsed ? {
         openKeys: MenuStore.openKeys,
-        onOpenChange: (keys: string[]) => MenuStore.openKeys = keys
+        onOpenChange: (keys: string[]) => MenuStore.setOpenKeys(keys)
     }:{}
+    console.log(mode,collapsed)
     return (
         <div className="flex-1 overflow-hidden">
             <AntMenu

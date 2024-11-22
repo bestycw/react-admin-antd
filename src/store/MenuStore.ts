@@ -113,11 +113,11 @@ class MenuStore {
         });
     }
 
-    setOpenKeys(path: string) {
-        runInAction(() => {
-        const parentKeys = this.findParentKeys(path)
+    setOpenKeys(path: string | string[]) {
+        // runInAction(() => {
+            const parentKeys = typeof path === 'string' ? this.findParentKeys(path) : path
             this.openKeys = parentKeys
-        })
+        // })
     }
 
     private findParentKeys(path: string): string[] {
