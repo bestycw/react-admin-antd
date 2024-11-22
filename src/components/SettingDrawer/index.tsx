@@ -78,7 +78,7 @@ const SettingDrawer = observer(() => {
       label: '侧边',
     },
     {
-      value: 'mix',
+      value: 'MIX',
       label: '混合',
     }
   ]
@@ -101,7 +101,7 @@ const SettingDrawer = observer(() => {
           <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">导航模式</div>
           <Segmented
             block
-            value={ConfigStore.layoutMode}
+            value={ConfigStore.currentLayoutMode}
             options={layoutOptions}
             onChange={(value) => ConfigStore.setLayoutMode(value as LayoutMode)}
             className="w-full"
@@ -132,15 +132,15 @@ const SettingDrawer = observer(() => {
           />
         </div>
 
-        {ConfigStore.layoutMode === 'mix' && (
+        {ConfigStore.currentLayoutMode === 'MIX' && (
           <>
             {/* Logo 位置 */}
             <div>
               <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">Logo 位置</div>
               <Segmented
                 block
-                value={ConfigStore.positions.logo}
-                options={positionOptions.filter(opt => opt.value !== 'mix')}
+                value={ConfigStore.getComponentPosition('LOGO')}
+                options={positionOptions.filter(opt => opt.value !== 'MIX')}
                 onChange={(value) => ConfigStore.toggleComponentPosition('LOGO', value )}
                 className="w-full"
               />
@@ -151,7 +151,7 @@ const SettingDrawer = observer(() => {
               <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">菜单位置</div>
               <Segmented
                 block
-                value={ConfigStore.positions.menu}
+                value={ConfigStore.getComponentPosition('MENU')}
                 options={positionOptions}
                 onChange={(value) => ConfigStore.toggleComponentPosition('MENU', value )}
                 className="w-full"
@@ -163,9 +163,9 @@ const SettingDrawer = observer(() => {
               <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">用户操作位置</div>
               <Segmented
                 block
-                value={ConfigStore.positions.userActions}
-                options={positionOptions.filter(opt => opt.value !== 'mix')}
-                onChange={(value) => ConfigStore.setPosition('USER_ACTIONS', value )}
+                value={ConfigStore.getComponentPosition('USER_ACTIONS')}
+                options={positionOptions.filter(opt => opt.value !== 'MIX')}
+                onChange={(value) => ConfigStore.toggleComponentPosition('USER_ACTIONS', value )}
                 className="w-full"
               />
             </div>

@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { theme } from 'antd'
 import type { ThemeConfig } from 'antd'
 import getGlobalConfig from '../config/GlobalConfig'
@@ -13,7 +13,7 @@ export const LayoutFlags = {
     // 位置标记 (每个组件的2位中)
     IN_SIDEBAR: 0b10, // 第二位
     IN_HEADER: 0b01, // 第一位
-
+    MIX: 0b11, // 第一位和第二位都为1
     // 位移量
     USER_ACTIONS_SHIFT: 4,
     MENU_SHIFT: 2,
@@ -24,7 +24,7 @@ export const LayoutFlags = {
 export const LayoutModes = {
     VERTICAL: 0b010101, // UserActions、Menu、Logo 都在 header
     HORIZONTAL: 0b101010, // UserActions、Menu、Logo 都在 sidebar
-    MIX: 0b111111  // UserActions、Menu、Logo 都在两个位置
+    MIX: 0b101110  // UserActions、Menu、Logo 都在两个位置
 } as const
 
 export type LayoutMode = keyof typeof LayoutModes
@@ -168,17 +168,35 @@ class ConfigStore {
         localStorage.setItem('layoutState', String(this.layoutState))
     }
 
-    // 组件位置控制
+    /**
+     * 设置组件在指定位置的显示状态
+     * @param component - 要设置的组件（'MENU' | 'LOGO' | 'USER_ACTIONS'）
+     * @param position - 要设置的位置（'IN_HEADER' | 'IN_SIDEBAR'）
+     * 
+     * 实现原理：
+     * 1. 获取组件的位移量（每个组件占用2位）
+     * 2. 获取位置的位标记（IN_HEADER: 01, IN_SIDEBAR: 10）
+     * 3. 创建掩码，用于清除原有位置信息
+     * 4. 将新的位值设置到对应位置
+     * 
+     * 示例：
+     * MENU 组件（占用第3、4位）设置为 header 位置
+     * 原状态：      00|10|00 (MENU在sidebar显示)
+     * 掩码：        11|00|11
+     * 新位值：      00|01|00 (MENU改为在header显示)
+     */
     toggleComponentPosition = (
         component: keyof typeof LayoutFlags,
         position: 'IN_HEADER' | 'IN_SIDEBAR'
     ) => {
+        // 获取组件的位移量
         const shift = LayoutFlags[`${component}_SHIFT`]
+        // 获取位置的位标记
         const positionBit = LayoutFlags[position]
+        // 创建掩码 (11 << shift)
         const mask = 0b11 << shift
-        const currentBits = (this.layoutState & mask) >> shift
-        const newBits = currentBits ^ positionBit
-        this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
+        // 设置新的位值
+        this.layoutState = (this.layoutState & ~mask) | (positionBit << shift)
         localStorage.setItem('layoutState', String(this.layoutState))
     }
 
@@ -250,7 +268,6 @@ class ConfigStore {
 
     // 计算属性 - 是否显示 Header
     get showHeader(): boolean {
-        console.log('showHeader',this.showHeaderLogo,this.showHeaderMenu,this.showHeaderUserActions)
         if (this.isDrawerMode) {
             return false
         }
@@ -274,6 +291,22 @@ class ConfigStore {
         return this.showSidebarLogo ||
                this.showSidebarMenu ||
                this.showSidebarUserActions
+    }
+
+    // 获取组件在当前布局下的位置
+    getComponentPosition(component: keyof typeof LayoutFlags): 'IN_HEADER' | 'IN_SIDEBAR' | 'MIX' | undefined {
+        const shift = LayoutFlags[`${component}_SHIFT`]
+        const componentBits = (this.layoutState & (0b11 << shift)) >> shift
+        // console.log(component,componentBits)
+        // 检查组件在 header 和 sidebar 的显示状态
+        const inHeader = (componentBits & LayoutFlags.IN_HEADER) !== 0
+        const inSidebar = (componentBits & LayoutFlags.IN_SIDEBAR) !== 0
+        // console.log(component,inHeader,inSidebar)
+        if (inHeader && inSidebar) return 'MIX'
+        if (inHeader) return 'IN_HEADER'
+        if (inSidebar) return 'IN_SIDEBAR'
+        return 
+        // return 'none'
     }
 }
 
