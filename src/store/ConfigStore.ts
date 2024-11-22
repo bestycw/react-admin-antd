@@ -223,8 +223,23 @@ class ConfigStore {
         const shift = LayoutFlags[`${component}_SHIFT`]
         // 创建掩码 (11 << shift)
         const mask = 0b11 << shift
-        // 设置新的位值
-        const newBits = isShow ? 0b11 : 0b00
+        
+        // 根据布局模式决定显示位置
+        let newBits = 0b00
+        if (isShow) {
+            switch (this.currentLayoutMode) {
+                case 'VERTICAL':
+                    newBits = 0b01 // 只在 header 显示
+                    break
+                case 'HORIZONTAL':
+                    newBits = 0b10 // 只在 sidebar 显示
+                    break
+                case 'MIX':
+                    newBits = 0b10 // 在两个位置都显示
+                    break
+            }
+        }
+
         // 更新状态
         this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
         localStorage.setItem('layoutState', String(this.layoutState))
