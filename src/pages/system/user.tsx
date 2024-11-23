@@ -130,7 +130,7 @@ const UserManagement: React.FC = observer(() => {
                             setModalVisible(true)
                         }}
                     >
-                        新增用户
+                        新增用户    
                     </Button>
                     </Permissions>
                 }
