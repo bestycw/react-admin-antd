@@ -5,7 +5,7 @@ const { Random } = Mock
 
 // 拦截 axios 请求
 Mock.setup({
-    timeout: '200-600'
+    timeout: '1000-2000'
 })
 
 // 登录接口
@@ -20,6 +20,7 @@ Mock.mock('/api/auth/login', 'post', (options) => {
                 avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
                 roles: ['admin'],
                 accessToken: Random.string('lower', 32),
+                permissions: ['*'],
                 // dynamicRoutesList: []
             }
         }

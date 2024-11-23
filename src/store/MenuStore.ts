@@ -48,11 +48,13 @@ class MenuStore {
 
     setMenuList(menuList: MenuItem[]) {
         // console.log(menuList)
+
         runInAction(() => {
             this.menuList = menuList
-            if (this.selectedKeys.length === 0) {
+            // console.log(this.selectedKeys)
+            // if (this.selectedKeys.length === 0) {
                 this.ensureSelectedKeys()
-            }
+            // }
         })
 
     }
@@ -98,8 +100,9 @@ class MenuStore {
     }
 
     setSelectedKeys(selectedKeys: string[]) {
+        console.log(selectedKeys)
         runInAction(() => {
-            if (this.selectedKeys[0] !== selectedKeys[0]) {
+            if (this.selectedKeys[0] !== selectedKeys[0] ) {
                 this.selectedKeys = selectedKeys;
                 const currentMenu = this.findMenuByPath(selectedKeys[0]);
                 if (currentMenu?.label) {
@@ -216,13 +219,8 @@ class MenuStore {
     }
 
     initRoutesAndMenu(rootRoute: CoRouteObject) {
-        // console.log(rootRoute)
-        // 避免因为menuList的改变导致重新渲染
-        // runInAction(() => {
-            // const rootRoute = routes.find(route => route.root)
             if (rootRoute?.children) {
                 const menu = this.routesToMenuItems(rootRoute.children)
-                console.log(menu)
                 this.setMenuList(menu)
             }
 

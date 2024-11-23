@@ -20,7 +20,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     // 只在路径真正改变时更新选中状态
     useEffect(() => {
         const currentPath = location.pathname;
-        if (currentPath !== MenuStore.selectedKeys[0]) {
+        if (currentPath !== MenuStore.selectedKeys[0] && currentPath!=='/') {
             MenuStore.setSelectedKeys([currentPath]);
         }
     }, [location.pathname]);
@@ -106,7 +106,8 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
         openKeys: MenuStore.openKeys,
         onOpenChange: (keys: string[]) => MenuStore.setOpenKeys(keys)
     }:{}
-    console.log(mode,collapsed)
+    // console.log(mode,collapsed)
+    console.log(MenuStore.selectedKeys)
     return (
         <div className="h-full">
             <AntMenu
