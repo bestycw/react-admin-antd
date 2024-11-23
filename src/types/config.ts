@@ -1,4 +1,5 @@
 import type { ThemeConfig as AntdThemeConfig } from 'antd'
+import { LayoutFlags, LayoutModes } from '../store/ConfigStore'
 
 // 布局模式
 export type LayoutMode = keyof typeof LayoutModes

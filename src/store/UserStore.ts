@@ -161,11 +161,6 @@ class UserStore {
 
             // 检查路由是否需要权限控制
             if (newRoute.meta?.roles?.length) {
-                // console.log('Checking route:', {
-                //     path: newRoute.path,
-                //     roles: newRoute.meta.roles,
-                //     hasAccess: this.hasAnyRole(newRoute.meta.roles)
-                // })
                 if (!this.hasAnyRole(newRoute.meta.roles)) {
                     newRoute.hidden = true
                 }
