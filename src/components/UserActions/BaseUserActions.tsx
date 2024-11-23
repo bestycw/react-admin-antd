@@ -14,6 +14,8 @@ import {
   SearchOutlined,
 } from '@ant-design/icons'
 import React from 'react'
+import { authService } from '../../services/auth'
+import { useNavigate } from 'react-router-dom'
 // import { useGlobalSearch } from '@/hooks/useGlobalSearch'
 
 export interface ActionItem {
@@ -29,6 +31,7 @@ export const useUserActions = () => {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [currentLang, setCurrentLang] = useState('zh_CN')
   const [searchVisible, setSearchVisible] = useState(false)
+  const navigate = useNavigate()
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -72,9 +75,11 @@ export const useUserActions = () => {
   ]
 
   // 用户菜单点击处理
-  const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
+  const handleUserMenuClick: MenuProps['onClick'] = async({ key }) => {
     if (key === 'logout') {
-      UserStore.logout()
+     await authService.logout()
+     navigate('/login')
+     UserStore.clearUserInfo()
     }
   }
 
