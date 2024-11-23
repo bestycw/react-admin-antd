@@ -1,53 +1,33 @@
-import React, { useState, useCallback } from 'react';
-import { Card } from 'antd';
-import RichTextEditor from '@/components/RichTextEditor';
-import { FileTextOutlined } from '@ant-design/icons';
-import type Quill from 'quill';
+import React, { useState } from 'react'
+import { Card } from 'antd'
+import RichTextEditor from '@/components/RichTextEditor'
+import { FileTextOutlined } from '@ant-design/icons'
 
 const EditorPage: React.FC = () => {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState('<p>初始内容...</p>')
 
   const handleImageUpload = async (file: File): Promise<string> => {
-    // 实现图片上传逻辑
+    // 这里实现图片上传逻辑
     return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
       reader.onloadend = () => {
-        resolve(reader.result as string);
-      };
-    });
-  };
-
-  const handleEditorReady = useCallback((quill: Quill) => {
-    console.log('Editor is ready:', quill);
-    // 可以在这里进行额外的编辑器配置
-  }, []);
-
-  // 自定义模块示例
-  const customModules = {
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline'],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'align': [] }],
-        ['link', 'image'],
-        ['clean']
-      ]
-    }
-  };
+        resolve(reader.result as string)
+      }
+    })
+  }
 
   return (
     <div className="p-6">
       <Card title="富文本编辑器" className="shadow-md">
         <RichTextEditor
           value={content}
+          mode={'default'}
           onChange={setContent}
-          height={400}
+          height={500}
           onImageUpload={handleImageUpload}
-          onReady={handleEditorReady}
-          customModules={customModules}
-          className="mb-6"
+          maxLength={50000}
+          placeholder="开始编辑..."
         />
         
         <div className="mt-8">
@@ -59,14 +39,14 @@ const EditorPage: React.FC = () => {
         </div>
       </Card>
     </div>
-  );
-};
+  )
+}
 
-export default EditorPage;
+export default EditorPage
 
 export const routeConfig = {
   title: '富文本编辑器',
   icon: <FileTextOutlined />,
   layout: true,
   auth: true,
-}; 
+} 

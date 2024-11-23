@@ -1,215 +1,211 @@
-import React, { useEffect, useRef, useCallback } from 'react';
-import Quill from 'quill';
-import 'quill/dist/quill.snow.css';
+/**
+ * RichTextEditor 富文本编辑器组件
+ * 基于 wangEditor 封装
+ * 
+ * 功能特性:
+ * 1. 文本编辑
+ *    - 字体大小、颜色
+ *    - 对齐方式
+ *    - 列表
+ *    - 标题
+ * 
+ * 2. 媒体插入
+ *    - 图片上传
+ *    - 视频插入
+ *    - 表格编辑
+ * 
+ * 3. 扩展功能
+ *    - HTML 源码编辑
+ *    - 全屏编辑
+ *    - 字数统计
+ */
 
-interface QuillModules {
-  toolbar: {
-    container: any[];
-    handlers?: Record<string, (() => void) | undefined>;
-  };
-  clipboard: {
-    matchVisual: boolean;
-  };
-}
+import React, { useState, useEffect } from 'react'
+import { Editor, Toolbar } from '@wangeditor/editor-for-react'
+import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
+import '@wangeditor/editor/dist/css/style.css'
 
 interface RichTextEditorProps {
-  value: string;
-  onChange: (content: string) => void;
-  placeholder?: string;
-  readOnly?: boolean;
-  className?: string;
-  height?: number | string;
-  theme?: 'snow' | 'bubble';
-  customModules?: Partial<QuillModules>;
-  customFormats?: string[];
-  onImageUpload?: (file: File) => Promise<string>;
-  onReady?: (quill: Quill) => void;
+  value: string
+  onChange: (html: string) => void
+  height?: number
+  mode?: 'default' | 'simple'
+  placeholder?: string
+  readOnly?: boolean
+  onImageUpload?: (file: File) => Promise<string>
+  maxLength?: number
+  className?: string
 }
-
-const defaultModules = {
-  toolbar: {
-    container: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      [{ 'font': [] }],
-      [{ 'size': ['small', false, 'large', 'huge'] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'script': 'sub'}, { 'script': 'super' }],
-      [{ 'align': [] }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
-      ['blockquote', 'code-block'],
-      ['link', 'image', 'video'],
-      ['clean']
-    ]
-  },
-  clipboard: {
-    matchVisual: false
-  }
-};
-
-const defaultFormats = [
-  'header', 'font', 'size',
-  'bold', 'italic', 'underline', 'strike',
-  'color', 'background',
-  'script',
-  'align',
-  'list', 'bullet', 'indent',
-  'blockquote', 'code-block',
-  'link', 'image', 'video'
-];
 
 const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
   onChange,
+  height = 500,
+  mode = 'default',
   placeholder = '请输入内容...',
   readOnly = false,
-  className = '',
-  height = 400,
-  theme = 'snow',
-  customModules,
-  customFormats,
   onImageUpload,
-  onReady
+  maxLength,
+  className = ''
 }) => {
-  const editorRef = useRef<HTMLDivElement>(null);
-  const quillRef = useRef<Quill | null>(null);
+  // 编辑器实例
+  const [editor, setEditor] = useState<IDomEditor | null>(null)
 
-  // 自定义图片处理器
-  const imageHandler = useCallback(() => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
+  // 修改工具栏配置，平铺所有按钮
+  const toolbarConfig: Partial<IToolbarConfig> = {
+    excludeKeys: [],
+    toolbarKeys: [
+      // 标题
+      'headerSelect',
+      '|',
+      // 字体
+      'fontSize',
+      'fontFamily',
+      'lineHeight',
+      '|',
+      // 文字样式
+      'bold',
+      'italic',
+      'underline',
+      'through',
+      'color',
+      'bgColor',
+      '|',
+      // 对齐方式
+      'alignment',
+      '|',
+      // 列表
+      'bulletedList',
+      'numberedList',
+      'indent',
+      '|',
+      // 其他格式
+      'blockquote',
+      'code',
+      'clearStyle',
+      '|',
+      // 插入功能
+      'insertTable',
+      'insertImage',
+      'insertVideo',
+      'insertLink',
+      'divider',
+      '|',
+      // 视图
+      'fullScreen',
+      'sourceCode',
+    ]
+  }
 
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (file && onImageUpload && quillRef.current) {
-        try {
-          const url = await onImageUpload(file);
-          const range = quillRef.current.getSelection(true);
-          quillRef.current.insertEmbed(range.index, 'image', url);
-          quillRef.current.setSelection(range.index + 1);
-        } catch (err) {
-          console.error('图片上传失败:', err);
+  // 编辑器配置
+  const editorConfig: Partial<IEditorConfig> = {
+    placeholder,
+    readOnly,
+    maxLength,
+    MENU_CONF: {
+      uploadImage: {
+        customUpload: async (file: File, insertFn: (url: string) => void) => {
+          if (onImageUpload) {
+            try {
+              const url = await onImageUpload(file)
+              insertFn(url)
+            } catch (error) {
+              console.error('图片上传失败:', error)
+            }
+          }
         }
       }
-    };
-  }, [onImageUpload]);
-
-  // 初始化编辑器
-  useEffect(() => {
-    if (!editorRef.current || quillRef.current) return;
-
-    const modules = {
-      ...defaultModules,
-      ...customModules,
-      toolbar: {
-        ...(customModules?.toolbar || defaultModules.toolbar),
-        handlers: {
-          image: onImageUpload ? imageHandler : undefined
-        }
-      }
-    };
-
-    const formats = customFormats || defaultFormats;
-
-    const quill = new Quill(editorRef.current, {
-      theme,
-      modules,
-      formats,
-      placeholder,
-      readOnly,
-    });
-
-    // 设置初始内容
-    quill.root.innerHTML = value;
-
-    // 监听内容变化
-    quill.on('text-change', () => {
-      const content = quill.root.innerHTML;
-      if (content !== value) {
-        onChange(content);
-      }
-    });
-
-    quillRef.current = quill;
-
-    // 调用 onReady 回调
-    if (onReady) {
-      onReady(quill);
+    },
+    onChange: (editor: IDomEditor) => {
+      onChange(editor.getHtml())
     }
+  }
 
-    // 清理函数
+  // 组件销毁时销毁编辑器实例
+  useEffect(() => {
     return () => {
-      if (quillRef.current) {
-        quillRef.current.off('text-change');
-        quillRef.current = null;
-      }
-    };
-  }, []); // 仅在组件挂载时初始化一次
-
-  // 更新内容
-  useEffect(() => {
-    if (quillRef.current && value !== quillRef.current.root.innerHTML) {
-      const selection = quillRef.current.getSelection();
-      quillRef.current.root.innerHTML = value;
-      if (selection) {
-        quillRef.current.setSelection(selection);
+      if (editor) {
+        editor.destroy()
+        setEditor(null)
       }
     }
-  }, [value]);
-
-  // 更新只读状态
-  useEffect(() => {
-    if (quillRef.current) {
-      quillRef.current.enable(!readOnly);
-    }
-  }, [readOnly]);
+  }, [editor])
 
   return (
     <div className={`rich-editor-container ${className}`}>
-      <div ref={editorRef} style={{ height }} />
+      <Toolbar
+        editor={editor}
+        defaultConfig={toolbarConfig}
+        mode={mode}
+        className="rich-editor-toolbar"
+      />
+      <Editor
+        defaultConfig={editorConfig}
+        value={value}
+        onCreated={setEditor}
+        mode={mode}
+        className="rich-editor-content"
+        style={{ height: `${height}px`, overflowY: 'hidden' }}
+      />
       <style>{`
         .rich-editor-container {
-          @apply w-full;
+          @apply border border-gray-200 rounded-md bg-white;
         }
-        .ql-container {
-          @apply text-base border border-gray-200 rounded-b font-sans;
+        .rich-editor-toolbar {
+          @apply border-b border-gray-200 bg-white sticky top-0 z-10 p-2;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
         }
-        .ql-toolbar {
-          @apply bg-gray-50 border border-gray-200 rounded-t;
+        .rich-editor-toolbar .w-e-bar-divider {
+          @apply border-l border-gray-200 mx-1 h-6;
         }
-        .ql-editor {
-          @apply prose max-w-none;
-          min-height: ${typeof height === 'number' ? `${height}px` : height};
+        .rich-editor-toolbar .w-e-bar-item {
+          @apply flex items-center;
         }
-        .ql-editor.ql-blank::before {
-          @apply text-gray-400 font-normal not-italic;
+        .rich-editor-toolbar button {
+          @apply px-2 py-1 rounded hover:bg-gray-100 text-gray-700;
         }
-        .ql-snow .ql-tooltip {
-          @apply bg-white shadow-lg border border-gray-200 rounded;
+        .rich-editor-toolbar button.active {
+          @apply bg-blue-50 text-blue-600;
         }
-        .ql-snow .ql-picker {
-          @apply text-gray-700;
+        .rich-editor-content {
+          @apply p-4;
         }
-        .ql-snow .ql-stroke {
-          @apply stroke-gray-700;
+        .w-e-text-container {
+          @apply bg-white;
         }
-        .ql-snow .ql-fill {
-          @apply fill-gray-700;
+        .w-e-text-container [data-slate-editor] {
+          @apply min-h-[200px];
         }
-        .ql-snow.ql-toolbar button:hover,
-        .ql-snow .ql-toolbar button:hover {
-          @apply bg-gray-100;
+        .w-e-panel-content-color {
+          @apply p-2;
         }
-        .ql-snow.ql-toolbar button.ql-active,
-        .ql-snow .ql-toolbar button.ql-active {
-          @apply bg-blue-50;
+        .w-e-panel-content-color button {
+          @apply w-6 h-6 rounded-sm m-1;
+        }
+        .w-e-modal {
+          @apply rounded-lg shadow-lg;
+        }
+        .w-e-modal-header {
+          @apply bg-gray-50 p-4 rounded-t-lg;
+        }
+        .w-e-modal-body {
+          @apply p-4;
+        }
+        .w-e-modal-footer {
+          @apply bg-gray-50 p-4 rounded-b-lg;
+        }
+        // 下拉菜单样式
+        .w-e-dropdown-content {
+          @apply bg-white border border-gray-200 rounded-md shadow-lg py-1;
+        }
+        .w-e-dropdown-item {
+          @apply px-4 py-2 hover:bg-gray-100 cursor-pointer;
         }
       `}</style>
     </div>
-  );
-};
+  )
+}
 
-export default RichTextEditor; 
+export default RichTextEditor 
