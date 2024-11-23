@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
     "@ant-design/plots": "^2.3.2",
+    "@monaco-editor/react": "^4.6.0",
     "@types/nprogress": "^0.2.3",
     "@types/quill": "^2.0.14",
     "@vitejs/plugin-react": "^4.3.3",
