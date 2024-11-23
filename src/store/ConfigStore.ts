@@ -62,6 +62,9 @@ class ConfigStore implements IConfigStore {
     // 用户操作区域的折叠状态
     isActionsCollapsed: boolean = false
 
+    // 搜索弹窗状态
+    searchVisible: boolean = false
+
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true })
         this.initConfig()
@@ -321,6 +324,11 @@ class ConfigStore implements IConfigStore {
     toggleActionsCollapsed = (isShow:boolean) => {
         this.isActionsCollapsed = isShow
         this.storage.set('ACTIONS_COLLAPSED', this.isActionsCollapsed)
+    }
+
+    // 切换搜索弹窗显示状态
+    toggleSearchVisible = (visible?: boolean) => {
+        this.searchVisible = visible ?? !this.searchVisible
     }
 }
 

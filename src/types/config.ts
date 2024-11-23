@@ -58,6 +58,7 @@ export interface IConfigStore {
     drawerVisible: boolean
     settingDrawerVisible: boolean
     isActionsCollapsed: boolean
+    searchVisible: boolean
 
     // 计算属性
     isDark: boolean
@@ -83,4 +84,5 @@ export interface IConfigStore {
     getComponentPosition(component: keyof typeof LayoutFlags): ComponentPosition
     clearConfig(): void
     toggleActionsCollapsed(isShow: boolean): void
+    toggleSearchVisible: (visible?: boolean) => void
 } 
