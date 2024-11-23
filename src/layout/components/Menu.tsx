@@ -108,7 +108,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     }:{}
     console.log(mode,collapsed)
     return (
-        <div className="flex-1 overflow-hidden">
+        <div className="h-full">
             <AntMenu
                 {...MenuOptions}
                 onClick={onClick}

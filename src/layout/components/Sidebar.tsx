@@ -14,6 +14,18 @@ const Sidebar = observer(() => {
   const { ConfigStore } = useStore()
   const isCollapsed = ConfigStore.sidebarCollapsed
   const isDrawerMode = ConfigStore.isDrawerMode
+  // const collapsed = ConfigStore.sidebarC1ollapsed
+  const menuHeight = useMemo(() => {
+    const logoHeight = ConfigStore.showSidebarLogo ? '64px' : '0px'
+    const userActionsHeight = ConfigStore.showSidebarUserActions 
+      ? (ConfigStore.isActionsCollapsed ? '48px' : '120px')
+      : '0px'
+    return `calc(100% - ${logoHeight} - ${userActionsHeight})`
+  }, [
+    ConfigStore.showSidebarLogo, 
+    ConfigStore.showSidebarUserActions,
+    ConfigStore.isActionsCollapsed
+  ])
   // 折叠/抽屉 切换按钮
   // const buttonClass =   // 按钮样式
   const toggleButtonClass = useMemo(() => `
@@ -50,7 +62,7 @@ const Sidebar = observer(() => {
         />
       )}
 
-      <div className="flex-1 overflow-hidden py-4">
+      <div className="flex-1 overflow-auto py-4" style={{height:menuHeight}}>
         <Menu 
           mode="inline" 
           collapsed={collapsed}
@@ -107,7 +119,7 @@ const Sidebar = observer(() => {
       width={280} 
       collapsedWidth={80} 
       collapsed={ConfigStore.sidebarCollapsed} 
-      className="!bg-transparent group relative"
+      className="!bg-transparent group relative h-screen"
     >
       {Content}
     </Sider>

@@ -18,7 +18,8 @@ export const STORAGE_KEYS = {
     SHOW_TABS: 'showTabs',
     SIDEBAR_COLLAPSED: 'sidebarCollapsed',
     DRAWER_VISIBLE: 'drawerVisible',
-    SETTING_DRAWER_VISIBLE: 'settingDrawerVisible'
+    SETTING_DRAWER_VISIBLE: 'settingDrawerVisible',
+    ACTIONS_COLLAPSED: 'actionsCollapsed'
 } as const
 
 // 存储键类型
@@ -56,6 +57,7 @@ export interface IConfigStore {
     isDrawerMode: boolean
     drawerVisible: boolean
     settingDrawerVisible: boolean
+    isActionsCollapsed: boolean
 
     // 计算属性
     isDark: boolean
@@ -80,4 +82,5 @@ export interface IConfigStore {
     toggleComponentShow(component: keyof typeof LayoutFlags, isShow: boolean): void
     getComponentPosition(component: keyof typeof LayoutFlags): ComponentPosition
     clearConfig(): void
+    toggleActionsCollapsed(isShow: boolean): void
 } 

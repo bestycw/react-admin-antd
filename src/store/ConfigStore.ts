@@ -3,13 +3,13 @@ import { theme } from 'antd'
 import type { ThemeConfig as AntdThemeConfig } from 'antd'
 import getGlobalConfig from '../config/GlobalConfig'
 import StorageManager from '../utils/storageManager'
-import { 
-    type IConfigStore, 
-    type ThemeMode, 
-    type ThemeStyle, 
-    type LayoutMode, 
+import {
+    type IConfigStore,
+    type ThemeMode,
+    type ThemeStyle,
+    type LayoutMode,
     type StorageKey,
-    type ComponentPosition, 
+    type ComponentPosition,
     STORAGE_KEYS
 } from '../types/config'
 
@@ -17,13 +17,13 @@ import {
 export const LayoutFlags = {
     // 组件位置标记 (每个组件占用2位)
     USER_ACTIONS: 0b110000, // 位 5-4
-    MENU:        0b001100, // 位 3-2
-    LOGO:        0b000011, // 位 1-0
+    MENU: 0b001100, // 位 3-2
+    LOGO: 0b000011, // 位 1-0
 
     // 位置标记 (每个组件的2位中)
-    IN_SIDEBAR:  0b10, // 第二位
-    IN_HEADER:   0b01, // 第一位
-    MIX:         0b11, // 两个位置都显示
+    IN_SIDEBAR: 0b10, // 第二位
+    IN_HEADER: 0b01, // 第一位
+    MIX: 0b11, // 两个位置都显示
     // 位移量
     USER_ACTIONS_SHIFT: 4,
     MENU_SHIFT: 2,
@@ -32,9 +32,9 @@ export const LayoutFlags = {
 
 // 预定义布局模式
 export const LayoutModes = {
-    VERTICAL:   0b010101, // UserActions、Menu、Logo 都在 header
+    VERTICAL: 0b010101, // UserActions、Menu、Logo 都在 header
     HORIZONTAL: 0b101010, // UserActions、Menu、Logo 都在 sidebar
-    MIX:        0b101110  // UserActions、Menu、Logo 都在两个位置
+    MIX: 0b101110  // UserActions、Menu、Logo 都在两个位置
 } as const
 
 // 抽屉类型
@@ -59,6 +59,9 @@ class ConfigStore implements IConfigStore {
     drawerVisible: boolean = false
     settingDrawerVisible: boolean = false
 
+    // 用户操作区域的折叠状态
+    isActionsCollapsed: boolean = false
+
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true })
         this.initConfig()
@@ -66,11 +69,11 @@ class ConfigStore implements IConfigStore {
 
     // 存储操作封装
     private storage = {
-        get: <T>(key: StorageKey, defaultValue: T) => 
+        get: <T>(key: StorageKey, defaultValue: T) =>
             StorageManager.get(STORAGE_KEYS[key], defaultValue),
-        set: <T>(key: StorageKey, value: T) => 
+        set: <T>(key: StorageKey, value: T) =>
             StorageManager.set(STORAGE_KEYS[key], value),
-        remove: (key: StorageKey) => 
+        remove: (key: StorageKey) =>
             StorageManager.remove(STORAGE_KEYS[key])
     }
 
@@ -94,7 +97,7 @@ class ConfigStore implements IConfigStore {
 
     // 计算属性
     get isDark(): boolean {
-        return this.themeMode === 'dark' || 
+        return this.themeMode === 'dark' ||
             (this.themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
     }
 
@@ -119,8 +122,8 @@ class ConfigStore implements IConfigStore {
     // 布局相关计算属性
     get showHeader(): boolean {
         return !this.isDrawerMode && (
-            this.showHeaderLogo || 
-            this.showHeaderMenu || 
+            this.showHeaderLogo ||
+            this.showHeaderMenu ||
             this.showHeaderUserActions
         )
     }
@@ -134,8 +137,8 @@ class ConfigStore implements IConfigStore {
             )
         }
         return this.showSidebarLogo ||
-               this.showSidebarMenu ||
-               this.showSidebarUserActions
+            this.showSidebarMenu ||
+            this.showSidebarUserActions
     }
 
     // 组件显示状态
@@ -145,6 +148,7 @@ class ConfigStore implements IConfigStore {
     get showSidebarMenu() { return this.checkComponentPosition('MENU', 'IN_SIDEBAR') }
     get showHeaderUserActions() { return this.checkComponentPosition('USER_ACTIONS', 'IN_HEADER') }
     get showSidebarUserActions() { return this.checkComponentPosition('USER_ACTIONS', 'IN_SIDEBAR') }
+    get showLogo() { return this.showHeaderLogo || this.showSidebarLogo }
 
     // 方法实现
     setThemeMode(mode: ThemeMode) {
@@ -189,7 +193,7 @@ class ConfigStore implements IConfigStore {
     ) {
         const shift = LayoutFlags[`${component}_SHIFT`]
         const mask = 0b11 << shift
-        
+
         let newBits = 0b00
         if (isShow) {
             switch (this.currentLayoutMode) {
@@ -210,22 +214,22 @@ class ConfigStore implements IConfigStore {
         this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
         StorageManager.set(STORAGE_KEYS.LAYOUT_STATE, this.layoutState)
     }
-  // 获取组件在当前布局下的位置
-  getComponentPosition(component: keyof typeof LayoutFlags): ComponentPosition {
-    const shift = LayoutFlags[`${component}_SHIFT`]
-    const componentBits = (this.layoutState & (0b11 << shift)) >> shift
+    // 获取组件在当前布局下的位置
+    getComponentPosition(component: keyof typeof LayoutFlags): ComponentPosition {
+        const shift = LayoutFlags[`${component}_SHIFT`]
+        const componentBits = (this.layoutState & (0b11 << shift)) >> shift
 
-    const inHeader = (componentBits & LayoutFlags.IN_HEADER) !== 0
-    const inSidebar = (componentBits & LayoutFlags.IN_SIDEBAR) !== 0
-    if (inHeader && inSidebar) return 'MIX'
-    if (inHeader) return 'IN_HEADER'
-    if (inSidebar) return 'IN_SIDEBAR'
-    // return
-    return 'NONE'
-}
+        const inHeader = (componentBits & LayoutFlags.IN_HEADER) !== 0
+        const inSidebar = (componentBits & LayoutFlags.IN_SIDEBAR) !== 0
+        if (inHeader && inSidebar) return 'MIX'
+        if (inHeader) return 'IN_HEADER'
+        if (inSidebar) return 'IN_SIDEBAR'
+        // return
+        return 'NONE'
+    }
 
     clearConfig() {
-        Object.keys(STORAGE_KEYS).forEach(key => 
+        Object.keys(STORAGE_KEYS).forEach(key =>
             this.storage.remove(key as StorageKey)
         )
     }
@@ -268,7 +272,7 @@ class ConfigStore implements IConfigStore {
 
     private initSystemTheme = () => {
         const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-        
+
         const handleThemeChange = () => {
             if (this.themeMode === 'system') {
                 this.updateThemeMode()
@@ -311,6 +315,12 @@ class ConfigStore implements IConfigStore {
                 this.storage.set('SETTING_DRAWER_VISIBLE', this.settingDrawerVisible)
                 break
         }
+    }
+
+    // 切换用户操作区域的折叠状态
+    toggleActionsCollapsed = (isShow:boolean) => {
+        this.isActionsCollapsed = isShow
+        this.storage.set('ACTIONS_COLLAPSED', this.isActionsCollapsed)
     }
 }
 
