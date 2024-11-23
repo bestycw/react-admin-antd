@@ -50,7 +50,7 @@ const themes = [
 ]
 
 const CodeEditorPage: React.FC = () => {
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState(`console.log('Hello World!')`)
   const [language, setLanguage] = useState('javascript')
   const [editorTheme, setEditorTheme] = useState<'vs-dark' | 'light'>('vs-dark')
   const { token } = theme.useToken()
@@ -82,13 +82,14 @@ const CodeEditorPage: React.FC = () => {
   }, [])
 
   return (
-    <div className="p-6">
+    <div >
       <Card 
         title="代码编辑器" 
         className="shadow-md"
         style={{
           backgroundColor: ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff',
-          color: ConfigStore.isDarkMode ? '#ffffff' : '#000000'
+          color: ConfigStore.isDarkMode ? '#ffffff' : '#000000',
+          border: ConfigStore.isDarkMode ? 'none' : '1px solid #e5e7eb'
         }}
       >
         <div className="mb-4 flex justify-between items-center flex-wrap gap-4">
@@ -103,9 +104,10 @@ const CodeEditorPage: React.FC = () => {
                 options={languages}
                 style={{ width: 160 }}
                 popupMatchSelectWidth={false}
-                className="min-w-[160px]"
+                className={`min-w-[160px] ${!ConfigStore.isDarkMode ? 'border-gray-300' : ''}`}
                 dropdownStyle={{
-                  backgroundColor: ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff'
+                  backgroundColor: ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff',
+                  border: ConfigStore.isDarkMode ? '1px solid #383838' : '1px solid #d9d9d9'
                 }}
               />
             </div>
@@ -118,8 +120,10 @@ const CodeEditorPage: React.FC = () => {
                 onChange={handleThemeChange}
                 options={themes}
                 style={{ width: 100 }}
+                className={!ConfigStore.isDarkMode ? 'border-gray-300' : ''}
                 dropdownStyle={{
-                  backgroundColor: ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff'
+                  backgroundColor: ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff',
+                  border: ConfigStore.isDarkMode ? '1px solid #383838' : '1px solid #d9d9d9'
                 }}
               />
             </div>
@@ -138,32 +142,41 @@ const CodeEditorPage: React.FC = () => {
           </Space>
         </div>
 
-        <CodeEditor
-          value={code}
-          onChange={setCode}
-          language={language}
-          theme={editorTheme}
-          height={600}
-          onSave={handleSave}
-          options={{
-            fontSize: 14,
-            fontFamily: 'Fira Code, Consolas, Monaco, monospace',
-            minimap: {
-              enabled: true,
-              maxColumn: 80,
-              renderCharacters: false
-            },
-            scrollbar: {
-              verticalScrollbarSize: 8,
-              horizontalScrollbarSize: 8
-            }
-          }}
-        />
+        <div className={!ConfigStore.isDarkMode ? 'editor-container-light' : ''}>
+          <CodeEditor
+            value={code}
+            onChange={setCode}
+            language={language}
+            theme={editorTheme}
+            height={600}
+            onSave={handleSave}
+            options={{
+              fontSize: 14,
+              fontFamily: 'Fira Code, Consolas, Monaco, monospace',
+              minimap: {
+                enabled: true,
+                maxColumn: 80,
+                renderCharacters: false
+              },
+              scrollbar: {
+                verticalScrollbarSize: 8,
+                horizontalScrollbarSize: 8
+              }
+            }}
+          />
+        </div>
       </Card>
       <style>{`
+        .editor-container-light {
+          border: 1px solid #e5e7eb;
+          border-radius: 4px;
+          overflow: hidden;
+        }
         .ant-select-dropdown {
           max-height: 400px;
           background-color: ${ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff'};
+          border: ${ConfigStore.isDarkMode ? '1px solid #383838' : '1px solid #d9d9d9'};
+          box-shadow: 0 2px 8px rgba(0, 0, 0, ${ConfigStore.isDarkMode ? '0.3' : '0.15'});
         }
         .ant-select-item {
           font-family: 'Fira Code', Consolas, Monaco, monospace;
@@ -172,6 +185,8 @@ const CodeEditorPage: React.FC = () => {
         .ant-select-item-group {
           color: ${token.colorPrimary};
           font-weight: 600;
+          padding: 8px 12px;
+          background-color: ${ConfigStore.isDarkMode ? '#2d2d2d' : '#f5f5f5'};
         }
         .ant-select-item:hover {
           background-color: ${ConfigStore.isDarkMode ? '#2d2d2d' : '#f5f5f5'};
@@ -182,6 +197,9 @@ const CodeEditorPage: React.FC = () => {
         .ant-select-selection-item {
           font-family: 'Fira Code', Consolas, Monaco, monospace;
           color: ${ConfigStore.isDarkMode ? '#ffffff' : '#000000'};
+        }
+        .ant-card {
+          box-shadow: ${ConfigStore.isDarkMode ? '0 4px 6px -1px rgba(0, 0, 0, 0.3)' : '0 1px 3px 0 rgba(0, 0, 0, 0.1)'};
         }
       `}</style>
     </div>

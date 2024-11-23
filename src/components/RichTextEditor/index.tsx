@@ -131,12 +131,13 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }, [editor])
 
   return (
-    <div className={`rich-editor-container ${className}`}>
+    <div className={`border border-gray-200 rounded-md bg-white ${className}`}>
       <Toolbar
         editor={editor}
         defaultConfig={toolbarConfig}
         mode={mode}
-        className="rich-editor-toolbar"
+        className="rich-editor-toolbar  border-b border-gray-200 bg-white top-0 z-10 p-2;
+"
       />
       <Editor
         defaultConfig={editorConfig}
@@ -147,11 +148,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         style={{ height: `${height}px`, overflowY: 'hidden' }}
       />
       <style>{`
-        .rich-editor-container {
-          @apply border border-gray-200 rounded-md bg-white;
-        }
+   
         .rich-editor-toolbar {
-          @apply border-b border-gray-200 bg-white sticky top-0 z-10 p-2;
           display: flex;
           flex-wrap: wrap;
           gap: 4px;

@@ -18,7 +18,7 @@ const EditorPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6">
+    <div>
       <Card title="富文本编辑器" className="shadow-md">
         <RichTextEditor
           value={content}
