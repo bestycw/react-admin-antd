@@ -23,6 +23,7 @@ class UserStore {
     dynamicRoutes: CoRouteObject[] = []
     allRoutes: CoRouteObject[] = []
     isInitDynamicRoutes = false
+    permissions: string[] = []
 
     private initUserInfo() {
         const storedUserInfo = localStorage.getItem('userInfo')
@@ -150,8 +151,10 @@ class UserStore {
     }
 
     logout() {
-        this.clearUserInfo()
+       
         window.location.href = '/login'
+        
+        this.clearUserInfo()
     }
 
     // 根据用户角色过滤路由
@@ -191,6 +194,20 @@ class UserStore {
             // 如果有子路由，确保至少有一个可见的子路由
             return route.children.some(child => !child.hidden)
         })
+    }
+
+    // 设置用户权限
+    setPermissions = (permissions: string[]) => {
+        this.permissions = permissions
+    }
+
+    // 检查是否有某个权限
+    hasPermission = (code: string): boolean => {
+        // 超级管理员拥有所有权限
+        if (this.userInfo?.roles.includes('admin')) {
+            return true
+        }
+        return this.permissions.includes(code)
     }
 }
 

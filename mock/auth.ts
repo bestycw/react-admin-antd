@@ -1,4 +1,5 @@
 import Mock from 'mockjs'
+import { PermissionsCode } from '../src/types/permission'
 
 const { Random } = Mock
 
@@ -19,7 +20,21 @@ Mock.mock('/api/auth/login', 'post', (options) => {
                 avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
                 roles: ['admin'],
                 accessToken: Random.string('lower', 32),
-                dynamicRoutesList: []
+                // dynamicRoutesList: []
+            }
+        }
+    }
+    if (username === 'user' && password === '123456') {
+        return {
+            code: 200,
+            message: 'success',
+            data: {
+                username: 'user',
+                avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+                roles: ['user'],
+                accessToken: Random.string('lower', 32),
+                permissions: [PermissionsCode.SYSTEM.USER.VIEW],
+                // dynamicRoutesList: []
             }
         }
     }

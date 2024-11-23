@@ -4,6 +4,8 @@ import { PlusOutlined, SettingOutlined } from '@ant-design/icons'
 import type { RouteConfig } from '@/types/route'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
+import Permission from '../../components/Permission'
+import { PermissionsCode } from '../../types/permission'
 
 // 路由配置
 export const routeConfig: RouteConfig = {
@@ -125,17 +127,19 @@ const RoleManagement: React.FC = observer(() => {
             <Card
                 title="角色管理"
                 extra={
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                            setCurrentRole(null)
-                            form.resetFields()
-                            setModalVisible(true)
-                        }}
-                    >
-                        新增角色
-                    </Button>
+                    <Permission code={PermissionsCode.SYSTEM.ROLE.ADD}>
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={() => {
+                                setCurrentRole(null)
+                                form.resetFields()
+                                setModalVisible(true)
+                            }}
+                        >
+                            新增角色
+                        </Button>
+                    </Permission>
                 }
             >
                 <Table
