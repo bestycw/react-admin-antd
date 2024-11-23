@@ -34,7 +34,7 @@ export const LayoutFlags = {
 export const LayoutModes = {
     VERTICAL:   0b010101, // UserActions、Menu、Logo 都在 header
     HORIZONTAL: 0b101010, // UserActions、Menu、Logo 都在 sidebar
-    MIX:        0b111111  // UserActions、Menu、Logo 都在两个位置
+    MIX:        0b101110  // UserActions、Menu、Logo 都在两个位置
 } as const
 
 // 抽屉类型
@@ -179,9 +179,7 @@ class ConfigStore implements IConfigStore {
         const shift = LayoutFlags[`${component}_SHIFT`]
         const positionBit = LayoutFlags[position]
         const mask = 0b11 << shift
-        const currentBits = (this.layoutState & mask) >> shift
-        const newBits = currentBits ^ positionBit
-        this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
+        this.layoutState = (this.layoutState & ~mask) | (positionBit << shift)
         this.storage.set('LAYOUT_STATE', this.layoutState)
     }
 
@@ -202,26 +200,29 @@ class ConfigStore implements IConfigStore {
                     newBits = 0b10 // 只在 sidebar 显示
                     break
                 case 'MIX':
-                    newBits = 0b11 // 在两个位置都显示
+                    newBits = 0b10 // 在两个位置都显示
                     break
             }
         }
-
+        if (this.isDrawerMode) {
+            newBits = 0b10
+        }
         this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
-        this.storage.set('LAYOUT_STATE', this.layoutState)
+        StorageManager.set(STORAGE_KEYS.LAYOUT_STATE, this.layoutState)
     }
+  // 获取组件在当前布局下的位置
+  getComponentPosition(component: keyof typeof LayoutFlags): ComponentPosition {
+    const shift = LayoutFlags[`${component}_SHIFT`]
+    const componentBits = (this.layoutState & (0b11 << shift)) >> shift
 
-    getComponentPosition(component: keyof typeof LayoutFlags): ComponentPosition {
-        const shift = LayoutFlags[`${component}_SHIFT`]
-        const componentBits = (this.layoutState & (0b11 << shift)) >> shift
-        const inHeader = (componentBits & LayoutFlags.IN_HEADER) !== 0
-        const inSidebar = (componentBits & LayoutFlags.IN_SIDEBAR) !== 0
-
-        if (inHeader && inSidebar) return 'mix'
-        if (inHeader) return 'header'
-        if (inSidebar) return 'sidebar'
-        return 'none'
-    }
+    const inHeader = (componentBits & LayoutFlags.IN_HEADER) !== 0
+    const inSidebar = (componentBits & LayoutFlags.IN_SIDEBAR) !== 0
+    if (inHeader && inSidebar) return 'MIX'
+    if (inHeader) return 'IN_HEADER'
+    if (inSidebar) return 'IN_SIDEBAR'
+    // return
+    return 'NONE'
+}
 
     clearConfig() {
         Object.keys(STORAGE_KEYS).forEach(key => 
