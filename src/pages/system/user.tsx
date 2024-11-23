@@ -3,14 +3,15 @@ import { Card, Table, Button, Modal, Form, Input, Select, Space, message } from 
 import { PlusOutlined, UserOutlined } from '@ant-design/icons'
 import type { RouteConfig } from '@/types/route'
 import { observer } from 'mobx-react-lite'
-
+import { PermissionsCode } from '../../types/permission'
+import Permissions from '@/components/Permission'
 // 路由配置
 export const routeConfig: RouteConfig = {
     title: '用户管理',  
     icon: <UserOutlined />,
     layout: true,
     auth: true,
-    roles: ['admin'],
+    // roles: ['admin'],
     sort: 2
 }
 
@@ -66,12 +67,14 @@ const UserManagement: React.FC = observer(() => {
                     <Button type="link" onClick={() => handleEdit(record)}>
                         编辑
                     </Button>
-                    <Button 
-                        type="link" 
-                        onClick={() => handleToggleStatus(record)}
-                    >
-                        {record.status === 'active' ? '禁用' : '启用'}
-                    </Button>
+                    <Permissions code={PermissionsCode.SYSTEM.USER.EDIT}>
+                        <Button 
+                            type="link" 
+                            onClick={() => handleToggleStatus(record)}
+                        >
+                            {record.status === 'active' ? '禁用' : '启用'}
+                        </Button>
+                    </Permissions>
                     <Button type="link" danger onClick={() => handleDelete(record)}>
                         删除
                     </Button>
@@ -117,6 +120,7 @@ const UserManagement: React.FC = observer(() => {
             <Card
                 title="用户管理"
                 extra={
+                    <Permissions code={PermissionsCode.SYSTEM.USER.ADD}>
                     <Button
                         type="primary"
                         icon={<PlusOutlined />}
@@ -128,6 +132,7 @@ const UserManagement: React.FC = observer(() => {
                     >
                         新增用户
                     </Button>
+                    </Permissions>
                 }
             >
                 <Table

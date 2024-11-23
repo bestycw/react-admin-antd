@@ -10,6 +10,7 @@ export interface UserInfo {
     roles: string[]
     accessToken: string
     dynamicRoutesList: string[]
+    permissions: string[]
 }
 
 class UserStore {
@@ -29,11 +30,13 @@ class UserStore {
         const storedUserInfo = localStorage.getItem('userInfo')
         const token = localStorage.getItem('token')
         const expiresAt = localStorage.getItem('tokenExpiresAt')
-        // console.log('storedUserInfo', storedUserInfo)
+        
         if (storedUserInfo && token) {
             if (expiresAt && new Date().getTime() < parseInt(expiresAt)) {
                 runInAction(() => {
-                    this.userInfo = JSON.parse(storedUserInfo)
+                    const parsedUserInfo = JSON.parse(storedUserInfo)
+                    this.userInfo = parsedUserInfo
+                    this.permissions = parsedUserInfo.permissions || []
                     this.isLogin = true
                     // 从缓存加载动态路由
                     const cachedRoutes = localStorage.getItem('dynamicRoutes')
@@ -74,6 +77,7 @@ class UserStore {
         runInAction(() => {
             this.userInfo = userInfo
             this.isLogin = true
+            this.permissions = userInfo.permissions || []
             localStorage.setItem('token', userInfo.accessToken)
 
             if (remember) {
@@ -93,6 +97,7 @@ class UserStore {
             this.isInitDynamicRoutes = false
             this.dynamicRoutes = []
             this.allRoutes = []
+            this.permissions = []
         })
         
         // 清除所有相关存储
@@ -196,17 +201,13 @@ class UserStore {
         })
     }
 
-    // 设置用户权限
-    setPermissions = (permissions: string[]) => {
-        this.permissions = permissions
-    }
-
     // 检查是否有某个权限
-    hasPermission = (code: string): boolean => {
-        // 超级管理员拥有所有权限
-        if (this.userInfo?.roles.includes('admin')) {
+    hasPermission(code: string): boolean {
+        // 如果权限列表包含 '*' 或为空，则拥有所有权限
+        if (!this.permissions || this.permissions.includes('*') || this.permissions.length === 0) {
             return true
         }
+        
         return this.permissions.includes(code)
     }
 }

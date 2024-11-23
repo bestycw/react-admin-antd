@@ -7,6 +7,6 @@ export const routeConfig: RouteConfig = {
     icon: <SettingOutlined />,
     layout: true,
     auth: true,
-    roles: ['admin'],
+    roles: ['admin','user'],
     sort: 3
 }

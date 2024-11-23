@@ -18,6 +18,11 @@ const Permission: React.FC<PermissionProps> = observer(({
     const { UserStore } = useStore()
     const codes = Array.isArray(code) ? code : [code]
     
+    // 如果用户拥有通配符权限 '*'，直接返回 children
+    if (UserStore.hasPermission('*')) {
+        return <>{children}</>
+    }
+    
     // 检查权限
     const hasPermission = mode === 'some'
         ? codes.some(c => UserStore.hasPermission(c))
