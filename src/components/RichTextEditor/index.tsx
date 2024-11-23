@@ -51,50 +51,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   // 编辑器实例
   const [editor, setEditor] = useState<IDomEditor | null>(null)
 
-  // 修改工具栏配置，平铺所有按钮
+  // 丰富工具栏配置
   const toolbarConfig: Partial<IToolbarConfig> = {
-    excludeKeys: [],
-    toolbarKeys: [
-      // 标题
-      'headerSelect',
-      '|',
-      // 字体
-      'fontSize',
-      'fontFamily',
-      'lineHeight',
-      '|',
-      // 文字样式
-      'bold',
-      'italic',
-      'underline',
-      'through',
-      'color',
-      'bgColor',
-      '|',
-      // 对齐方式
-      'alignment',
-      '|',
-      // 列表
-      'bulletedList',
-      'numberedList',
-      'indent',
-      '|',
-      // 其他格式
-      'blockquote',
-      'code',
-      'clearStyle',
-      '|',
-      // 插入功能
-      'insertTable',
-      'insertImage',
-      'insertVideo',
-      'insertLink',
-      'divider',
-      '|',
-      // 视图
-      'fullScreen',
-      'sourceCode',
-    ]
+    excludeKeys: ['divider', 'fullScreen']
   }
 
   // 编辑器配置
@@ -102,7 +61,34 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     placeholder,
     readOnly,
     maxLength,
+    autoFocus: false,
+    scroll: true,
     MENU_CONF: {
+      // 字体配置
+      fontSize: {
+        options: [
+          '12px', '13px', '14px', '15px', '16px', '18px', '20px', '24px', '28px', '32px', '36px'
+        ]
+      },
+      fontFamily: {
+        options: [
+          '默认字体',
+          'Arial',
+          'Tahoma',
+          'Verdana',
+          'Times New Roman',
+          'Georgia',
+          '微软雅黑',
+          '宋体',
+          '黑体',
+          '楷体',
+          '仿宋'
+        ]
+      },
+      lineHeight: {
+        options: ['1', '1.5', '1.75', '2', '2.5', '3']
+      },
+      // 上传图片配置
       uploadImage: {
         customUpload: async (file: File, insertFn: (url: string) => void) => {
           if (onImageUpload) {
@@ -114,6 +100,19 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             }
           }
         }
+      },
+      // 代码块配置
+      codeBlock: {
+        languages: [
+          { text: 'Plain Text', value: 'text' },
+          { text: 'JavaScript', value: 'javascript' },
+          { text: 'TypeScript', value: 'typescript' },
+          { text: 'HTML', value: 'html' },
+          { text: 'CSS', value: 'css' },
+          { text: 'Python', value: 'python' },
+          { text: 'Java', value: 'java' },
+          { text: 'SQL', value: 'sql' }
+        ]
       }
     },
     onChange: (editor: IDomEditor) => {
@@ -165,6 +164,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         }
         .rich-editor-toolbar button {
           @apply px-2 py-1 rounded hover:bg-gray-100 text-gray-700;
+          min-width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .rich-editor-toolbar button.active {
           @apply bg-blue-50 text-blue-600;
@@ -179,29 +183,37 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           @apply min-h-[200px];
         }
         .w-e-panel-content-color {
-          @apply p-2;
+          @apply p-2 grid grid-cols-8 gap-1;
         }
         .w-e-panel-content-color button {
-          @apply w-6 h-6 rounded-sm m-1;
+          @apply w-6 h-6 rounded-sm border border-gray-200;
         }
         .w-e-modal {
-          @apply rounded-lg shadow-lg;
+          @apply rounded-lg shadow-lg border border-gray-200;
         }
         .w-e-modal-header {
-          @apply bg-gray-50 p-4 rounded-t-lg;
+          @apply bg-gray-50 p-4 rounded-t-lg font-medium;
         }
         .w-e-modal-body {
           @apply p-4;
         }
         .w-e-modal-footer {
-          @apply bg-gray-50 p-4 rounded-b-lg;
+          @apply bg-gray-50 p-4 rounded-b-lg flex justify-end gap-2;
         }
-        // 下拉菜单样式
+        .w-e-button-container button {
+          @apply px-4 py-2 rounded;
+        }
+        .w-e-button-container button.primary {
+          @apply bg-blue-500 text-white hover:bg-blue-600;
+        }
         .w-e-dropdown-content {
-          @apply bg-white border border-gray-200 rounded-md shadow-lg py-1;
+          @apply bg-white border border-gray-200 rounded-md shadow-lg py-1 min-w-[120px];
         }
         .w-e-dropdown-item {
-          @apply px-4 py-2 hover:bg-gray-100 cursor-pointer;
+          @apply px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm;
+        }
+        .w-e-select-list {
+          @apply max-h-[300px] overflow-y-auto;
         }
       `}</style>
     </div>
