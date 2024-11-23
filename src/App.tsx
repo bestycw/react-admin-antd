@@ -1,76 +1,44 @@
 import { ConfigProvider } from 'antd'
 import { observer } from 'mobx-react-lite'
-import { useRoutes, useNavigate, RouteObject } from 'react-router-dom'
+import { useRoutes, RouteObject } from 'react-router-dom'
 import './App.css'
 import './index.css'
-import { Suspense, useEffect } from 'react'
-import { RemainingRoutes, StaticRoutes, DynamicRoutes } from './router'
-import GlobalConfig from './config/GlobalConfig'
-import { useStore } from './store'
-import { CoRouteObject } from './types/route'
-import React from 'react'
+import { Suspense } from 'react'
+import routes from './router/index'
 
-function mergeRouteByPath(to: CoRouteObject[], from: CoRouteObject[]) {
-    for (let i = 0; i < from.length; i++) {
-        const fromItem = from[i];
-        const index = to.findIndex((toItem) => {
-            return toItem.path === fromItem.path
-        })
-        if (index > -1) {
-            const toItem = to[index]
-            if (!toItem.children) {
-                toItem.children = []
-            }
-            if (fromItem.children ) {
-                mergeRouteByPath(toItem.children, fromItem.children)
-            }
-        }else{
-            to.push(fromItem)
+import { useStore } from './store'
+import React from 'react'
+import PageProgress from '@/components/PageProgress'
+import { CoRouteObject } from './types/route.d'
+import { runInAction } from 'mobx'
+console.log('routes', routes)
+const App = observer(() => {
+    const { UserStore, MenuStore ,ConfigStore} = useStore()
+    let renderRoutes = routes
+
+    console.log(' app init')
+
+    if (UserStore.isLogin) {
+        if (!UserStore.hasAllRoutes) {
+            renderRoutes = UserStore.filterRoutesByRoles(routes)
+            const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
+            runInAction(() => {
+                UserStore.setAllRoutes(renderRoutes)
+                MenuStore.initRoutesAndMenu(rootRoute)
+
+            })
+        } else {
+            renderRoutes = UserStore.allRoutes
         }
     }
-    if(from.length===0) return to
-}
 
-const routes = [...StaticRoutes, ...RemainingRoutes]
-
-const App = observer(() => {
-    const { PermissionControl } = GlobalConfig
-    const { UserStore, MenuStore } = useStore()
-    const { isLogin } = UserStore
-    const roles = UserStore.userInfo?.roles ?? []
-    const navigate = useNavigate()
-    const { ConfigStore } = useStore()
-
-    useEffect(() => {
-        if (isLogin) {
-            let finalRoutes = routes
-            
-            if (!PermissionControl || PermissionControl === 'fontend') {
-                console.log('前端控制路由')
-                mergeRouteByPath(routes, DynamicRoutes)
-                finalRoutes = routes
-            } else if (PermissionControl === 'backend') {
-                console.log('后端控制路由')
-                // TODO: 从后端获取路由
-            } else if (PermissionControl === 'both') {
-                console.log('协同控制路由')
-            }
-            const HomePageRoutes = finalRoutes.filter((item) => item.path === '/')[0]   
-
-            // 更新菜单并获取第一个可用路径
-            const firstPath = MenuStore.updateMenuFromRoutes(HomePageRoutes.children || [])
-            console.log(firstPath)
-            // 如果当前在登录页或根路径，则导航到第一个可用路径
-            if (firstPath && (window.location.pathname === '/login' || window.location.pathname === '/')) {
-                navigate(firstPath)
-            }
-        }
-    }, [isLogin])
 
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>
-            {useRoutes(routes as RouteObject[])}
-            {/* <Suspense></Suspense> */}
+            <PageProgress />
+            <Suspense>
+                {useRoutes(renderRoutes as RouteObject[])}
+            </Suspense>
         </ConfigProvider>
     )
 })

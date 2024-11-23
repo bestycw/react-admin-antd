@@ -14,13 +14,14 @@ const Header = observer(({ className = '', style }: HeaderProps) => {
   const { ConfigStore } = useStore()
 
   // 抽屉模式下不显示 Header
-  if (ConfigStore.isDrawerMode) {
+  if (!ConfigStore.showHeader) {
     return null
   }
-  if( ConfigStore.effectiveLayoutMode === 'horizontal'){
-    return null
-  }
-  console.log('header',ConfigStore.showHeaderMenu)
+  // if
+  // if( ConfigStore.effectiveLayoutMode === 'horizontal'){
+  //   return null
+  // }
+  // console.log('header',ConfigStore.showHeaderMenu)
   return (
     <header 
       className={`

@@ -1,88 +1,39 @@
-import React from "react";
-import AuthBoundary from "../components/AuthBoundary";
-import HomePage from "../layout";
-import Login from "../pages/Login";
-import { CoRouteObject } from "../types/route";
-import Forbidden from "../pages/error/403";
-import NotFound from "../pages/error/404";
-import { Navigate } from 'react-router-dom';
-const staticRoutesList: CoRouteObject[] = []
-const dynamicRoutesList: CoRouteObject[] = []
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const staticModules: Record<string, any> = import.meta.glob(
-    ["./modules/static/*.tsx"],
-    {
-        eager: true
-    }
-);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const dynamicModules: Record<string, any> = import.meta.glob(
-    ["./modules/dynamic/*.tsx"],
-    {
-        eager: true
-    }
-);
+import { generateRoutes } from './generator'
+import { CoRouteObject } from '../types/route.d'
+// import { lazy } from 'react'
+import React from 'react'
+import Layout from '../layout'
 
-export const staticFirstPathList: string[] = []
-export const dynamicFirstPathList: string[] = []
-function handleOriginRoute() {
-    //静态路由处理
-    Object.keys(staticModules).forEach(key => {
-        getRouteFirstPath(staticFirstPathList, key)
-        staticRoutesList.push(staticModules[key].default);
-    });
-    //动态路由处理
-    Object.keys(dynamicModules).forEach(key => {
-        getRouteFirstPath(dynamicFirstPathList, key)
-        dynamicRoutesList.push(dynamicModules[key].default);
-    });
+// 基础布局
+// const BasicLayout = lazy(() => import('../layout'))
 
+// 生成路由配置
+export  function createRoutes(): CoRouteObject[] {
+    // 生成动态路由
+    const { layoutRoutes, independentRoutes } =  generateRoutes()
+    // console.log('routes init',layoutRoutes,independentRoutes)
+    const rootRoute: CoRouteObject = {
+        path: '/',
+        root: true,
+        element: <Layout></Layout>,
+        children: layoutRoutes
+    }
+    // 创建根路由
+    // const rootRoute: CoRouteObject = {
+    //     path: '/',
+    //     element: <BasicLayout />,
+    //     root: true,
+    //     children: dynamicRoutes
+    // }
+
+    // // 添加其他基础路由
+    const routes: CoRouteObject[] = [
+        rootRoute,
+        ...independentRoutes
+    ]    
+    // console.log(routes)
+
+    return routes
 }
 
-function getRouteFirstPath(pathList: string[], path: string) {
-    const regex = /\/([^/]+)\.tsx/;
-    const match = path.match(regex);
-    if (match) {
-        pathList.push(match[1])
-    } else {
-        throw new Error('路由文件命名错误')!
-    }
-
-}
-handleOriginRoute()
-//静态路由
-export const StaticRoutes: CoRouteObject[] = [
-    {
-        path: '/',
-        element: <AuthBoundary><HomePage /></AuthBoundary>,
-        children: staticRoutesList
-    }
-]
-//动态路由
-export const DynamicRoutes: CoRouteObject[] = [
-    {
-        path: '/',
-        element: <AuthBoundary><HomePage /></AuthBoundary>,
-        children: dynamicRoutesList
-    }
-]
-//登录、错误页
-export const RemainingRoutes: CoRouteObject[] = [
-    {
-        path: '/login',
-        element: <Login />,
-    },
-    {
-        path: '/403',
-        element: <Forbidden />,
-    },
-    {
-        path: '/404',
-        element: <NotFound />,
-    },
-    {
-        path: '/*',
-        element: <Navigate to="/404" replace />,
-    }
-]
-
+export default await createRoutes()

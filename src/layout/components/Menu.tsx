@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import React from 'react';
 
 interface IProps extends MenuProps {
     type?: string;
@@ -16,9 +17,12 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // 只在路径真正改变时更新选中状态
     useEffect(() => {
         const currentPath = location.pathname;
-        MenuStore.setSelectedKeys([currentPath]);
+        if (currentPath !== MenuStore.selectedKeys[0]) {
+            MenuStore.setSelectedKeys([currentPath]);
+        }
     }, [location.pathname]);
 
     // 获取父级菜单的 key
@@ -55,12 +59,12 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     // 获取菜单项
     const getMenuItems = () => {
         const menuItems = MenuStore.menuList || [];
-        const { effectiveLayoutMode, positions } = ConfigStore;
+        // const { getComponentPosition } = ConfigStore;
         const currentPath = MenuStore.selectedKeys[0];
         const parentKey = getParentKey(currentPath);
 
         // 如果菜单位置设置为混合模式
-        if (positions.menu === 'mix') {
+        if (ConfigStore.getComponentPosition('MENU') === 'MIX') {
             // 顶部显示一级菜单，并处理选中状态
             if (mode === 'horizontal') {
                 return menuItems.map(item => ({
@@ -81,37 +85,36 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
                 });
                 return currentRoot?.children || [currentRoot];
             }
+
         }
 
         // 垂直布局（顶部导航）
-        if (effectiveLayoutMode === 'vertical') {
+        if (ConfigStore.getComponentPosition('MENU')  === 'IN_HEADER') {
             return mode === 'horizontal' ? menuItems : [];
         }
 
         // 水平布局（侧边导航）
-        if (effectiveLayoutMode === 'horizontal') {
+        if (ConfigStore.getComponentPosition('MENU')  === 'IN_SIDEBAR') {
             return mode === 'inline' ? menuItems : [];
         }
 
-        // 混合布局 - 非混合菜单模式
-        if (effectiveLayoutMode === 'mix') {
-            if ((mode === 'horizontal' && positions.menu === 'header') ||
-                (mode === 'inline' && positions.menu === 'sidebar')) {
-                return menuItems;
-            }
-            return [];
-        }
+
 
         return menuItems;
     };
-
+    const MenuOptions = mode === 'inline' && !collapsed ? {
+        openKeys: MenuStore.openKeys,
+        onOpenChange: (keys: string[]) => MenuStore.setOpenKeys(keys)
+    }:{}
+    console.log(mode,collapsed)
     return (
-        <div className="flex-1 overflow-hidden">
+        <div className="h-full">
             <AntMenu
+                {...MenuOptions}
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
-                openKeys={MenuStore.openKeys}
-                onOpenChange={MenuStore.setOpenKeys}
+                // openKeys={ MenuStore.openKeys}
+                // onOpenChange={(keys) => MenuStore.openKeys = keys}
                 mode={mode}
                 inlineCollapsed={collapsed}
                 className="menu-component !border-none"

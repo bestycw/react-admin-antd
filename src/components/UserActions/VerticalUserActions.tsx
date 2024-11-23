@@ -2,7 +2,8 @@ import { Avatar, Dropdown, Badge, Tooltip } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { UserOutlined, DownOutlined } from '@ant-design/icons'
 import useUserActions from './BaseUserActions'
-import React, { useState, useEffect, useRef } from 'react'
+import React, {  useRef } from 'react'
+import { useStore } from '../../store'
 
 interface VerticalUserActionsProps {
   collapsed?: boolean
@@ -10,45 +11,46 @@ interface VerticalUserActionsProps {
 
 const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActionsProps) => {
   const { actionItems, userMenuItems, languageItems, handleUserMenuClick, userInfo } = useUserActions()
-  const [isActionsCollapsed, setIsActionsCollapsed] = useState(false)
+  // const [isActionsCollapsed, setIsActionsCollapsed] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
-
+  const { ConfigStore } = useStore()
+  const isActionsCollapsed = ConfigStore.isActionsCollapsed
   // 监听 Sidebar 高度变化
-  useEffect(() => {
-    const container = containerRef.current?.closest('.ant-layout-sider-children')
-    if (!container) return
+  // useEffect(() => {
+  //   const container = containerRef.current?.closest('.ant-layout-sider-children')
+  //   if (!container) return
 
-    const checkHeight = () => {
-      const containerHeight = container.clientHeight
-      // 当高度小于 500px 时自动折叠
-      setIsActionsCollapsed(containerHeight < 500)
-    }
+  //   const checkHeight = () => {
+  //     const containerHeight = container.clientHeight
+  //     // 当高度小于 500px 时自动折叠
+  //     ConfigStore.toggleActionsCollapsed(containerHeight < 500)
+  //   }
 
-    const resizeObserver = new ResizeObserver(() => {
-      checkHeight()
-    })
+  //   const resizeObserver = new ResizeObserver(() => {
+  //     checkHeight()
+  //   })
 
-    resizeObserver.observe(container)
+  //   resizeObserver.observe(container)
     
-    // 初始检查
-    checkHeight()
+  //   // 初始检查
+  //   checkHeight()
 
-    return () => resizeObserver.disconnect()
-  }, [])
+  //   return () => resizeObserver.disconnect()
+  // }, [])
 
-  // 监听窗口大小变化
-  useEffect(() => {
-    const handleResize = () => {
-      const container = containerRef.current?.closest('.ant-layout-sider-children')
-      if (container) {
-        const containerHeight = container.clientHeight
-        setIsActionsCollapsed(containerHeight < 500)
-      }
-    }
+  // // 监听窗口大小变化
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     const container = containerRef.current?.closest('.ant-layout-sider-children')
+  //     if (container) {
+  //       const containerHeight = container.clientHeight
+  //       ConfigStore.toggleActionsCollapsed(containerHeight < 500)
+  //     }
+  //   }
 
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  //   window.addEventListener('resize', handleResize)
+  //   return () => window.removeEventListener('resize', handleResize)
+  // }, [])
 
   const ActionButton = ({ icon, label, badge, onClick }: {
     icon: React.ReactNode
@@ -134,7 +136,7 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
     >
       {/* Collapse Toggle Button */}
       <button
-        onClick={() => setIsActionsCollapsed(prev => !prev)}
+        onClick={() => ConfigStore.toggleActionsCollapsed(!ConfigStore.isActionsCollapsed)}
         className="flex items-center justify-center h-8 hover:bg-black/5 dark:hover:bg-white/5 w-full"
       >
         <span className={`

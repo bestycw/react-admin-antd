@@ -5,8 +5,8 @@ import axios, {
     InternalAxiosRequestConfig
 } from 'axios'
 import { message } from 'antd'
-import GlobalConfig from '../config/GlobalConfig'
-const { ApiUrl } = GlobalConfig
+import getGlobalConfig from '../config/GlobalConfig'
+const ApiUrl = getGlobalConfig('ApiUrl')
 
 interface RequestConfig extends AxiosRequestConfig {
     loading?: boolean

@@ -122,8 +122,8 @@
 
 /* 按钮样式 */
 .ant-btn {
-  border-color: var(--border-primary);
-  color: var(--text-primary);
+  /* border-color: var(--border-primary); */
+  /* color: var(--text-primary); */
 }
 
 /* 输入框样式 */
@@ -138,13 +138,13 @@
 }
 
 /* 确保所有组件文字颜色统一 */
-.ant-menu,
+/* .ant-menu,
 .ant-dropdown-menu,
 .ant-btn,
 .ant-input,
 .ant-select {
   color: var(--text-primary);
-}
+} */
 
 /* 下拉菜单样式 */
 .ant-dropdown {

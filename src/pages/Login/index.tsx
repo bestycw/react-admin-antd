@@ -1,20 +1,32 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../store";
 import { Form, Input, Button, Checkbox, message } from 'antd';
-import { UserOutlined, LockOutlined, SunOutlined, MoonOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, SunOutlined, MoonOutlined, LoginOutlined } from '@ant-design/icons';
 import Particles from "react-particles";
 import { loadSlim } from "tsparticles-slim";
 import type { Engine, IOptions, RecursivePartial } from "tsparticles-engine";
 import { useCallback, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo.svg";
-import GlobalConfig from '../../config/GlobalConfig'
+import getGlobalConfig from '../../config/GlobalConfig'
 import TypeWriter from '../../components/TypeWriter';
 import Captcha from '../../components/Captcha';
 import { authService } from '../../services/auth';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitch from '../../components/LanguageSwitch';
 import './index.scss';
+import React from "react";
+import { runInAction } from "mobx";
+import type { RouteConfig } from '@/types/route'
+
+// 路由配置
+export const routeConfig: RouteConfig = {
+    title: '登录',
+    icon: <LoginOutlined />,
+    layout: false,
+    auth: false,
+    sort: 999 // 放在最后
+}
 
 interface LoginForm {
   username: string;
@@ -87,12 +99,12 @@ const ParticlesOptions:RecursivePartial<IOptions> = {
 }
 const Login = observer(() => {
   const { UserStore, ConfigStore } = useStore();
-  const { AdminName } = GlobalConfig;
+  // const { AdminName } = GlobalConfig;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const isDynamic = ConfigStore.themeStyle === 'dynamic'
-
+  console.log('login init')
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
@@ -107,11 +119,17 @@ const Login = observer(() => {
     
     setLoading(true);
     try {
+      // 1. 登录获取用户信息
       const userInfo = await authService.login(values);
       UserStore.setUserInfo(userInfo, values.remember);
-      
+
+      // 2. 获取动态路由
+      // const routes = await UserStore.getDynamicRoutes();
+      // UserStore.setDynamicRoutes(routes);
+
       message.success(t('login.loginSuccess'));
-      navigate('/');
+      // 4. 使用 replace 进行导航，避免历史记录
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('Login failed:', error);
       message.error(t('login.loginFailed'));
@@ -140,9 +158,9 @@ const Login = observer(() => {
               }
               text-secondary
             `}
-            onClick={() => ConfigStore.toggleDarkMode()}
+            onClick={() => ConfigStore.setThemeMode(ConfigStore.isDark ? 'light' : 'dark')}
           >
-            {ConfigStore.isDarkMode ? (
+            {ConfigStore.isDark ? (
               <SunOutlined className="text-lg text-amber-500" />
             ) : (
               <MoonOutlined className="text-lg text-blue-500" />
@@ -154,7 +172,7 @@ const Login = observer(() => {
           <div className="text-center mb-8">
             <img src={logo} alt="Logo" className="h-16 mx-auto mb-4" />
             <TypeWriter
-              text={AdminName}
+              text={getGlobalConfig('AdminName')}
               className="artistic-text mb-2"
               loop={true}
               loopDelay={3000}

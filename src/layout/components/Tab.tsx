@@ -14,9 +14,14 @@ import {
 } from '@ant-design/icons'
 
 const Tab = observer(() => {
-  const { MenuStore } = useStore()
+  const { MenuStore, ConfigStore } = useStore()
   const navigate = useNavigate()
   const location = useLocation()
+
+  // 如果 showTabs 为 false 或没有访问标签，不渲染任何内容
+  if (!ConfigStore.showTabs || MenuStore.visitedTags.length === 0) {
+    return null
+  }
 
   // 处理标签页切换
   const onChange = (key: string) => {
