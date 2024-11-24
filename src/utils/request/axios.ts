@@ -2,7 +2,8 @@ import axios, {
     AxiosInstance,
     AxiosRequestConfig,
     AxiosResponse,
-    InternalAxiosRequestConfig
+    InternalAxiosRequestConfig,
+    AxiosProgressEvent
 } from 'axios'
 import { message } from 'antd'
 import getGlobalConfig from '@/config/GlobalConfig'
@@ -12,6 +13,8 @@ interface RequestConfig extends AxiosRequestConfig {
     token?: boolean
     retry?: number // 重试次数
     retryDelay?: number // 重试延迟时间(ms)
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void // 上传进度
+    onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void // 下载进度
 }
 
 // interface ResponseData<T> {
@@ -199,8 +202,21 @@ class Request {
         return this.instance.get(url, config)
     }
 
-    public post<T>(url: string, data?: unknown, config?: RequestConfig): Promise<T> {
-        return this.instance.post(url, data, config)
+    public async post<T>(url: string, data?: unknown, config?: RequestConfig): Promise<T> {
+        // 处理上传进度
+        const finalConfig: RequestConfig = {
+            ...config
+        };
+
+        // 如果是 FormData，需要特殊处理
+        if (data instanceof FormData) {
+            finalConfig.headers = {
+                ...finalConfig.headers,
+                'Content-Type': 'multipart/form-data'
+            };
+        }
+
+        return this.instance.post(url, data, finalConfig);
     }
 
     public put<T>(url: string, data?: unknown, config?: RequestConfig): Promise<T> {
@@ -212,7 +228,7 @@ class Request {
     }
 
     /**
-     * 文件下载方法
+     * 文件下载法
      * @param url 下载地址
      * @param fileName 文件名（可选）
      * @param config 请求配置（可选）
@@ -227,7 +243,7 @@ class Request {
                 url,
                 method: 'GET',
                 responseType: 'blob',
-                ...config
+                ...config,
             });
 
             // 获取文件名
@@ -306,12 +322,19 @@ class Request {
         config?: RequestConfig
     ): Promise<void> {
         try {
-            const response = await this.instance({
-                url,
-                method: 'POST',
-                data,
+            const response = await this.instance.post(url, data, {
                 responseType: 'blob',
-                ...config
+                ...config,
+                // onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+                //     const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1))
+                //     config?.onUploadProgress?.(progressEvent)
+                //     console.log(`导出上传进度: ${percentCompleted}%`)
+                // },
+                // onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
+                //     const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1))
+                //     config?.onDownloadProgress?.(progressEvent)
+                //     console.log(`导出下载进度: ${percentCompleted}%`)
+                // }
             });
 
             // 处理文件名
@@ -348,6 +371,44 @@ class Request {
             message.error('导出失败，请重试！');
             return Promise.reject(error);
         }
+    }
+
+    /**
+     * 文件上传方法
+     * @param url 上传地址
+     * @param file 文件对象
+     * @param config 请求配置
+     */
+    public async upload<T>(
+        url: string,
+        file: File | Blob | FormData,
+        config?: RequestConfig
+    ): Promise<T> {
+        let formData: FormData;
+        
+        if (file instanceof FormData) {
+            formData = file;
+        } else {
+            formData = new FormData();
+            formData.append('file', file);
+        }
+
+        const uploadConfig: RequestConfig = {
+            ...config,
+            headers: {
+                ...config?.headers,
+                'Content-Type': 'multipart/form-data'
+            },
+            // onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+            //     if (progressEvent.total) {
+            //         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            //         config?.onUploadProgress?.(progressEvent);
+            //         console.log(`上传进度: ${percentCompleted}%`);
+            //     }
+            // }
+        };
+
+        return this.post(url, formData, uploadConfig);
     }
 }
 
