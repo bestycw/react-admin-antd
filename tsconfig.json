@@ -5,7 +5,7 @@
       "@/*": ["src/*"]
     }
   },
-  "files": [],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
     // { "path": "./tsconfig.app.json" },
     // { "path": "./tsconfig.node.json" }
