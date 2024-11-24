@@ -6,6 +6,7 @@ export interface UserInfo {
     username: string
     avatar?: string
     roles: string[]
+    email: string
     accessToken: string
     dynamicRoutesList: string[]
     permissions: string[]

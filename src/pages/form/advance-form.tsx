@@ -4,10 +4,8 @@ import {
   Form,
   Input,
   Button,
-  Select,
   DatePicker,
   Upload,
-  Space,
   Table,
   Tag,
   Divider,
@@ -17,23 +15,34 @@ import {
 import { FormOutlined, PlusOutlined, InboxOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
 import type { TableColumnsType } from 'antd';
+import type { Dayjs } from 'dayjs';
 
 const { TextArea } = Input;
-const { Option } = Select;
 const { RangePicker } = DatePicker;
 
+// 定义表单值的类型
+interface FormValues {
+  projectName: string;
+  projectCode: string;
+  projectTime: [Dayjs, Dayjs];
+  budget: number;
+  description: string;
+}
+
+// 定义表格项的类型
 interface TableItem {
   key: string;
   name: string;
   amount: number;
-  status: string;
+  status: 'completed' | 'pending';
 }
 
 const AdvanceForm: React.FC = () => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormValues>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [tableData, setTableData] = useState<TableItem[]>([]);
 
+  // 定义表格列配置
   const columns: TableColumnsType<TableItem> = [
     {
       title: '名称',
@@ -44,12 +53,13 @@ const AdvanceForm: React.FC = () => {
       title: '金额',
       dataIndex: 'amount',
       key: 'amount',
+      render: (amount: number) => `¥${amount.toLocaleString()}`
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: string) => (
+      render: (status: TableItem['status']) => (
         <Tag color={status === 'completed' ? 'success' : 'processing'}>
           {status === 'completed' ? '已完成' : '进行中'}
         </Tag>
@@ -67,7 +77,7 @@ const AdvanceForm: React.FC = () => {
   ];
 
   const handleRemoveItem = (key: string) => {
-    setTableData(tableData.filter(item => item.key !== key));
+    setTableData(prev => prev.filter(item => item.key !== key));
   };
 
   const handleAddItem = () => {
@@ -77,20 +87,27 @@ const AdvanceForm: React.FC = () => {
       amount: 0,
       status: 'pending',
     };
-    setTableData([...tableData, newItem]);
+    setTableData(prev => [...prev, newItem]);
   };
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: FormValues) => {
     try {
-      console.log('Form values:', {
+      const submitData = {
         ...values,
         files: fileList,
         items: tableData,
-      });
+      };
+      console.log('Form values:', submitData);
       message.success('表单提交成功！');
-    } catch (error) {
+    } catch {
       message.error('提交失败，请重试！');
     }
+  };
+
+  const handleReset = () => {
+    form.resetFields();
+    setFileList([]);
+    setTableData([]);
   };
 
   return (
@@ -134,8 +151,8 @@ const AdvanceForm: React.FC = () => {
             >
               <InputNumber
                 className="w-full"
-                formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                parser={value => value!.replace(/\￥\s?|(,*)/g, '')}
+                formatter={value => `¥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                parser={value => value!.replace(/[¥\s,]/g, '')}
               />
             </Form.Item>
           </div>
@@ -179,11 +196,7 @@ const AdvanceForm: React.FC = () => {
 
           <Form.Item>
             <div className="flex justify-end gap-4">
-              <Button onClick={() => {
-                form.resetFields();
-                setFileList([]);
-                setTableData([]);
-              }}>
+              <Button onClick={handleReset}>
                 重置
               </Button>
               <Button type="primary" htmlType="submit">

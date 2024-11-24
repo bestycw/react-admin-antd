@@ -1258,6 +1258,11 @@
   "resolved" "https://registry.npmmirror.com/@types/json-schema/-/json-schema-7.0.15.tgz"
   "version" "7.0.15"
 
+"@types/mockjs@^1.0.10":
+  "integrity" "sha512-SXgrhajHG7boLv6oU93CcmdDm0HYRiceuz6b+7z+/2lCJPTWDv0V5YiwFHT2ejE4bQqgSXQiVPQYPWv7LGsK1g=="
+  "resolved" "https://registry.npmmirror.com/@types/mockjs/-/mockjs-1.0.10.tgz"
+  "version" "1.0.10"
+
 "@types/node@^18.0.0 || >=20.0.0", "@types/node@^22.9.0":
   "integrity" "sha512-vuyHg81vvWA1Z1ELfvLko2c8f34gyA0zaic0+Rllc5lbCnbSyuvb2Oxpm6TAUAC/2xZN3QGqxBNggD1nNR2AfQ=="
   "resolved" "https://registry.npmmirror.com/@types/node/-/node-22.9.0.tgz"

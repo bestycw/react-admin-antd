@@ -106,7 +106,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         monaco.KeyMod.Alt | monaco.KeyMod.Shift | monaco.KeyCode.KeyF
       ],
       run: (ed) => {
-        ed.getAction('editor.action.formatDocument').run()
+        ed.getAction('editor.action.formatDocument')?.run()
       }
     })
   }, [onSave])

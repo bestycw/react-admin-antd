@@ -1,6 +1,6 @@
 import { Layout } from 'antd'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+// import React from 'react'
 import { CSSProperties, ReactNode } from 'react'
 
 interface ContentProps {

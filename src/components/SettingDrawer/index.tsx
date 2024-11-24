@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
 import { Segmented, Space, Switch } from 'antd'
@@ -14,7 +14,7 @@ import {
 
 } from '@ant-design/icons'
 import CustomDrawer from '../CustomDrawer'
-import { LayoutMode, ThemeStyle, ThemeMode } from '@/types/config'
+import { LayoutMode, ThemeStyle, ThemeMode, ComponentPosition } from '@/types/config'
 
 const SettingDrawer = observer(() => {
   const { ConfigStore } = useStore()
@@ -68,7 +68,10 @@ const SettingDrawer = observer(() => {
     },
   ]
 
-  const positionOptions = [
+  const positionOptions:{
+    value:ComponentPosition,
+    label:string
+  }[] = [
     {
       value: 'IN_HEADER',
       label: '顶部',

@@ -16,17 +16,17 @@ import {
 } from 'antd';
 import { SearchOutlined, FilterOutlined, ReloadOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
-import type { Dayjs } from 'dayjs';
+// import type { Dayjs } from 'dayjs';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-interface SearchFormValues {
-  keyword?: string;
-  status?: string;
-  type?: string;
-  dateRange?: [Dayjs, Dayjs];
-}
+// interface SearchFormValues {
+//   keyword?: string;
+//   status?: string;
+//   type?: string;
+//   dateRange?: [Dayjs, Dayjs];
+// }
 
 interface TableItem {
   key: string;
@@ -87,7 +87,7 @@ const SearchForm: React.FC = () => {
     {
       title: '操作',
       key: 'action',
-      render: (_, record) => (
+      render: () => (
         <Space>
           <Button type="link">查看</Button>
           <Button type="link">编辑</Button>
@@ -96,7 +96,7 @@ const SearchForm: React.FC = () => {
     },
   ];
 
-  const handleSearch = async (values: SearchFormValues) => {
+  const handleSearch = async () => {
     setLoading(true);
     try {
       // 模拟API请求
@@ -116,6 +116,7 @@ const SearchForm: React.FC = () => {
       message.success('查询成功！');
     } catch (error) {
       message.error('查询失败，请重试！');
+      console.error(error)
     } finally {
       setLoading(false);
     }

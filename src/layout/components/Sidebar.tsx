@@ -5,7 +5,7 @@ import UserActions from '@/components/UserActions'
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import { Layout } from 'antd'
 import CustomDrawer from '@/components/CustomDrawer'
-import React, { useMemo } from 'react'
+import  { useMemo } from 'react'
 import { useStore } from '@/store'
 
 const { Sider } = Layout

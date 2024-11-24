@@ -4,7 +4,8 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import React from 'react';
+import { ItemType, MenuItemType } from 'antd/es/menu/interface';
+// import React from 'react';
 
 interface IProps extends MenuProps {
     type?: string;
@@ -59,13 +60,10 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     // 获取菜单项
     const getMenuItems = () => {
         const menuItems = MenuStore.menuList || [];
-        // const { getComponentPosition } = ConfigStore;
         const currentPath = MenuStore.selectedKeys[0];
         const parentKey = getParentKey(currentPath);
 
-        // 如果菜单位置设置为混合模式
         if (ConfigStore.getComponentPosition('MENU') === 'MIX') {
-            // 顶部显示一级菜单，并处理选中状态
             if (mode === 'horizontal') {
                 return menuItems.map(item => ({
                     key: item.key,
@@ -74,7 +72,6 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
                     className: parentKey === item.key ? 'ant-menu-item-selected' : ''
                 }));
             }
-            // 侧边栏显示当前选中一级菜单的子菜单
             if (mode === 'inline') {
                 const currentRoot = menuItems.find(item => {
                     if (item.key === currentPath) return true;
@@ -83,9 +80,8 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
                         return child.key === currentPath;
                     });
                 });
-                return currentRoot?.children || [currentRoot];
+                return (currentRoot?.children || [currentRoot]).filter(Boolean);
             }
-
         }
 
         // 垂直布局（顶部导航）
@@ -98,8 +94,6 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
             return mode === 'inline' ? menuItems : [];
         }
 
-
-
         return menuItems;
     };
     const MenuOptions = mode === 'inline' && !collapsed ? {
@@ -107,7 +101,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
         onOpenChange: (keys: string[]) => MenuStore.setOpenKeys(keys)
     }:{}
     // console.log(mode,collapsed)
-    console.log(MenuStore.selectedKeys)
+    // console.log(MenuStore.selectedKeys)
     return (
         <div className="h-full">
             <AntMenu
@@ -119,7 +113,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
                 mode={mode}
                 inlineCollapsed={collapsed}
                 className="menu-component !border-none"
-                items={getMenuItems()}
+                items={getMenuItems() as ItemType<MenuItemType>[]}
             />
         </div>
     );

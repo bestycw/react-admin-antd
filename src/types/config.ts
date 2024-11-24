@@ -29,8 +29,8 @@ export type StorageKey = keyof typeof STORAGE_KEYS
 export type LayoutFlag = number
 
 // 组件位置类型
-export type ComponentPosition = 'IN_HEADER' | 'IN_SIDEBAR' | 'MIX' | 'NONE'
-
+export type ComponentPosition = 'IN_HEADER' | 'IN_SIDEBAR' | 'MIX' 
+// export type ComponentPositionType = 'IN_HEADER' | 'IN_SIDEBAR'
 // 布局配置接口
 export interface LayoutConfig {
     mode: LayoutMode

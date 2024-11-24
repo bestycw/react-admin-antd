@@ -3,8 +3,9 @@ import { Modal, Input, Empty, List } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { useStore } from '@/store'
 import { useNavigate } from 'react-router-dom'
-import type { MenuItem } from '@/types/menu'
+// import type { MenuItem } from '@/types/menu'
 import { observer } from 'mobx-react-lite'
+import { MenuItem } from '@/store/MenuStore'
 
 const GlobalSearch: React.FC = observer(() => {
     const { ConfigStore, MenuStore } = useStore()

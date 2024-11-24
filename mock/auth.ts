@@ -9,7 +9,7 @@ Mock.setup({
 })
 
 // 登录接口
-Mock.mock('/api/auth/login', 'post', (options) => {
+Mock.mock('/api/auth/login', 'post', (options:any) => {
     const { username, password } = JSON.parse(options.body)
     if (username === 'admin' && password === '123456') {
         return {

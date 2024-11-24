@@ -33,7 +33,7 @@ const RoleManagement: React.FC = observer(() => {
     const [permissionModalVisible, setPermissionModalVisible] = useState(false)
     const [currentRole, setCurrentRole] = useState<RoleItem | null>(null)
     const [form] = Form.useForm()
-
+    console.log(setLoading,setData)
     // 将路由转换为树形结构
     const getPermissionTree = () => {
         const routes = UserStore.allRoutes
@@ -75,7 +75,7 @@ const RoleManagement: React.FC = observer(() => {
                     <Button type="link" onClick={() => handleEdit(record)}>
                         编辑
                     </Button>
-                    <Button type="link" danger onClick={() => handleDelete(record)}>
+                    <Button type="link" danger onClick={() => handleDelete()}>
                         删除
                     </Button>
                 </Space>
@@ -97,7 +97,7 @@ const RoleManagement: React.FC = observer(() => {
     }
 
     // 处理删除
-    const handleDelete = (role: RoleItem) => {
+    const handleDelete = () => {
         // TODO: 实现删除逻辑
         message.success('删除成功')
     }
@@ -106,6 +106,8 @@ const RoleManagement: React.FC = observer(() => {
     const handleSave = async () => {
         try {
             const values = await form.validateFields()
+            console.error(values)
+
             // TODO: 实现保存逻辑
             message.success('保存成功')
             setModalVisible(false)
@@ -116,7 +118,7 @@ const RoleManagement: React.FC = observer(() => {
     }
 
     // 处理权限保存
-    const handlePermissionSave = (checkedKeys: any) => {
+    const handlePermissionSave = () => {
         // TODO: 实现权限保存逻辑
         message.success('权限配置成功')
         setPermissionModalVisible(false)

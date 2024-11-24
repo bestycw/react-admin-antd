@@ -16,9 +16,9 @@ export interface LoginResult {
 
 export const authService = {
     // 登录
-    login(params: LoginParams) {
+    login(params: LoginParams){
         const { username, password } = params
-        return Request.post<LoginResult>('/api/auth/login', { username, password }, {
+        return Request.post<UserInfo>('/api/auth/login', { username, password }, {
             retry: 2
         })
     },

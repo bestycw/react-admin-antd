@@ -173,14 +173,13 @@ const routeTreeHandler = {
         }
 
         // 处理多级路由
-        let currentPath = ''
+        // let currentPath = ''
         let currentParent: RouteNode | undefined
         
         // 逐级创建或获取父级路由
         for (let i = 0; i < parts.length - 1; i++) {
             const parentPath = parts.slice(0, i + 1).join('/')
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            currentPath = parentPath
+        //   const  currentPath = parentPath
 
             if (!moduleMap.has(parentPath)) {
                 // 尝试获取父级配置

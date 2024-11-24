@@ -183,7 +183,7 @@ class ConfigStore implements IConfigStore {
 
     toggleComponentPosition(
         component: keyof typeof LayoutFlags,
-        position: 'IN_HEADER' | 'IN_SIDEBAR'
+        position: ComponentPosition
     ) {
         const shift = LayoutFlags[`${component}_SHIFT` as keyof typeof LayoutFlags]
         const positionBit = LayoutFlags[position]
@@ -230,7 +230,7 @@ class ConfigStore implements IConfigStore {
         if (inHeader) return 'IN_HEADER'
         if (inSidebar) return 'IN_SIDEBAR'
         // return
-        return 'NONE'
+        return 'MIX'
     }
 
     clearConfig() {
@@ -242,7 +242,7 @@ class ConfigStore implements IConfigStore {
     // 私有方法
     private checkComponentPosition(
         component: keyof typeof LayoutFlags,
-        position: 'IN_HEADER' | 'IN_SIDEBAR'
+        position: ComponentPosition
     ): boolean {
         const shift = LayoutFlags[`${component}_SHIFT`as keyof typeof LayoutFlags]
         const positionBit = LayoutFlags[position]

@@ -30,7 +30,7 @@ const UserManagement: React.FC = observer(() => {
     const [modalVisible, setModalVisible] = useState(false)
     const [currentUser, setCurrentUser] = useState<UserItem | null>(null)
     const [form] = Form.useForm()
-
+    console.log(setLoading,setData)
     const columns = [
         {
             title: '用户名',
@@ -93,11 +93,13 @@ const UserManagement: React.FC = observer(() => {
     // 处理状态切换
     const handleToggleStatus = (user: UserItem) => {
         // TODO: 实现状态切换逻辑
+        console.log(user)
         message.success('状态更新成功')
     }
 
     // 处理删除
     const handleDelete = (user: UserItem) => {
+        console.log(user)
         // TODO: 实现删除逻辑
         message.success('删除成功')
     }
@@ -106,6 +108,7 @@ const UserManagement: React.FC = observer(() => {
     const handleSave = async () => {
         try {
             const values = await form.validateFields()
+            console.log(values)
             // TODO: 实现保存逻辑
             message.success('保存成功')
             setModalVisible(false)

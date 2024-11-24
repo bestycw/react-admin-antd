@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitch from '../../components/LanguageSwitch';
 import './index.scss';
 import type { RouteConfig } from '@/types/route'
+// import { UserInfo } from "@/store/UserStore";
 
 // 路由配置
 export const routeConfig: RouteConfig = {

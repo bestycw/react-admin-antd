@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { Card, Row, Col, Statistic, Progress, List, Button, Timeline, Tag, Tooltip, Alert, Calendar, Badge } from 'antd';
+import { Card, Row, Col, Statistic, Progress, List, Button, Timeline, Tag, Tooltip, Alert, Badge } from 'antd';
 // import type { Dayjs } from 'dayjs';
 import { 
   ArrowUpOutlined, ArrowDownOutlined, UserOutlined, ShoppingCartOutlined, 
-  FileTextOutlined, TeamOutlined, BellOutlined, ReloadOutlined,
+  FileTextOutlined, TeamOutlined, ReloadOutlined,
   CheckCircleOutlined, ClockCircleOutlined, InfoCircleOutlined,
   HomeOutlined
 } from '@ant-design/icons';
 import { Area, Pie } from '@ant-design/plots';
+import { RouteConfig } from '@/types/route';
 export const routeConfig: RouteConfig = {
     title: '首页',
     icon: <HomeOutlined />,

@@ -7,7 +7,7 @@ import { Suspense } from 'react'
 import routes from './router/index'
 
 import { useStore } from './store'
-import React from 'react'
+// import React from 'react'
 import PageProgress from '@/components/PageProgress'
 import { CoRouteObject } from './types/route.d'
 import { runInAction } from 'mobx'
