@@ -35,4 +35,4 @@ export  function createRoutes(): CoRouteObject[] {
     return routes
 }
 
-export default await createRoutes()
+export default  createRoutes()
