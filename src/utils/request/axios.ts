@@ -5,8 +5,7 @@ import axios, {
     InternalAxiosRequestConfig
 } from 'axios'
 import { message } from 'antd'
-import getGlobalConfig from '../config/GlobalConfig'
-const ApiUrl = getGlobalConfig('ApiUrl')
+import getGlobalConfig from '@/config/GlobalConfig'
 
 interface RequestConfig extends AxiosRequestConfig {
     loading?: boolean
@@ -29,7 +28,7 @@ class Request {
         this.pendingRequests = new Map()
 
         this.instance = axios.create({
-            baseURL: ApiUrl,
+            baseURL: getGlobalConfig('ApiUrl'),
             timeout: 10000,
             headers: {
                 'Content-Type': 'application/json'
@@ -78,7 +77,7 @@ class Request {
                 currentRetry++
                 console.log(`重试第 ${currentRetry}/${retryCount} 次`)
                 const source = axios.CancelToken.source()
-                // 创��新的配置，移除重试相关配置避免无限重试
+                // 创新的配置，移除重试相关配置避免无限重试
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { retry: _, retryDelay: __, ...restConfig } = config
                 const newConfig = { 
@@ -162,7 +161,7 @@ class Request {
                             message.error('拒绝访问')
                             break
                         case 404:
-                            message.error('���求错误，未找到该资源')
+                            message.error('请求错误，未找到该资源')
                             break
                         case 500:
                             message.error('服务器错误')
@@ -210,6 +209,145 @@ class Request {
 
     public delete<T>(url: string, config?: RequestConfig): Promise<T> {
         return this.instance.delete(url, config)
+    }
+
+    /**
+     * 文件下载方法
+     * @param url 下载地址
+     * @param fileName 文件名（可选）
+     * @param config 请求配置（可选）
+     */
+    public async download(
+        url: string,
+        fileName?: string,
+        config?: RequestConfig
+    ): Promise<void> {
+        try {
+            const response = await this.instance({
+                url,
+                method: 'GET',
+                responseType: 'blob',
+                ...config
+            });
+
+            // 获取文件名
+            let downloadFileName = fileName;
+            if (!downloadFileName) {
+                // 尝试从响应头获取文件名
+                const contentDisposition = response.headers['content-disposition'];
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                    if (filenameMatch && filenameMatch[1]) {
+                        downloadFileName = decodeURIComponent(filenameMatch[1].replace(/['"]/g, ''));
+                    }
+                }
+                // 如果还是没有文件名，使用时间戳
+                if (!downloadFileName) {
+                    const extension = this.getFileExtension(response.headers['content-type']);
+                    downloadFileName = `download_${Date.now()}${extension}`;
+                }
+            }
+
+            // 创建下载链接
+            const blob = new Blob([response.data], {
+                type: response.headers['content-type']
+            });
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = downloadFileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(downloadUrl);
+
+            return Promise.resolve();
+        } catch (error) {
+            message.error('下载失败，请重试！');
+            return Promise.reject(error);
+        }
+    }
+
+    /**
+     * 获取文件扩展名
+     * @param mimeType MIME类型
+     */
+    private getFileExtension(mimeType: string): string {
+        const mimeTypeMap: Record<string, string> = {
+            'application/pdf': '.pdf',
+            'application/msword': '.doc',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+            'application/vnd.ms-excel': '.xls',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
+            'application/vnd.ms-powerpoint': '.ppt',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
+            'image/jpeg': '.jpg',
+            'image/png': '.png',
+            'image/gif': '.gif',
+            'text/plain': '.txt',
+            'application/zip': '.zip',
+            'application/x-rar-compressed': '.rar'
+        };
+
+        return mimeTypeMap[mimeType] || '';
+    }
+
+    /**
+     * 导出文件（POST方法）
+     * @param url 导出地址
+     * @param data 请求数据
+     * @param fileName 文件名（可选）
+     * @param config 请求配置（可选）
+     */
+    public async export(
+        url: string,
+        data?: unknown,
+        fileName?: string,
+        config?: RequestConfig
+    ): Promise<void> {
+        try {
+            const response = await this.instance({
+                url,
+                method: 'POST',
+                data,
+                responseType: 'blob',
+                ...config
+            });
+
+            // 处理文件名
+            let downloadFileName = fileName;
+            if (!downloadFileName) {
+                const contentDisposition = response.headers['content-disposition'];
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                    if (filenameMatch && filenameMatch[1]) {
+                        downloadFileName = decodeURIComponent(filenameMatch[1].replace(/['"]/g, ''));
+                    }
+                }
+                if (!downloadFileName) {
+                    const extension = this.getFileExtension(response.headers['content-type']);
+                    downloadFileName = `export_${Date.now()}${extension}`;
+                }
+            }
+
+            // 创建下载链接
+            const blob = new Blob([response.data], {
+                type: response.headers['content-type']
+            });
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = downloadFileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(downloadUrl);
+
+            return Promise.resolve();
+        } catch (error) {
+            message.error('导出失败，请重试！');
+            return Promise.reject(error);
+        }
     }
 }
 

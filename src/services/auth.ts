@@ -1,4 +1,4 @@
-import Request from '../utils/request'
+import Request from '../utils/request/'
 import { UserInfo } from '../store/UserStore'
 import { CoRouteObject } from '../types/route'
 
