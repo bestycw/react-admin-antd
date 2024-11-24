@@ -23,8 +23,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+
+    /* Build Options */
+    "incremental": false,
+    "tsBuildInfoFile": null
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "mock/**/*.ts"],
+  "exclude": ["node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
