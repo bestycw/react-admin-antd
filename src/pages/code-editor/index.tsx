@@ -177,4 +177,5 @@ export const routeConfig = {
   icon: <CodeOutlined />,
   layout: true,
   auth: true,
+  sort: 100
 } 

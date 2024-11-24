@@ -18,12 +18,6 @@ export  function createRoutes(): CoRouteObject[] {
         children: layoutRoutes
     }
     // 创建根路由
-    // const rootRoute: CoRouteObject = {
-    //     path: '/',
-    //     element: <BasicLayout />,
-    //     root: true,
-    //     children: dynamicRoutes
-    // }
 
     // // 添加其他基础路由
     const routes: CoRouteObject[] = [

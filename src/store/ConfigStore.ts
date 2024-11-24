@@ -259,6 +259,7 @@ class ConfigStore implements IConfigStore {
             const width = window.innerWidth
             if (width < 768) {
                 this.isDrawerMode = true
+                this.layoutState = LayoutModes.HORIZONTAL
                 this.drawerVisible = false
                 this.sidebarCollapsed = false
             } else {
