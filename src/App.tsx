@@ -8,7 +8,7 @@ import routes from './router/index'
 
 import { useStore } from './store'
 // import React from 'react'
-import PageProgress from '@/components/PageProgress'
+// import PageProgress from '@/components/PageProgress'
 import { CoRouteObject } from './types/route.d'
 import { runInAction } from 'mobx'
 console.log('routes', routes)
@@ -35,7 +35,7 @@ const App = observer(() => {
 
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>
-            <PageProgress />
+            {/* <PageProgress /> */}
             <Suspense>
                 {useRoutes(renderRoutes as RouteObject[])}
             </Suspense>

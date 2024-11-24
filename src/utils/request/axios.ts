@@ -7,6 +7,7 @@ import axios, {
 } from 'axios'
 import { message } from 'antd'
 import getGlobalConfig from '@/config/GlobalConfig'
+import NProgress from '../nprogress'
 
 interface RequestConfig extends AxiosRequestConfig {
     loading?: boolean
@@ -26,6 +27,7 @@ interface RequestConfig extends AxiosRequestConfig {
 class Request {
     private instance: AxiosInstance
     private pendingRequests: Map<string, () => void>
+    private activeRequestCount: number = 0
 
     constructor() {
         this.pendingRequests = new Map()
@@ -104,9 +106,21 @@ class Request {
         return retryer()
     }
 
+    private handleRequestCount(change: number) {
+        this.activeRequestCount += change
+        console.log(`当前请求数: ${this.activeRequestCount}`)
+        if (this.activeRequestCount > 0) {
+            NProgress.start()
+        } else {
+            this.activeRequestCount = 0
+            NProgress.done()
+        }
+    }
+
     private initInterceptors(): void {
         this.instance.interceptors.request.use(
             (config: InternalAxiosRequestConfig) => {
+                NProgress.start()
                 this.removePendingRequest(config)
                 this.addPendingRequest(config)
 
@@ -119,12 +133,14 @@ class Request {
                 return config
             },
             (error) => {
+                // this.handleRequestCount(-1)
                 return Promise.reject(error)
             }
         )
 
         this.instance.interceptors.response.use(
             (response: AxiosResponse) => {
+                NProgress.done()
                 this.removePendingRequest(response.config)
 
                 const { code, message: msg, data } = response.data
@@ -137,6 +153,7 @@ class Request {
                 return Promise.reject(new Error(msg || '请求失败'))
             },
             async (error) => {
+                NProgress.done()
                 if (error.config) {
                     this.removePendingRequest(error.config)
                 }
@@ -244,6 +261,13 @@ class Request {
                 method: 'GET',
                 responseType: 'blob',
                 ...config,
+                onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
+                    if (progressEvent.total) {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        NProgress.set(percentCompleted / 100)
+                        config?.onDownloadProgress?.(progressEvent);
+                    }
+                }
             });
 
             // 获取文件名
@@ -399,13 +423,13 @@ class Request {
                 ...config?.headers,
                 'Content-Type': 'multipart/form-data'
             },
-            // onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-            //     if (progressEvent.total) {
-            //         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            //         config?.onUploadProgress?.(progressEvent);
-            //         console.log(`上传进度: ${percentCompleted}%`);
-            //     }
-            // }
+            onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+                if (progressEvent.total) {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    NProgress.set(percentCompleted / 100)
+                    config?.onUploadProgress?.(progressEvent);
+                }
+            }
         };
 
         return this.post(url, formData, uploadConfig);

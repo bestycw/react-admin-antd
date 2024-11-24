@@ -5,7 +5,7 @@ const { Random } = Mock
 
 // 拦截 axios 请求
 Mock.setup({
-    timeout: '1000-2000'
+    timeout: '2000-5000'
 })
 
 // 登录接口
