@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Form, Input, Button, Select, DatePicker, Radio, Switch, message } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
+import type { Dayjs } from 'dayjs';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -10,7 +11,7 @@ interface BasicFormValues {
   description: string;
   category: string;
   visibility: 'public' | 'private';
-  date: moment.Moment;
+  date: Dayjs;
   tags: string[];
   status: boolean;
 }

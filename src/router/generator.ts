@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { lazy } from 'react'
 import type { CoRouteObject, RouteConfig } from '../types/route'
 import * as Icons from '@ant-design/icons'
@@ -15,7 +16,7 @@ const pages = import.meta.glob([
 ], { eager: true })
 
 // 获取配置文件
-const configs = import.meta.glob([
+const configs: Record<string, { routeConfig?: RouteConfig }> = import.meta.glob([
     '@/pages/**/index.config.tsx'
 ], { eager: true })
 
@@ -52,7 +53,7 @@ const routeUtils = {
     // 生成图标
     generateIcon(iconName: string) {
         const Icon = iconMap.get(iconName.toLowerCase())
-        return Icon ? React.createElement(Icon) : null
+        return Icon ? React.createElement(Icon as React.ComponentType) : null
     },
 
     // 格式化路径
@@ -119,7 +120,7 @@ const routeConfigHandler = {
 
     // 创建路由节点
     createRouteNode(path: string, config: RouteConfig): RouteNode {
-        const component = lazy(() => PagesList[path]())
+        const component = lazy(() => PagesList[path]() as Promise<{ default: React.ComponentType<any> }>)
         return {
             path: routeUtils.formatRoutePath(routeUtils.getRelativePath(path)),
 
@@ -178,6 +179,7 @@ const routeTreeHandler = {
         // 逐级创建或获取父级路由
         for (let i = 0; i < parts.length - 1; i++) {
             const parentPath = parts.slice(0, i + 1).join('/')
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             currentPath = parentPath
 
             if (!moduleMap.has(parentPath)) {

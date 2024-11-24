@@ -65,6 +65,8 @@ class ConfigStore implements IConfigStore {
     // 搜索弹窗状态
     searchVisible: boolean = false
 
+    isDarkMode = false;
+
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true })
         this.initConfig()
@@ -183,7 +185,7 @@ class ConfigStore implements IConfigStore {
         component: keyof typeof LayoutFlags,
         position: 'IN_HEADER' | 'IN_SIDEBAR'
     ) {
-        const shift = LayoutFlags[`${component}_SHIFT`]
+        const shift = LayoutFlags[`${component}_SHIFT` as keyof typeof LayoutFlags]
         const positionBit = LayoutFlags[position]
         const mask = 0b11 << shift
         this.layoutState = (this.layoutState & ~mask) | (positionBit << shift)
@@ -194,7 +196,7 @@ class ConfigStore implements IConfigStore {
         component: keyof typeof LayoutFlags,
         isShow: boolean
     ) {
-        const shift = LayoutFlags[`${component}_SHIFT`]
+        const shift = LayoutFlags[`${component}_SHIFT` as keyof typeof LayoutFlags]
         const mask = 0b11 << shift
 
         let newBits = 0b00
@@ -219,7 +221,7 @@ class ConfigStore implements IConfigStore {
     }
     // 获取组件在当前布局下的位置
     getComponentPosition(component: keyof typeof LayoutFlags): ComponentPosition {
-        const shift = LayoutFlags[`${component}_SHIFT`]
+        const shift = LayoutFlags[`${component}_SHIFT` as keyof typeof LayoutFlags]
         const componentBits = (this.layoutState & (0b11 << shift)) >> shift
 
         const inHeader = (componentBits & LayoutFlags.IN_HEADER) !== 0
@@ -242,7 +244,7 @@ class ConfigStore implements IConfigStore {
         component: keyof typeof LayoutFlags,
         position: 'IN_HEADER' | 'IN_SIDEBAR'
     ): boolean {
-        const shift = LayoutFlags[`${component}_SHIFT`]
+        const shift = LayoutFlags[`${component}_SHIFT`as keyof typeof LayoutFlags]
         const positionBit = LayoutFlags[position]
         const componentBits = (this.layoutState & (0b11 << shift)) >> shift
         return (componentBits & positionBit) !== 0
@@ -330,6 +332,10 @@ class ConfigStore implements IConfigStore {
     toggleSearchVisible = (visible?: boolean) => {
         this.searchVisible = visible ?? !this.searchVisible
     }
+
+    setDarkMode = (isDark: boolean) => {
+        this.isDarkMode = isDark;
+    };
 }
 
 export default new ConfigStore()

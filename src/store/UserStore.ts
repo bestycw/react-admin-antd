@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { makeAutoObservable, runInAction } from "mobx"
 import { CoRouteObject } from "../types/route.d"
-// import getGlobalConfig from "../config/GlobalConfig"
-// import { fetchBackendRoutes, formatBackendRoutes } from "../router/old_index"
 
 export interface UserInfo {
     username: string

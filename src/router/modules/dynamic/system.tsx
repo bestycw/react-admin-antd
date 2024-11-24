@@ -1,12 +1,7 @@
-import {
-  // DashboardOutlined,
-  UserOutlined,
-  TeamOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+
 import type { CoRouteObject } from '@/types/route';
 import { lazy } from 'react';
-import React from 'react';
+// import React from 'react';
 
 const User = lazy(() => import('../../../pages/system/user'))
 const Role = lazy(() => import('../../../pages/system/role'))

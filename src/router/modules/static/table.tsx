@@ -1,7 +1,7 @@
 import { TableOutlined } from '@ant-design/icons'
 import { lazy } from 'react'
 import { CoRouteObject } from '../../../types/route'
-import React from 'react'
+// import React from 'react'
 const BasicTable = lazy(() => import('../../../pages/table/basic'))
 const AdvanceTable = lazy(() => import('../../../pages/table/advance'))
 const tableRoute: CoRouteObject = {

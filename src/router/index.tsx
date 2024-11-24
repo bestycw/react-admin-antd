@@ -1,7 +1,6 @@
 import { generateRoutes } from './generator'
 import { CoRouteObject } from '../types/route.d'
-// import { lazy } from 'react'
-import React from 'react'
+
 import Layout from '../layout'
 
 // 基础布局

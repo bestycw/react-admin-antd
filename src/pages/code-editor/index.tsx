@@ -4,7 +4,6 @@ import { CodeOutlined } from '@ant-design/icons'
 import CodeEditor from '@/components/CodeEditor'
 import { useStore } from '@/store'
 import type { SelectProps } from 'antd'
-// import './styles.scss';
 
 // 语言选项配置
 const languages: SelectProps['options'] = [

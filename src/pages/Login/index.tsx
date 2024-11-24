@@ -15,8 +15,6 @@ import { authService } from '../../services/auth';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitch from '../../components/LanguageSwitch';
 import './index.scss';
-import React from "react";
-import { runInAction } from "mobx";
 import type { RouteConfig } from '@/types/route'
 
 // 路由配置

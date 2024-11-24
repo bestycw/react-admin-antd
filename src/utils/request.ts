@@ -15,11 +15,11 @@ interface RequestConfig extends AxiosRequestConfig {
     retryDelay?: number // 重试延迟时间(ms)
 }
 
-interface ResponseData<T> {
-    code: number
-    data: T
-    message: string
-}
+// interface ResponseData<T> {
+//     code: number
+//     data: T
+//     message: string
+// }
 
 class Request {
     private instance: AxiosInstance
@@ -78,7 +78,8 @@ class Request {
                 currentRetry++
                 console.log(`重试第 ${currentRetry}/${retryCount} 次`)
                 const source = axios.CancelToken.source()
-                // 创建新的配置，移除重试相关配置避免无限重试
+                // 创��新的配置，移除重试相关配置避免无限重试
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { retry: _, retryDelay: __, ...restConfig } = config
                 const newConfig = { 
                     ...restConfig, 
@@ -121,13 +122,13 @@ class Request {
         )
 
         this.instance.interceptors.response.use(
-            (response: AxiosResponse<ResponseData<unknown>>) => {
+            (response: AxiosResponse) => {
                 this.removePendingRequest(response.config)
 
                 const { code, message: msg, data } = response.data
 
                 if (code === 200) {
-                    return Promise.resolve(data)
+                    return data
                 }
 
                 message.error(msg || '请求失败')
@@ -161,7 +162,7 @@ class Request {
                             message.error('拒绝访问')
                             break
                         case 404:
-                            message.error('请求错误，未找到该资源')
+                            message.error('���求错误，未找到该资源')
                             break
                         case 500:
                             message.error('服务器错误')
