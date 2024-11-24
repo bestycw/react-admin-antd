@@ -4,6 +4,7 @@ import { CodeOutlined } from '@ant-design/icons'
 import CodeEditor from '@/components/CodeEditor'
 import { useStore } from '@/store'
 import type { SelectProps } from 'antd'
+// import './styles.scss';
 
 // 语言选项配置
 const languages: SelectProps['options'] = [
@@ -82,7 +83,7 @@ const CodeEditorPage: React.FC = () => {
   }, [])
 
   return (
-    <div >
+    <div className="code-editor-page">
       <Card 
         title="代码编辑器" 
         className="shadow-md"
@@ -95,7 +96,7 @@ const CodeEditorPage: React.FC = () => {
         <div className="mb-4 flex justify-between items-center flex-wrap gap-4">
           <Space size="middle">
             <div className="flex items-center gap-2">
-              <span style={{ color: ConfigStore.isDarkMode ? '#ffffff' : '#666666' }}>
+              <span className={ConfigStore.isDarkMode ? 'text-white' : 'text-gray-600'}>
                 语言：
               </span>
               <Select
@@ -112,7 +113,7 @@ const CodeEditorPage: React.FC = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <span style={{ color: ConfigStore.isDarkMode ? '#ffffff' : '#666666' }}>
+              <span className={ConfigStore.isDarkMode ? 'text-white' : 'text-gray-600'}>
                 主题：
               </span>
               <Select
@@ -142,7 +143,7 @@ const CodeEditorPage: React.FC = () => {
           </Space>
         </div>
 
-        <div className={!ConfigStore.isDarkMode ? 'editor-container-light' : ''}>
+        <div className={`rounded-md overflow-hidden ${!ConfigStore.isDarkMode ? 'border border-gray-200' : ''}`}>
           <CodeEditor
             value={code}
             onChange={setCode}
@@ -166,42 +167,6 @@ const CodeEditorPage: React.FC = () => {
           />
         </div>
       </Card>
-      <style>{`
-        .editor-container-light {
-          border: 1px solid #e5e7eb;
-          border-radius: 4px;
-          overflow: hidden;
-        }
-        .ant-select-dropdown {
-          max-height: 400px;
-          background-color: ${ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff'};
-          border: ${ConfigStore.isDarkMode ? '1px solid #383838' : '1px solid #d9d9d9'};
-          box-shadow: 0 2px 8px rgba(0, 0, 0, ${ConfigStore.isDarkMode ? '0.3' : '0.15'});
-        }
-        .ant-select-item {
-          font-family: 'Fira Code', Consolas, Monaco, monospace;
-          color: ${ConfigStore.isDarkMode ? '#ffffff' : '#000000'};
-        }
-        .ant-select-item-group {
-          color: ${token.colorPrimary};
-          font-weight: 600;
-          padding: 8px 12px;
-          background-color: ${ConfigStore.isDarkMode ? '#2d2d2d' : '#f5f5f5'};
-        }
-        .ant-select-item:hover {
-          background-color: ${ConfigStore.isDarkMode ? '#2d2d2d' : '#f5f5f5'};
-        }
-        .ant-select-item-option-selected {
-          background-color: ${ConfigStore.isDarkMode ? '#3c3c3c' : '#e6f7ff'};
-        }
-        .ant-select-selection-item {
-          font-family: 'Fira Code', Consolas, Monaco, monospace;
-          color: ${ConfigStore.isDarkMode ? '#ffffff' : '#000000'};
-        }
-        .ant-card {
-          box-shadow: ${ConfigStore.isDarkMode ? '0 4px 6px -1px rgba(0, 0, 0, 0.3)' : '0 1px 3px 0 rgba(0, 0, 0, 0.1)'};
-        }
-      `}</style>
     </div>
   )
 }

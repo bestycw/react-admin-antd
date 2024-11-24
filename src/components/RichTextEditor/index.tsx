@@ -131,87 +131,116 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }, [editor])
 
   return (
-    <div className={`border border-gray-200 rounded-md bg-white ${className}`}>
+    <div className={`rich-editor-container border border-gray-200 rounded-md bg-white ${className}`}>
       <Toolbar
         editor={editor}
         defaultConfig={toolbarConfig}
         mode={mode}
-        className="rich-editor-toolbar  border-b border-gray-200 bg-white top-0 z-10 p-2;
-"
+        className="rich-editor-toolbar border-b border-gray-200 bg-white  z-10 p-2"
       />
       <Editor
         defaultConfig={editorConfig}
         value={value}
         onCreated={setEditor}
         mode={mode}
-        className="rich-editor-content"
+        className="rich-editor-content p-4"
         style={{ height: `${height}px`, overflowY: 'hidden' }}
       />
+
       <style>{`
-   
         .rich-editor-toolbar {
           display: flex;
           flex-wrap: wrap;
           gap: 4px;
         }
-        .rich-editor-toolbar .w-e-bar-divider {
-          @apply border-l border-gray-200 mx-1 h-6;
-        }
-        .rich-editor-toolbar .w-e-bar-item {
-          @apply flex items-center;
-        }
-        .rich-editor-toolbar button {
-          @apply px-2 py-1 rounded hover:bg-gray-100 text-gray-700;
+        .rich-editor-toolbar .w-e-bar-item button {
           min-width: 32px;
           height: 32px;
+          padding: 4px 8px;
+          border-radius: 4px;
           display: flex;
           align-items: center;
           justify-content: center;
         }
-        .rich-editor-toolbar button.active {
-          @apply bg-blue-50 text-blue-600;
+        .rich-editor-toolbar .w-e-bar-item button:hover {
+          background-color: #f3f4f6;
         }
-        .rich-editor-content {
-          @apply p-4;
+        .rich-editor-toolbar .w-e-bar-item button.active {
+          background-color: #ebf5ff;
+          color: #2563eb;
         }
         .w-e-text-container {
-          @apply bg-white;
+          background-color: white;
         }
         .w-e-text-container [data-slate-editor] {
-          @apply min-h-[200px];
+          min-height: 200px;
         }
         .w-e-panel-content-color {
-          @apply p-2 grid grid-cols-8 gap-1;
+          padding: 8px;
+          display: grid;
+          grid-template-columns: repeat(8, 1fr);
+          gap: 4px;
         }
         .w-e-panel-content-color button {
-          @apply w-6 h-6 rounded-sm border border-gray-200;
+          width: 24px;
+          height: 24px;
+          border-radius: 2px;
+          border: 1px solid #e5e7eb;
         }
         .w-e-modal {
-          @apply rounded-lg shadow-lg border border-gray-200;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          border: 1px solid #e5e7eb;
         }
         .w-e-modal-header {
-          @apply bg-gray-50 p-4 rounded-t-lg font-medium;
+          background-color: #f9fafb;
+          padding: 16px;
+          border-top-left-radius: 8px;
+          border-top-right-radius: 8px;
+          font-weight: 500;
         }
         .w-e-modal-body {
-          @apply p-4;
+          padding: 16px;
         }
         .w-e-modal-footer {
-          @apply bg-gray-50 p-4 rounded-b-lg flex justify-end gap-2;
+          background-color: #f9fafb;
+          padding: 16px;
+          border-bottom-left-radius: 8px;
+          border-bottom-right-radius: 8px;
+          display: flex;
+          justify-content: flex-end;
+          gap: 8px;
         }
         .w-e-button-container button {
-          @apply px-4 py-2 rounded;
+          padding: 8px 16px;
+          border-radius: 4px;
         }
         .w-e-button-container button.primary {
-          @apply bg-blue-500 text-white hover:bg-blue-600;
+          background-color: #3b82f6;
+          color: white;
+        }
+        .w-e-button-container button.primary:hover {
+          background-color: #2563eb;
         }
         .w-e-dropdown-content {
-          @apply bg-white border border-gray-200 rounded-md shadow-lg py-1 min-w-[120px];
+          background-color: white;
+          border: 1px solid #e5e7eb;
+          border-radius: 4px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          padding: 4px 0;
+          min-width: 120px;
         }
         .w-e-dropdown-item {
-          @apply px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm;
+          padding: 8px 16px;
+          cursor: pointer;
+          font-size: 14px;
+        }
+        .w-e-dropdown-item:hover {
+          background-color: #f3f4f6;
         }
         .w-e-select-list {
-          @apply max-h-[300px] overflow-y-auto;
+          max-height: 300px;
+          overflow-y: auto;
         }
       `}</style>
     </div>

@@ -118,15 +118,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     }
   }, [onChange])
 
-  // 自定义加载状态
-  const renderLoading = () => (
-    <div className="flex items-center justify-center h-full">
-      <Spin tip="编辑器加载中..." />
-    </div>
-  )
-
   return (
-    <div className={`code-editor-container ${className}`}>
+    <div className={`code-editor-container border border-gray-200 rounded-md overflow-hidden ${className}`}>
       <Editor
         value={value}
         defaultLanguage={language}
@@ -141,22 +134,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         }}
         onChange={handleEditorChange}
         onMount={handleEditorDidMount}
-        loading={renderLoading()}
+        loading={
+          <div className="flex items-center justify-center h-full">
+            <Spin tip="编辑器加载中..." />
+          </div>
+        }
       />
-      <style>{`
-        .code-editor-container {
-          @apply border border-gray-200 rounded-md overflow-hidden;
-        }
-        .code-editor-container .monaco-editor {
-          @apply p-2;
-        }
-        .code-editor-container .monaco-editor .margin {
-          @apply bg-transparent;
-        }
-        .code-editor-container .monaco-editor .minimap {
-          @apply border-l border-gray-200;
-        }
-      `}</style>
     </div>
   )
 }
