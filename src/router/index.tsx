@@ -12,7 +12,7 @@ export function createRoutes(): CoRouteObject[] {
     const rootRoute: CoRouteObject = {
         path: '/',
         root: true,
-        redirect: true,
+        redirect: '/dashboard',
         element:
             <AuthBoundary><Layout />
             </AuthBoundary>,

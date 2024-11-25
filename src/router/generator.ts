@@ -225,12 +225,29 @@ const routeTreeHandler = {
 
     // 路由排序
     sortRoutes(routes: RouteNode[]): RouteNode[] {
-        return routes
+        const sortedRoutes = routes
             .sort((a, b) => (a.meta?.sort || 0) - (b.meta?.sort || 0))
             .map(route => ({
                 ...route,
                 children: route.children ? this.sortRoutes(route.children) : undefined
-            }))
+            }));
+
+        // 在排序后处理重定向
+        return this.handleRedirects(sortedRoutes);
+    },
+
+    // 处理重定向
+    handleRedirects(routes: RouteNode[]): RouteNode[] {
+        return routes.map(route => {
+            // 如果有子路由但没有 element
+            if (route.children?.length && !route.element && !route.isFile) {
+                const firstVisibleChild = route.children.find(child => !child.hidden);
+                if (firstVisibleChild) {
+                    route.redirect = firstVisibleChild.path;
+                }
+            }
+            return route;
+        });
     }
 }
 
