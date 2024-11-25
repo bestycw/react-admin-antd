@@ -19,7 +19,8 @@ export const STORAGE_KEYS = {
     SIDEBAR_COLLAPSED: 'sidebarCollapsed',
     DRAWER_VISIBLE: 'drawerVisible',
     SETTING_DRAWER_VISIBLE: 'settingDrawerVisible',
-    ACTIONS_COLLAPSED: 'actionsCollapsed'
+    ACTIONS_COLLAPSED: 'actionsCollapsed',
+    PRESET_COLOR: 'preset_color'
 } as const
 
 // 存储键类型
@@ -47,6 +48,13 @@ export interface ThemeConfig extends AntdThemeConfig {
     borderRadius: number
 }
 
+// 添加预设主题色类型
+export type PresetColor = {
+  name: string;
+  color: string;
+  description?: string;
+};
+
 // ConfigStore 接口
 export interface IConfigStore {
     // 状态
@@ -73,6 +81,10 @@ export interface IConfigStore {
     showHeaderUserActions: boolean
     showSidebarUserActions: boolean
 
+    // 添加预设主题色相关属性
+    presetColors: PresetColor[];
+    currentPresetColor: string;
+
     // 方法
     setThemeMode(mode: ThemeMode): void
     setThemeStyle(style: ThemeStyle): void
@@ -85,4 +97,5 @@ export interface IConfigStore {
     clearConfig(): void
     toggleActionsCollapsed(isShow: boolean): void
     toggleSearchVisible: (visible?: boolean) => void
+    setPresetColor: (color: string) => void;
 } 

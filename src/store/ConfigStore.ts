@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { theme } from 'antd'
-import type { ThemeConfig as AntdThemeConfig } from 'antd'
+import type { ThemeConfig } from 'antd'
 import getGlobalConfig from '../config/GlobalConfig'
 import StorageManager from '../utils/storageManager'
 import {
@@ -10,6 +10,7 @@ import {
     type LayoutMode,
     type StorageKey,
     type ComponentPosition,
+    type PresetColor,
     STORAGE_KEYS
 } from '../types/config'
 
@@ -40,6 +41,35 @@ export const LayoutModes = {
 // 抽屉类型
 type DrawerType = 'setting' | 'sidebar'
 
+// 预设主题色配置
+const PRESET_COLORS: PresetColor[] = [
+    {
+        name: '拂晓蓝（默认）',
+        color: '#1890ff',
+        description: '拂晓蓝代表包容、科技、普惠'
+    },
+    {
+        name: '薄暮红',
+        color: '#f5222d',
+        description: '薄暮红代表热情、活力、警示'
+    },
+    {
+        name: '极光绿',
+        color: '#52c41a',
+        description: '极光绿代表希望、生机、健康'
+    },
+    {
+        name: '日暮橙',
+        color: '#faad14',
+        description: '日暮橙代表温暖、愉悦、活力'
+    },
+    {
+        name: '酱紫',
+        color: '#722ed1',
+        description: '酱紫代表高贵、浪漫、优雅'
+    }
+];
+
 class ConfigStore implements IConfigStore {
     // 布局状态
     private layoutState: number = LayoutModes.MIX
@@ -67,8 +97,13 @@ class ConfigStore implements IConfigStore {
 
     isDarkMode = false;
 
+    // 添加预设主题色相关属性
+    presetColors = PRESET_COLORS;
+    currentPresetColor: string;
+
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true })
+        this.currentPresetColor = this.storage.get('PRESET_COLOR', PRESET_COLORS[0].color);
         this.initConfig()
     }
 
@@ -98,6 +133,10 @@ class ConfigStore implements IConfigStore {
         // 初始化监听器
         this.initViewportListener()
         this.initSystemTheme()
+
+        // 初始化主题色
+        const savedColor = this.storage.get('PRESET_COLOR', PRESET_COLORS[0].color);
+        this.setPresetColor(savedColor);
     }
 
     // 计算属性
@@ -117,11 +156,11 @@ class ConfigStore implements IConfigStore {
         }
     }
 
-    get themeConfig(): AntdThemeConfig {
+    get themeConfig(): ThemeConfig {
         return {
             token: this.themeToken,
-            algorithm: this.isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
-        }
+            algorithm: this.isDark ? theme.darkAlgorithm : theme.defaultAlgorithm
+        };
     }
 
     // 布局相关计算属性
@@ -337,6 +376,16 @@ class ConfigStore implements IConfigStore {
     setDarkMode = (isDark: boolean) => {
         this.isDarkMode = isDark;
     };
+
+    // 设置预设主题色
+    setPresetColor(color: string) {
+        this.currentPresetColor = color;
+        this.themeToken = {
+            colorPrimary: color,
+            borderRadius: this.themeToken.borderRadius,
+        };
+        this.storage.set('PRESET_COLOR', color);
+    }
 }
 
 export default new ConfigStore()

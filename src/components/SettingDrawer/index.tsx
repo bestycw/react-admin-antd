@@ -2,8 +2,8 @@
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
 import { Segmented, Space, Switch } from 'antd'
-import { 
-  MenuUnfoldOutlined, 
+import {
+  MenuUnfoldOutlined,
   LayoutOutlined,
   AppstoreOutlined,
   BarsOutlined,
@@ -11,6 +11,7 @@ import {
   MoonOutlined,
   DesktopOutlined,
   PictureOutlined,
+  CheckOutlined,
 
 } from '@ant-design/icons'
 import CustomDrawer from '../CustomDrawer'
@@ -68,23 +69,23 @@ const SettingDrawer = observer(() => {
     },
   ]
 
-  const positionOptions:{
-    value:ComponentPosition,
-    label:string
+  const positionOptions: {
+    value: ComponentPosition,
+    label: string
   }[] = [
-    {
-      value: 'IN_HEADER',
-      label: '顶部',
-    },
-    {
-      value: 'IN_SIDEBAR',
-      label: '侧边',
-    },
-    {
-      value: 'MIX',
-      label: '混合',
-    }
-  ]
+      {
+        value: 'IN_HEADER',
+        label: '顶部',
+      },
+      {
+        value: 'IN_SIDEBAR',
+        label: '侧边',
+      },
+      {
+        value: 'MIX',
+        label: '混合',
+      }
+    ]
 
   return (
     <CustomDrawer
@@ -104,7 +105,7 @@ const SettingDrawer = observer(() => {
           <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">导航模式</div>
           <Segmented
             block
-            value={ConfigStore.currentLayoutMode }
+            value={ConfigStore.currentLayoutMode}
             options={layoutOptions}
             onChange={(value) => ConfigStore.setLayoutMode(value as LayoutMode)}
             className="w-full"
@@ -134,6 +135,36 @@ const SettingDrawer = observer(() => {
             className="w-full"
           />
         </div>
+        {/* 主题色 - 新增 */}
+        <div className="flex flex-col gap-3">
+        <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">主题色</div>
+        <div className="flex items-center gap-3">
+            {ConfigStore.presetColors.map(preset => (
+              <div
+                key={preset.color}
+                className="group relative cursor-pointer"
+                onClick={() => ConfigStore.setPresetColor(preset.color)}
+              >
+                <div
+                  className={`
+                                        w-6 h-6 rounded-full flex items-center justify-center
+                                        transition-all duration-300
+                                        hover:scale-110
+                                        ${ConfigStore.currentPresetColor === preset.color
+                      ? 'ring-2 ring-current ring-offset-2'
+                      : ''
+                    }
+                                    `}
+                  style={{ backgroundColor: preset.color }}
+                >
+                  {ConfigStore.currentPresetColor === preset.color && (
+                    <CheckOutlined className="text-white text-xs" />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {ConfigStore.currentLayoutMode === 'MIX' && (
           <>
@@ -144,7 +175,7 @@ const SettingDrawer = observer(() => {
                 block
                 value={ConfigStore.getComponentPosition('LOGO')}
                 options={positionOptions.filter(opt => opt.value !== 'MIX')}
-                onChange={(value) => ConfigStore.toggleComponentPosition('LOGO', value )}
+                onChange={(value) => ConfigStore.toggleComponentPosition('LOGO', value)}
                 className="w-full"
               />
             </div>
@@ -156,7 +187,7 @@ const SettingDrawer = observer(() => {
                 block
                 value={ConfigStore.getComponentPosition('MENU')}
                 options={positionOptions}
-                onChange={(value) => ConfigStore.toggleComponentPosition('MENU', value )}
+                onChange={(value) => ConfigStore.toggleComponentPosition('MENU', value)}
                 className="w-full"
               />
             </div>
@@ -168,7 +199,7 @@ const SettingDrawer = observer(() => {
                 block
                 value={ConfigStore.getComponentPosition('USER_ACTIONS')}
                 options={positionOptions.filter(opt => opt.value !== 'MIX')}
-                onChange={(value) => ConfigStore.toggleComponentPosition('USER_ACTIONS', value )}
+                onChange={(value) => ConfigStore.toggleComponentPosition('USER_ACTIONS', value)}
                 className="w-full"
               />
             </div>
@@ -177,30 +208,30 @@ const SettingDrawer = observer(() => {
 
         {/* 其他设置 */}
         <div >
-        <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">其他设置</div>
+          <div className="mb-4 text-sm font-medium text-gray-900 dark:text-gray-100">其他设置</div>
 
           {/* <div className="setting-item-content"> */}
-            <Space direction="vertical" style={{ width: '100%' }}>
-              {/* Logo显示控制 */}
-              <div className="flex items-center justify-between">
-                <span className="text-[14px] text-[rgba(0,0,0,.88)]">显示 Logo</span>
-                <Switch
-                  checked={ConfigStore.showLogo}
-                  onChange={(checked) => ConfigStore.toggleComponentShow('LOGO',checked)}
-                  className="ml-auto"
-                />
-              </div>
-              {/* 页签显示控制 */}
-              <div className="flex items-center justify-between">
-                <span className="text-[14px] text-[rgba(0,0,0,.88)]">显示页签</span>
-                <Switch
-                  checked={ConfigStore.showTabs}
-                  onChange={() => ConfigStore.toggleTabs()}
-                  className="ml-auto"
-                />
-              </div>
-            </Space>
-          </div> 
+          <Space direction="vertical" style={{ width: '100%' }}>
+            {/* Logo显示控制 */}
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] text-[rgba(0,0,0,.88)]">显示 Logo</span>
+              <Switch
+                checked={ConfigStore.showLogo}
+                onChange={(checked) => ConfigStore.toggleComponentShow('LOGO', checked)}
+                className="ml-auto"
+              />
+            </div>
+            {/* 页签显示控制 */}
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] text-[rgba(0,0,0,.88)]">显示页签</span>
+              <Switch
+                checked={ConfigStore.showTabs}
+                onChange={() => ConfigStore.toggleTabs()}
+                className="ml-auto"
+              />
+            </div>
+          </Space>
+        </div>
         {/* </div> */}
 
       </div>
