@@ -17,7 +17,7 @@ export interface RouteConfig {
 export interface CoRouteObject extends Omit<RouteObject, 'path'> {
   path?: string
   root?: boolean
-  redirect?: string
+  redirect?: boolean
   meta?: {
     title?: string
     icon?: React.ReactNode
