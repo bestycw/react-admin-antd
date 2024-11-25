@@ -1,4 +1,7 @@
 /* Antd 组件样式覆盖 */
+.ant-menu{
+  background: var(--menu-bg) !important;
+}
 .ant-menu-horizontal {
   border-bottom: none !important;
   background: var(--menu-bg) !important;
