@@ -34,7 +34,7 @@ const Header = observer(({ className = '', style }: HeaderProps) => {
     >
       {/* Logo */}
       {ConfigStore.showHeaderLogo && (
-        <Logo collapsed={false} className="h-14 py-4" />
+        <Logo collapsed={false}  />
       )}
 
       {/* Menu */}

@@ -269,4 +269,67 @@
   --border-opacity: 1;
 }
 
+/* 滚动条基础样式 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background: #f0f2f5;
+  border-radius: 6px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  /* background: var(--ant-primary-3); */
+  border-radius: 6px;
+  border: 1px solid #f0f2f5;
+  background-clip: padding-box;
+  min-height: 30px;
+  opacity: 0.8;  /* 添加透明度 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ant-primary-4);
+  border-width: 2px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--ant-primary-5);
+  border-width: 1px;
+}
+
+/* 暗色主题滚动条样式优化 */
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);  /* 更微妙的轨道背景 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--ant-primary-3);  /* 使用较浅的主题色 */
+  border: 3px solid rgba(255, 255, 255, 0.05);  /* 边框颜色配合轨道 */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--ant-primary-2);  /* 悬停时更亮 */
+  border-width: 2px;
+  opacity: 1;
+}
+
+.dark ::-webkit-scrollbar-thumb:active {
+  background: var(--ant-primary-1);  /* 点击时最亮 */
+  border-width: 1px;
+}
+
+/* 暗色主题下特定区域的滚动条 */
+.dark .ant-layout-content::-webkit-scrollbar-thumb,
+.dark .ant-table-body::-webkit-scrollbar-thumb,
+.dark .ant-modal-body::-webkit-scrollbar-thumb,
+.dark .ant-drawer-body::-webkit-scrollbar-thumb {
+  background: var(--ant-primary-3);
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
 /* ... 其他主题相关样式 ... */ 
