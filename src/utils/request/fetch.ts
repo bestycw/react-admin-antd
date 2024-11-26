@@ -250,6 +250,72 @@ export class FetchRequest extends BaseRequest {
   }
 
   // 重试机制
+
+  // 流式请求方法
+  async stream<T>(url: string, config?: BaseRequestConfig & {
+    onMessage?: (data: T) => void;
+    onError?: (error: any) => void;
+    onComplete?: () => void;
+    signal?: AbortSignal;
+  }): Promise<void> {
+    try {
+      const response = await fetch(this.baseURL + url, {
+        ...config,
+        headers: {
+          ...this.defaultConfig.headers,
+          ...config?.headers,
+          'Accept': 'text/event-stream',
+        },
+        credentials: 'omit',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      if (!response.body) {
+        throw new Error('Response body is null');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          if (buffer.trim()) {
+            this.processStreamChunk(buffer, config);
+          }
+          config?.onComplete?.();
+          break;
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          this.processStreamChunk(line, config);
+        }
+      }
+    } catch (error) {
+      config?.onError?.(error);
+      throw error;
+    }
+  }
+
+  private processStreamChunk(chunk: string, config?: any) {
+    if (chunk.startsWith('data: ')) {
+      try {
+        const data = JSON.parse(chunk.slice(6));
+        config?.onMessage?.(data);
+      } catch (error) {
+        config?.onError?.(error);
+      }
+    }
+  }
 }
 
 export default new FetchRequest();

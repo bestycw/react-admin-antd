@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, Button, Space, message } from 'antd';
+import { Card, Button, Space, message, Radio } from 'antd';
 import { 
   SendOutlined, 
   StopOutlined, 
@@ -9,28 +9,60 @@ import {
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { fetchRequest } from '@/utils/request';
 
 interface StreamChatProps {
   title?: string;
 }
 
+type StreamMethod = 'fetch' | 'eventSource';
+
 const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' }) => {
   const [streamContent, setStreamContent] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
+  const [method, setMethod] = useState<StreamMethod>('fetch');
+  const abortControllerRef = useRef<AbortController | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
 
-  // 开始流式响应
-  const handleStartStream = () => {
-    setIsStreaming(true);
-    setStreamContent('');
-
-    // 关闭之前的连接
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-    }
+  // 使用 Fetch 方式的流式响应
+  const handleFetchStream = async () => {
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
     try {
-      // 创建新的 EventSource 连接
+      await fetchRequest.stream('/api/stream/chat', {
+        signal: abortController.signal,
+        onMessage: (data: { text: string; done: boolean }) => {
+          if (data.done) {
+            setIsStreaming(false);
+          } else {
+            setStreamContent(prev => prev + data.text);
+          }
+        },
+        onError: (error) => {
+          console.error('Stream error:', error);
+          message.error('流式响应出错');
+          handleStopStream();
+        },
+        onComplete: () => {
+          setIsStreaming(false);
+          message.success('流式响应完成');
+        }
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        message.info('已停止流式响应');
+      } else {
+        console.error('Connection error:', error);
+        message.error('创建流式连接失败');
+      }
+      setIsStreaming(false);
+    }
+  };
+
+  // 使用 EventSource 方式的流式响应
+  const handleEventSourceStream = () => {
+    try {
       const eventSource = new EventSource('http://localhost:3000/api/stream/chat');
       eventSourceRef.current = eventSource;
 
@@ -40,11 +72,12 @@ const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' })
           if (data.done) {
             eventSource.close();
             setIsStreaming(false);
+            message.success('流式响应完成');
           } else {
             setStreamContent(prev => prev + data.text);
           }
         } catch (error) {
-          console.error('Stream error:', error);
+          console.error('Parse error:', error);
           message.error('数据解析错误');
           handleStopStream();
         }
@@ -62,8 +95,28 @@ const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' })
     }
   };
 
+  // 开始流式响应
+  const handleStartStream = async () => {
+    setIsStreaming(true);
+    setStreamContent('');
+
+    // 清理之前的连接
+    handleStopStream();
+
+    // 根据选择的方法启动流式响应
+    if (method === 'fetch') {
+      await handleFetchStream();
+    } else {
+      handleEventSourceStream();
+    }
+  };
+
   // 停止流式响应
   const handleStopStream = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
       eventSourceRef.current = null;
@@ -89,6 +142,16 @@ const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' })
       className="shadow-md"
       extra={
         <Space>
+          <Radio.Group 
+            value={method} 
+            onChange={e => setMethod(e.target.value)}
+            optionType="button"
+            buttonStyle="solid"
+            disabled={isStreaming}
+          >
+            <Radio.Button value="fetch">Fetch</Radio.Button>
+            <Radio.Button value="eventSource">EventSource</Radio.Button>
+          </Radio.Group>
           <Button
             type="primary"
             icon={isStreaming ? <LoadingOutlined /> : <SendOutlined />}
