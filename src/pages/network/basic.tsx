@@ -13,9 +13,13 @@ const NetworkBasic: React.FC = () => {
   const handleGet = async (type: 'default' | 'axios' | 'fetch') => {
     try {
       const api = type === 'axios' ? axiosRequest : type === 'fetch' ? fetchRequest : request;
+      console.log(`Testing ${type} GET request`);
+      console.log('API instance:', api);
       const response = await api.get('/api/test');
+      console.log(`${type} GET response:`, response);
       message.success(`GET 请求成功: ${JSON.stringify(response)}`);
     } catch (error) {
+      console.error(`${type} GET error:`, error);
       message.error(`GET 请求失败: ${error}`);
     }
   };
@@ -47,9 +51,8 @@ const NetworkBasic: React.FC = () => {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
-        onUploadProgress: (progress: ProgressEvent) => {
-          const percent = Math.round((progress.loaded * 100) / (progress.total || 1));
-          message.info(`上传进度: ${percent}%`);
+        onUploadProgress: (progress: number) => {
+          message.info(`上传进度: ${progress * 100}%`);
         }
       });
       
@@ -64,9 +67,8 @@ const NetworkBasic: React.FC = () => {
     try {
       const api = type === 'axios' ? axiosRequest : type === 'fetch' ? fetchRequest : request;
       await api.download('/api/download', 'test.txt', {
-        onDownloadProgress: (progress: ProgressEvent) => {
-          const percent = Math.round((progress.loaded * 100) / (progress.total || 1));
-          message.info(`下载进度: ${percent}%`);
+        onDownloadProgress: (progress: number) => {
+          message.info(`下载进度: ${progress * 100}%`);
         }
       });
       message.success('下载成功');
