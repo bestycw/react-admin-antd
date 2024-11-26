@@ -1,5 +1,6 @@
 import getGlobalConfig from '@/config/GlobalConfig';
 import { message } from 'antd';
+import NProgress from '../nprogress';
 
 interface RequestConfig extends Omit<RequestInit, 'cache'> {
   baseURL?: string;
@@ -79,7 +80,7 @@ class FetchRequest {
       if (error.name === 'AbortError') {
         message.error('请求已取消');
       } else if (!window.navigator.onLine) {
-        message.error('网络连接已断开，请检查网络');
+        message.error('网络连接已断开，请检查网���');
       } else {
         message.error(error.message || '请求失败');
       }
@@ -156,6 +157,10 @@ class FetchRequest {
 
   private async request<T>(url: string, config: RequestConfig): Promise<T> {
     try {
+      if (config.retry && config.retry > 0) {
+        return await this.retryRequest<T>(url, config, config.retry, config.retryDelay);
+      }
+
       // 运行请求拦截器
       const finalConfig = await this.runRequestInterceptors(config);
       const fullUrl = this.getFullUrl(url);
@@ -167,7 +172,7 @@ class FetchRequest {
         body: finalConfig.body
       });
 
-      // 添加超时控制
+      // ���加超时控制
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
           reject(new Error('请求超时'));
@@ -176,7 +181,17 @@ class FetchRequest {
 
       // 发起请求
       const fetchPromise = fetch(fullUrl, finalConfig);
+
+      // 添加进度条支持
+      if (config.loading !== false) {
+        NProgress.start();
+      }
+
       const response = await Promise.race([fetchPromise, timeoutPromise]) as Response;
+
+      if (config.loading !== false) {
+        NProgress.done();
+      }
 
       console.log('Response:', {
         status: response.status,
@@ -199,6 +214,9 @@ class FetchRequest {
 
       return data.data;
     } catch (error) {
+      if (config.loading !== false) {
+        NProgress.done();
+      }
       return this.runErrorInterceptors(error);
     }
   }
@@ -255,6 +273,64 @@ class FetchRequest {
       message.error('下载失败');
       throw error;
     }
+  }
+
+  // 修改上传方法中的进度监控部分
+  public async upload<T>(url: string, file: File | Blob | FormData, config?: RequestConfig): Promise<T> {
+    let formData: FormData;
+    
+    if (file instanceof FormData) {
+      formData = file;
+    } else {
+      formData = new FormData();
+      formData.append('file', file);
+    }
+
+    const uploadConfig: RequestConfig = {
+      ...config,
+      method: 'POST',
+      body: formData
+    };
+
+    if (config?.onUploadProgress) {
+      // 简化进度监控逻辑
+      const totalSize = file instanceof File || file instanceof Blob ? file.size : 0;
+      if (totalSize > 0) {
+        uploadConfig.onUploadProgress = (progress) => {
+          config.onUploadProgress?.(progress);
+        };
+      }
+    }
+
+    return this.post(url, formData, uploadConfig);
+  }
+
+  // 添加重试功能
+  private async retryRequest<T>(
+    url: string, 
+    config: RequestConfig, 
+    retryCount: number = 3, 
+    retryDelay: number = 1000
+  ): Promise<T> {
+    try {
+      return await this.request<T>(url, config);
+    } catch (error) {
+      if (retryCount <= 0) throw error;
+
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
+      return this.retryRequest(url, config, retryCount - 1, retryDelay);
+    }
+  }
+
+  // 添加缓存支持
+  private cache = new Map<string, { data: any; timestamp: number }>();
+
+  private getCacheKey(url: string, config: RequestConfig): string {
+    return `${config.method || 'GET'}-${url}-${JSON.stringify(config.body || {})}`;
+  }
+
+  private isCacheValid(timestamp: number, cacheTime: number): boolean {
+    return Date.now() - timestamp < cacheTime;
   }
 }
 
