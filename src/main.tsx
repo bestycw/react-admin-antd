@@ -1,4 +1,5 @@
 import '../mock/auth.ts'  // 引入 mock 服务
+import '../mock/network.ts'  // 引入 mock 服务
 import './locales/i18n'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
