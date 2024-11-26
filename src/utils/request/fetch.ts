@@ -1,6 +1,141 @@
 import { BaseRequest, BaseRequestConfig, ResponseData } from './base';
 
+interface RequestInterceptor {
+  onFulfilled?: (config: BaseRequestConfig) => BaseRequestConfig | Promise<BaseRequestConfig>;
+  onRejected?: (error: any) => any;
+}
+
+interface ResponseInterceptor {
+  onFulfilled?: (response: Response) => any;
+  onRejected?: (error: any) => any;
+}
+
 export class FetchRequest extends BaseRequest {
+  private requestInterceptors: RequestInterceptor[] = [];
+  private responseInterceptors: ResponseInterceptor[] = [];
+
+  constructor(config?: BaseRequestConfig) {
+    super(config);
+    this.setupDefaultInterceptors();
+  }
+
+  private setupDefaultInterceptors() {
+    // 添加默认的请求拦截器
+    this.interceptors.request.use(
+      (config: BaseRequestConfig) => {
+        if (config.token !== false) {
+          const token = localStorage.getItem('token');
+          if (token) {
+            config.headers = {
+              ...config.headers,
+              Authorization: `Bearer ${token}`
+            };
+          }
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    // 添加默认的响应拦截器
+    this.interceptors.response.use(
+      async (response: Response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText || '请求失败');
+        }
+        const data = await response.json() as ResponseData;
+        if (data.code !== 200) {
+          throw new Error(data.message || '请求失败');
+        }
+        return data.data;
+      },
+      (error) => Promise.reject(error)
+    );
+  }
+
+  // 拦截器管理
+  public interceptors = {
+    request: {
+      use: (onFulfilled?: RequestInterceptor['onFulfilled'], onRejected?: RequestInterceptor['onRejected']) => {
+        this.requestInterceptors.push({ onFulfilled, onRejected });
+      }
+    },
+    response: {
+      use: (onFulfilled?: ResponseInterceptor['onFulfilled'], onRejected?: ResponseInterceptor['onRejected']) => {
+        this.responseInterceptors.push({ onFulfilled, onRejected });
+      }
+    }
+  };
+
+  private async runRequestInterceptors(config: BaseRequestConfig): Promise<BaseRequestConfig> {
+    let currentConfig = { ...config };
+    for (const interceptor of this.requestInterceptors) {
+      if (interceptor.onFulfilled) {
+        try {
+          currentConfig = await interceptor.onFulfilled(currentConfig);
+        } catch (error) {
+          if (interceptor.onRejected) {
+            throw interceptor.onRejected(error);
+          }
+          throw error;
+        }
+      }
+    }
+    return currentConfig;
+  }
+
+  private async runResponseInterceptors(response: Response): Promise<any> {
+    let currentResponse = response;
+    for (const interceptor of this.responseInterceptors) {
+      if (interceptor.onFulfilled) {
+        try {
+          currentResponse = await interceptor.onFulfilled(currentResponse);
+        } catch (error) {
+          if (interceptor.onRejected) {
+            throw interceptor.onRejected(error);
+          }
+          throw error;
+        }
+      }
+    }
+    return currentResponse;
+  }
+
+  private async request<T>(url: string, config: BaseRequestConfig = {}): Promise<T> {
+    const endProgress = this.handleProgress(config?.loading);
+
+    try {
+      // 应用请求拦截器
+      const finalConfig = await this.runRequestInterceptors(config);
+
+      // 处理超时
+      const controller = new AbortController();
+      const timeout = finalConfig.timeout || this.defaultConfig.timeout;
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+      // 构建请求选项
+      const requestInit: RequestInit = {
+        ...finalConfig,
+        headers: {
+          ...this.defaultConfig.headers,
+          ...finalConfig.headers
+        },
+        signal: controller.signal
+      };
+
+      // 发起请求
+      const response = await fetch(this.getFullUrl(url), requestInit);
+      clearTimeout(timeoutId);
+
+      // 应用响应拦截器
+      return await this.runResponseInterceptors(response);
+    } catch (error) {
+      return this.handleError(error);
+    } finally {
+      endProgress();
+    }
+  }
+
   async get<T>(url: string, config?: BaseRequestConfig): Promise<T> {
     return this.request<T>(url, { ...config, method: 'GET' });
   }
@@ -17,6 +152,22 @@ export class FetchRequest extends BaseRequest {
     });
   }
 
+  async put<T>(url: string, data?: any, config?: BaseRequestConfig): Promise<T> {
+    return this.request<T>(url, {
+      ...config,
+      method: 'PUT',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        ...config?.headers
+      }
+    });
+  }
+
+  async delete<T>(url: string, config?: BaseRequestConfig): Promise<T> {
+    return this.request<T>(url, { ...config, method: 'DELETE' });
+  }
+
   async upload<T>(url: string, file: File | Blob | FormData, config?: BaseRequestConfig): Promise<T> {
     let formData: FormData;
     
@@ -30,16 +181,26 @@ export class FetchRequest extends BaseRequest {
     return this.request<T>(url, {
       ...config,
       method: 'POST',
-      body: formData
+      body: formData,
+      headers: {
+        ...config?.headers
+      }
     });
   }
 
   async download(url: string, fileName?: string, config?: BaseRequestConfig): Promise<void> {
-    const fullUrl = this.getFullUrl(url);
     const endProgress = this.handleProgress(config?.loading);
-
     try {
-      const response = await fetch(fullUrl, config);
+      const finalConfig = await this.runRequestInterceptors(config || {});
+      
+      const response = await fetch(this.getFullUrl(url), {
+        ...finalConfig,
+        headers: {
+          ...this.defaultConfig.headers,
+          ...finalConfig.headers
+        }
+      });
+
       if (!response.ok) throw new Error('Download failed');
       if (!response.body) throw new Error('No response body');
 
@@ -54,7 +215,7 @@ export class FetchRequest extends BaseRequest {
 
         chunks.push(value);
         receivedLength += value.length;
-
+        console.log(contentLength, receivedLength)
         if (config?.onDownloadProgress) {
           config.onDownloadProgress(contentLength ? receivedLength / contentLength : 0);
         }
@@ -64,7 +225,7 @@ export class FetchRequest extends BaseRequest {
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = fileName || 'download';
+      link.download = fileName || this.getFileNameFromResponse(response) || 'download';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -76,47 +237,19 @@ export class FetchRequest extends BaseRequest {
     }
   }
 
-  private async request<T>(url: string, config?: BaseRequestConfig): Promise<T> {
-    const endProgress = this.handleProgress(config?.loading);
-
-    try {
-      if (config?.retry && config?.retry > 0) {
-        return await this.retryRequest(
-          () => this.request<T>(url, { ...config, retry: 0 }),
-          config.retry,
-          config.retryDelay
-        );
+  private getFileNameFromResponse(response: Response): string {
+    const disposition = response.headers.get('content-disposition');
+    if (disposition && disposition.includes('filename=')) {
+      const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+      const matches = filenameRegex.exec(disposition);
+      if (matches?.[1]) {
+        return decodeURIComponent(matches[1].replace(/['"]/g, ''));
       }
-
-      const fullUrl = this.getFullUrl(url);
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('请求超时')), config?.timeout || this.defaultConfig.timeout);
-      });
-
-      const fetchPromise = fetch(fullUrl, {
-        ...config,
-        headers: {
-          ...this.defaultConfig.headers,
-          ...config?.headers,
-          ...(config?.token !== false && {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          })
-        }
-      });
-
-      const response = await Promise.race([fetchPromise, timeoutPromise]) as Response;
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-      const data = await response.json() as ResponseData<T>;
-      if (data.code !== 200) throw new Error(data.message || '请求失败');
-
-      return data.data;
-    } catch (error) {
-      return this.handleError(error);
-    } finally {
-      endProgress();
     }
+    return '';
   }
+
+  // 重试机制
 }
 
 export default new FetchRequest();

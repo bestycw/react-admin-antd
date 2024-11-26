@@ -90,4 +90,33 @@ if (ENABLE_MOCK) {
     code: 500,
     message: '模拟服务器错误'
   });
+
+  // 文件下载测试
+  Mock.mock('/api/download', 'get', (options) => {
+    // 这里只返回成功状态，实际下载会走真实接口
+    return {
+      code: 200,
+      message: '文件下载成功'
+    };
+  });
+
+  // 获取文件列表
+  Mock.mock('/api/files', 'get', {
+    code: 200,
+    data: [
+      {
+        name: 'test1.txt',
+        size: 1024,
+        createTime: '@datetime',
+        updateTime: '@datetime'
+      },
+      {
+        name: 'test2.txt',
+        size: 2048,
+        createTime: '@datetime',
+        updateTime: '@datetime'
+      }
+    ],
+    message: '获取文件列表成功'
+  });
 } 

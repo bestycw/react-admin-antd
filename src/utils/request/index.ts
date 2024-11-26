@@ -1,15 +1,30 @@
 import { AxiosRequest } from './axios';
 import { FetchRequest } from './fetch';
-import type { BaseRequestConfig } from './base';
+import { WebSocketRequest, type WebSocketConfig, WebSocketState } from './websocket';
 
-export enum RequestType {
-  AXIOS = 'axios',
-  FETCH = 'fetch'
-}
+// 创建默认实例
+const request = new AxiosRequest();
+const fetchRequest = new FetchRequest();
 
-const createRequest = (type: RequestType = RequestType.AXIOS) => {
-  return type === RequestType.FETCH ? new FetchRequest() : new AxiosRequest();
+// WebSocket 工厂函数
+const createWebSocket = (config: WebSocketConfig) => new WebSocketRequest(config);
+
+// 统一导出
+export {
+  // 类
+  AxiosRequest,
+  FetchRequest,
+  WebSocketRequest,
+  
+  // 实例
+  request,
+  fetchRequest,
+  createWebSocket,
 };
 
-export default createRequest();
-export { AxiosRequest, FetchRequest, type BaseRequestConfig };
+// 类型导出
+export type { WebSocketConfig };
+export { WebSocketState };
+
+// 默认导出 axios 实例
+export default request;
