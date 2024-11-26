@@ -1,14 +1,14 @@
 import React from 'react';
 import { Card, Button, Space, message } from 'antd';
-import request, { axiosRequest, fetchRequest } from '@/utils/request';
+import { AxiosRequest, FetchRequest } from '@/utils/request';
 import { CloudUploadOutlined, CloudDownloadOutlined, ApiOutlined } from '@ant-design/icons';
 
-interface ProgressEvent {
-  loaded: number;
-  total?: number;
-}
 
 const NetworkBasic: React.FC = () => {
+  // 创建实例
+  const axiosRequest = new AxiosRequest();
+  const fetchRequest = new FetchRequest();
+
   // 测试 GET 请求
   const handleGet = async (type: 'default' | 'axios' | 'fetch') => {
     try {
