@@ -91,4 +91,22 @@ export abstract class BaseRequest {
   abstract post<T>(url: string, data?: any, config?: BaseRequestConfig): Promise<T>;
   abstract upload<T>(url: string, file: File | Blob | FormData, config?: BaseRequestConfig): Promise<T>;
   abstract download(url: string, fileName?: string, config?: BaseRequestConfig): Promise<void>;
+}
+
+export class Interceptor<T> {
+  private handlers: Array<{
+    onFulfilled?: (value: T) => T | Promise<T>;
+    onRejected?: (error: any) => any;
+  }> = [];
+
+  use(onFulfilled?: (value: T) => T | Promise<T>, onRejected?: (error: any) => any) {
+    this.handlers.push({
+      onFulfilled,
+      onRejected
+    });
+  }
+
+  getHandlers() {
+    return this.handlers;
+  }
 } 

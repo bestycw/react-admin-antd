@@ -1,5 +1,6 @@
 import { BaseRequest, BaseRequestConfig, ResponseData } from './base';
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, AxiosProgressEvent } from 'axios';
+import { message } from 'antd';
 
 export class AxiosRequest extends BaseRequest {
   private instance: AxiosInstance;
@@ -31,16 +32,38 @@ export class AxiosRequest extends BaseRequest {
     );
 
     this.instance.interceptors.response.use(
-      (response: AxiosResponse<ResponseData>) => {
+      (response: AxiosResponse) => {
         if (response.config.responseType === 'blob') {
           return response;
         }
         if (response.data.code !== 200) {
           return Promise.reject(new Error(response.data.message || '请求失败'));
         }
-        return response.data.data;
+        return response.data;
       },
-      (error) => Promise.reject(error)
+      (error) => {
+        if (error.response) {
+          switch (error.response.status) {
+            case 401:
+              message.error('未授权，请重新登录');
+              break;
+            case 403:
+              message.error('拒绝访问');
+              break;
+            case 404:
+              message.error('请求错误，未找到该资源');
+              break;
+            case 500:
+              message.error('服务器错误');
+              break;
+            default:
+              message.error(`连接错误 ${error.response.status}`);
+          }
+        } else {
+          message.error('网络错误，请检查网络连接');
+        }
+        return Promise.reject(error);
+      }
     );
   }
 
@@ -60,54 +83,70 @@ export class AxiosRequest extends BaseRequest {
     };
   }
 
+  // 发送请求
+  private async request<T>(config: AxiosRequestConfig & { retry?: number, retryDelay?: number, loading?: boolean }): Promise<T> {
+    const { retry, retryDelay, loading, ...axiosConfig } = config;
+    const endProgress = this.handleProgress(loading);
+
+    try {
+      if (retry && retry > 0) {
+        return await this.retryRequest(async () => {
+          const { data } = await this.instance.request<T>(axiosConfig);
+          return data;
+        }, retry, retryDelay);
+      }
+      
+      const { data } = await this.instance.request<T>(axiosConfig);
+      return data;
+    } catch (error) {
+      return this.handleError(error);
+    } finally {
+      endProgress();
+    }
+  }
+
+  // GET 请求
   async get<T>(url: string, config?: BaseRequestConfig): Promise<T> {
-    const endProgress = this.handleProgress(config?.loading);
-    // console.log('get config:', config);
-    try {
-      return await this.instance.get(url, this.toAxiosConfig(config));
-    } catch (error) {
-      return this.handleError(error);
-    } finally {
-      endProgress();
-    }
+    return this.request<T>({
+      ...this.toAxiosConfig(config),
+      method: 'GET',
+      url
+    });
   }
 
+  // POST 请求
   async post<T>(url: string, data?: any, config?: BaseRequestConfig): Promise<T> {
-    const endProgress = this.handleProgress(config?.loading);
-    try {
-      return await this.instance.post(url, data, this.toAxiosConfig(config));
-    } catch (error) {
-      return this.handleError(error);
-    } finally {
-      endProgress();
-    }
+    return this.request<T>({
+      ...this.toAxiosConfig(config),
+      method: 'POST',
+      url,
+      data
+    });
   }
 
+  // PUT 请求
   async put<T>(url: string, data?: any, config?: BaseRequestConfig): Promise<T> {
-    const endProgress = this.handleProgress(config?.loading);
-    try {
-      return await this.instance.put(url, data, this.toAxiosConfig(config));
-    } catch (error) {
-      return this.handleError(error);
-    } finally {
-      endProgress();
-    }
+    return this.request<T>({
+      ...this.toAxiosConfig(config),
+      method: 'PUT',
+      url,
+      data
+    });
   }
 
+  // DELETE 请求
   async delete<T>(url: string, config?: BaseRequestConfig): Promise<T> {
-    const endProgress = this.handleProgress(config?.loading);
-    try {
-      return await this.instance.delete(url, this.toAxiosConfig(config));
-    } catch (error) {
-      return this.handleError(error);
-    } finally {
-      endProgress();
-    }
+    return this.request<T>({
+      ...this.toAxiosConfig(config),
+      method: 'DELETE',
+      url
+    });
   }
 
+  // 上传文件
   async upload<T>(url: string, file: File | Blob | FormData, config?: BaseRequestConfig): Promise<T> {
     let formData: FormData;
-    // console.log('upload file:', file);
+    
     if (file instanceof FormData) {
       formData = file;
     } else {
@@ -115,89 +154,37 @@ export class AxiosRequest extends BaseRequest {
       formData.append('file', file);
     }
 
-    const uploadConfig = {
-      ...config,
+    return this.request<T>({
+      ...this.toAxiosConfig(config),
+      method: 'POST',
+      url,
+      data: formData,
       headers: {
         'Content-Type': 'multipart/form-data',
         ...config?.headers
-      },
-      onUploadProgress: config?.onUploadProgress
-    };
-
-    return this.post<T>(url, formData, uploadConfig);
+      }
+    });
   }
 
+  // 下载文件
   async download(url: string, fileName?: string, config?: BaseRequestConfig): Promise<void> {
-    const endProgress = this.handleProgress(config?.loading);
-    try {
-      const response = await this.instance.get(url, {
-        ...this.toAxiosConfig(config),
-        responseType: 'blob',
-        validateStatus: (status) => status === 200
-      });
+    const response = await this.request<Blob>({
+      ...this.toAxiosConfig(config),
+      method: 'GET',
+      url,
+      responseType: 'blob'
+    });
 
-      const contentType = response.headers['content-type'];
-      if (contentType && contentType.includes('application/json')) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          try {
-            const result = JSON.parse(reader.result as string);
-            throw new Error(result.message || '下载失败');
-          } catch (e) {
-            throw new Error('下载失败');
-          }
-        };
-        reader.readAsText(response.data);
-        return;
-      }
-
-      const blob = new Blob([response.data], {
-        type: contentType || 'application/octet-stream'
-      });
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = fileName || this.getFileNameFromResponse(response) || 'download';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
-    } catch (error) {
-      this.handleError(error);
-    } finally {
-      endProgress();
-    }
-
-  }
-
-  private getFileNameFromResponse(response: AxiosResponse): string {
-    const disposition = response.headers['content-disposition'];
-    if (disposition && disposition.includes('filename=')) {
-      const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-      const matches = filenameRegex.exec(disposition);
-      if (matches?.[1]) {
-        return decodeURIComponent(matches[1].replace(/['"]/g, ''));
-      }
-    }
-    return '';
-  }
-
-  // 发送请求
-  async request<T = any>(config: AxiosRequestConfig & { retry?: number, retryDelay?: number }): Promise<T> {
-    const { retry, retryDelay, ...axiosConfig } = config;
-    console.log('axiosConfig:', axiosConfig);
-    if (retry && retry > 0) {
-      return this.retryRequest(async () => {
-        try {
-          return await this.instance.request(axiosConfig);
-        } catch (error) {
-          console.error('Request failed:', error);
-          throw error;
-        }
-      }, retry, retryDelay);
-    }
-    
-    return this.instance.request(axiosConfig);
+    // 处理下载
+    const blob = new Blob([response], { type: 'application/octet-stream' });
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = fileName || 'download';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
   }
 }
 

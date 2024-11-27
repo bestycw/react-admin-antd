@@ -81,6 +81,7 @@ const NetworkBasic: React.FC = () => {
     try {
       const api = type === 'axios' ? axiosRequest : fetchRequest;
       const response = await api.get('/api/test');
+      console.log('response:', response);
       message.success({
         content: `GET 请求成功: ${JSON.stringify(response)}`,
         icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />

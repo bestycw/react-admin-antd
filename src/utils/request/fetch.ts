@@ -1,103 +1,123 @@
-import { BaseRequest, BaseRequestConfig, ResponseData } from './base';
-
-interface RequestInterceptor {
-  onFulfilled?: (config: BaseRequestConfig) => BaseRequestConfig | Promise<BaseRequestConfig>;
-  onRejected?: (error: any) => any;
-}
-
-interface ResponseInterceptor {
-  onFulfilled?: (response: Response) => any;
-  onRejected?: (error: any) => any;
-}
+import { BaseRequest, BaseRequestConfig, Interceptor } from './base';
 
 export class FetchRequest extends BaseRequest {
-  private requestInterceptors: RequestInterceptor[] = [];
-  private responseInterceptors: ResponseInterceptor[] = [];
+  public interceptors = {
+    request: new Interceptor<BaseRequestConfig>(),
+    response: new Interceptor<Response>()
+  };
 
   constructor(config?: BaseRequestConfig) {
     super(config);
-    this.setupDefaultInterceptors();
-  }
 
-  private setupDefaultInterceptors() {
     // 添加默认的请求拦截器
     this.interceptors.request.use(
-      (config: BaseRequestConfig) => {
-        if (config.token !== false) {
-          const token = localStorage.getItem('token');
-          if (token) {
-            config.headers = {
-              ...config.headers,
-              Authorization: `Bearer ${token}`
-            };
-          }
+      async (config: BaseRequestConfig) => {
+        // 处理 token
+        const token = localStorage.getItem('token');
+        const headers = { ...(config.headers || {}) };
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
         }
-        return config;
+
+        // 设置默认 Content-Type
+        if (!headers['Content-Type']) {
+          headers['Content-Type'] = 'application/json';
+        }
+
+        return {
+          ...config,
+          headers
+        };
       },
-      (error) => Promise.reject(error)
+      (error) => {
+        console.error('Request interceptor error:', error);
+        return Promise.reject(error);
+      }
     );
 
     // 添加默认的响应拦截器
     this.interceptors.response.use(
       async (response: Response) => {
         if (!response.ok) {
-          throw new Error(response.statusText || '请求失败');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json() as ResponseData;
+
+        const contentType = response.headers.get('content-type');
+
+        // 处理二进制文件响应
+        if (contentType?.includes('application/octet-stream') || 
+            contentType?.includes('application/pdf') ||
+            contentType?.includes('image/') ||
+            contentType?.includes('video/') ||
+            contentType?.includes('audio/')) {
+          return response.blob();
+        }
+
+        // 处理 JSON 响应
+        const data = await response.json();
+        console.log('Response data:', data);
+
         if (data.code !== 200) {
           throw new Error(data.message || '请求失败');
         }
+
         return data.data;
       },
-      (error) => Promise.reject(error)
+      (error) => {
+        console.error('Response interceptor error:', error);
+        return Promise.reject(error);
+      }
     );
   }
 
-  // 拦截器管理
-  public interceptors = {
-    request: {
-      use: (onFulfilled?: RequestInterceptor['onFulfilled'], onRejected?: RequestInterceptor['onRejected']) => {
-        this.requestInterceptors.push({ onFulfilled, onRejected });
-      }
-    },
-    response: {
-      use: (onFulfilled?: ResponseInterceptor['onFulfilled'], onRejected?: ResponseInterceptor['onRejected']) => {
-        this.responseInterceptors.push({ onFulfilled, onRejected });
-      }
-    }
-  };
-
   private async runRequestInterceptors(config: BaseRequestConfig): Promise<BaseRequestConfig> {
     let currentConfig = { ...config };
-    for (const interceptor of this.requestInterceptors) {
-      if (interceptor.onFulfilled) {
-        try {
-          currentConfig = await interceptor.onFulfilled(currentConfig);
-        } catch (error) {
-          if (interceptor.onRejected) {
-            throw interceptor.onRejected(error);
-          }
+    
+    // 获取所有请求拦截器
+    const handlers = (this.interceptors.request as Interceptor<BaseRequestConfig>).getHandlers();
+    
+    // 按顺序执行所有请求拦截器
+    for (const handler of handlers) {
+      try {
+        if (handler.onFulfilled) {
+          currentConfig = await handler.onFulfilled(currentConfig);
+          console.log('After request interceptor:', currentConfig);
+        }
+      } catch (error) {
+        if (handler.onRejected) {
+          currentConfig = await handler.onRejected(error);
+        } else {
           throw error;
         }
       }
     }
+    
     return currentConfig;
   }
 
   private async runResponseInterceptors(response: Response): Promise<any> {
     let currentResponse = response;
-    for (const interceptor of this.responseInterceptors) {
-      if (interceptor.onFulfilled) {
-        try {
-          currentResponse = await interceptor.onFulfilled(currentResponse);
-        } catch (error) {
-          if (interceptor.onRejected) {
-            throw interceptor.onRejected(error);
-          }
+    
+    // 获取所有响应拦截器
+    const handlers = (this.interceptors.response as Interceptor<Response>).getHandlers();
+    
+    // 按顺序执行所有响应拦截器
+    for (const handler of handlers) {
+      try {
+        if (handler.onFulfilled) {
+          currentResponse = await handler.onFulfilled(currentResponse);
+          console.log('After response interceptor:', currentResponse);
+        }
+      } catch (error) {
+        if (handler.onRejected) {
+          currentResponse = await handler.onRejected(error);
+        } else {
           throw error;
         }
       }
     }
+    
     return currentResponse;
   }
 
@@ -105,8 +125,10 @@ export class FetchRequest extends BaseRequest {
     const endProgress = this.handleProgress(config?.loading);
 
     try {
+      const { retry, retryDelay, ...restConfig } = config;
+      
       // 应用请求拦截器
-      const finalConfig = await this.runRequestInterceptors(config);
+      const finalConfig = await this.runRequestInterceptors(restConfig);
 
       // 处理超时
       const controller = new AbortController();
@@ -123,13 +145,29 @@ export class FetchRequest extends BaseRequest {
         signal: controller.signal
       };
 
+      // 如果设置了重试，使用重试逻辑
+      if (retry && retry > 0) {
+        return await this.retryRequest(
+          async () => {
+            const response = await fetch(this.getFullUrl(url), requestInit);
+            clearTimeout(timeoutId);
+            return this.runResponseInterceptors(response);
+          },
+          retry,
+          retryDelay
+        );
+      }
+
       // 发起请求
       const response = await fetch(this.getFullUrl(url), requestInit);
       clearTimeout(timeoutId);
 
       // 应用响应拦截器
       return await this.runResponseInterceptors(response);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        throw new Error('请求超时');
+      }
       return this.handleError(error);
     } finally {
       endProgress();
