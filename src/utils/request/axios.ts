@@ -62,6 +62,7 @@ export class AxiosRequest extends BaseRequest {
 
   async get<T>(url: string, config?: BaseRequestConfig): Promise<T> {
     const endProgress = this.handleProgress(config?.loading);
+    // console.log('get config:', config);
     try {
       return await this.instance.get(url, this.toAxiosConfig(config));
     } catch (error) {
@@ -106,7 +107,7 @@ export class AxiosRequest extends BaseRequest {
 
   async upload<T>(url: string, file: File | Blob | FormData, config?: BaseRequestConfig): Promise<T> {
     let formData: FormData;
-    
+    // console.log('upload file:', file);
     if (file instanceof FormData) {
       formData = file;
     } else {
@@ -114,13 +115,16 @@ export class AxiosRequest extends BaseRequest {
       formData.append('file', file);
     }
 
-    return this.post<T>(url, formData, {
+    const uploadConfig = {
       ...config,
       headers: {
         'Content-Type': 'multipart/form-data',
         ...config?.headers
-      }
-    });
+      },
+      onUploadProgress: config?.onUploadProgress
+    };
+
+    return this.post<T>(url, formData, uploadConfig);
   }
 
   async download(url: string, fileName?: string, config?: BaseRequestConfig): Promise<void> {
@@ -163,6 +167,7 @@ export class AxiosRequest extends BaseRequest {
     } finally {
       endProgress();
     }
+
   }
 
   private getFileNameFromResponse(response: AxiosResponse): string {
@@ -175,6 +180,24 @@ export class AxiosRequest extends BaseRequest {
       }
     }
     return '';
+  }
+
+  // 发送请求
+  async request<T = any>(config: AxiosRequestConfig & { retry?: number, retryDelay?: number }): Promise<T> {
+    const { retry, retryDelay, ...axiosConfig } = config;
+    console.log('axiosConfig:', axiosConfig);
+    if (retry && retry > 0) {
+      return this.retryRequest(async () => {
+        try {
+          return await this.instance.request(axiosConfig);
+        } catch (error) {
+          console.error('Request failed:', error);
+          throw error;
+        }
+      }, retry, retryDelay);
+    }
+    
+    return this.instance.request(axiosConfig);
   }
 }
 

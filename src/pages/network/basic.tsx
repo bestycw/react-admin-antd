@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button, Space, message, Alert, Tabs, Row, Col, Typography, Upload, Progress, Divider } from 'antd';
+import { Card, Button, Space, message, Alert, Row, Col, Typography } from 'antd';
 import { 
   ApiOutlined, 
   EditOutlined, 
@@ -8,17 +8,12 @@ import {
   DownloadOutlined,
   SyncOutlined,
   CheckCircleOutlined,
-  UploadOutlined,
-  FileOutlined,
-  LoadingOutlined
 } from '@ant-design/icons';
-import { AxiosRequest, FetchRequest, axiosInstance, fetchInstance } from '@/utils/request';
+import { AxiosRequest, FetchRequest } from '@/utils/request';
 import FileUpload from './components/FileUpload';
 import FileDownload from './components/FileDownload';
 import { RouteConfig } from '@/types/route';
-import axios from 'axios';
 
-const { TabPane } = Tabs;
 const { Text } = Typography;
 
 interface RequestCardProps {
@@ -76,7 +71,6 @@ const RequestCard: React.FC<RequestCardProps> = ({
 );
 
 const NetworkBasic: React.FC = () => {
-  const [loading, setLoading] = useState(false);
 
   // 创建实例
   const axiosRequest = new AxiosRequest();
