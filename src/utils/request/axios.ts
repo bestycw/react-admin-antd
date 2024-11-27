@@ -87,16 +87,28 @@ export class AxiosRequest extends BaseRequest {
   private async request<T>(config: AxiosRequestConfig & { retry?: number, retryDelay?: number, loading?: boolean }): Promise<T> {
     const { retry, retryDelay, loading, ...axiosConfig } = config;
     const endProgress = this.handleProgress(loading);
-
+      // 处理超时
+      const controller = new AbortController();
+      const timeout = config.timeout || this.defaultConfig.timeout;
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      console.log('timeoutId', timeout);
+      const finalConfig = {
+        ...axiosConfig,
+        signal: controller.signal
+      };
     try {
       if (retry && retry > 0) {
         return await this.retryRequest(async () => {
-          const { data } = await this.instance.request<T>(axiosConfig);
+          const { data } = await this.instance.request<T>(finalConfig);
+          clearTimeout(timeoutId);
+
           return data;
         }, retry, retryDelay);
       }
-      
-      const { data } = await this.instance.request<T>(axiosConfig);
+
+      const { data } = await this.instance.request<T>(finalConfig);
+      clearTimeout(timeoutId);
+
       return data;
     } catch (error) {
       return this.handleError(error);
@@ -185,6 +197,33 @@ export class AxiosRequest extends BaseRequest {
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(downloadUrl);
+  }
+
+  protected handleError(error: any) {
+    if (error.name === 'AbortError' || error.name === 'CanceledError' || error.code === 'ECONNABORTED') {
+      return Promise.reject(new Error('请求已取消或超时'));
+    }
+    if (error.response) {
+      switch (error.response.status) {
+        case 401:
+          message.error('未授权，请重新登录');
+          break;
+        case 403:
+          message.error('拒绝访问');
+          break;
+        case 404:
+          message.error('请求错误，未找到该资源');
+          break;
+        case 500:
+          message.error('服务器错误');
+          break;
+        default:
+          message.error(`连接错误 ${error.response.status}`);
+      }
+    } else {
+      message.error('网络错误，请检查网络连接');
+    }
+    return Promise.reject(error);
   }
 }
 

@@ -12,6 +12,7 @@ import {
 import { AxiosRequest, FetchRequest } from '@/utils/request';
 import FileUpload from './components/FileUpload';
 import FileDownload from './components/FileDownload';
+import TimeoutTest from './components/TimeoutTest';
 import { RouteConfig } from '@/types/route';
 
 const { Text } = Typography;
@@ -235,6 +236,9 @@ const NetworkBasic: React.FC = () => {
 
         {/* 文件下载组件 */}
         <FileDownload axiosRequest={axiosRequest} fetchRequest={fetchRequest} />
+
+        {/* 超时取消测试组件 */}
+        <TimeoutTest />
 
         {/* 重试请求测试 */}
         <Card 
