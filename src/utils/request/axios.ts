@@ -86,12 +86,13 @@ export class AxiosRequest extends BaseRequest {
   // 发送请求
   private async request<T>(config: AxiosRequestConfig & { retry?: number, retryDelay?: number, loading?: boolean }): Promise<T> {
     const { retry, retryDelay, loading, ...axiosConfig } = config;
+    console.log('axiosConfig', axiosConfig);
     const endProgress = this.handleProgress(loading);
       // 处理超时
       const controller = new AbortController();
       const timeout = config.timeout || this.defaultConfig.timeout;
       const timeoutId = setTimeout(() => controller.abort(), timeout);
-      console.log('timeoutId', timeout);
+      // console.log('timeoutId', timeout);
       const finalConfig = {
         ...axiosConfig,
         signal: controller.signal
@@ -165,9 +166,10 @@ export class AxiosRequest extends BaseRequest {
       formData = new FormData();
       formData.append('file', file);
     }
-
+    console.log('formData', this.toAxiosConfig(config));
+    // return this.instance.post(url,formData)
     return this.request<T>({
-      ...this.toAxiosConfig(config),
+      // ...this.toAxiosConfig(config),
       method: 'POST',
       url,
       data: formData,

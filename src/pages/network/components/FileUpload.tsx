@@ -21,7 +21,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ axiosRequest, fetchRequest }) =
       setLoading(true);
       const formData = new FormData();
       formData.append('file', file);
-
+    //   console.log('formData', file);
       if (type === 'axios') {
         setAxiosProgress(0);
         await axiosRequest.upload('/api/upload', formData, {

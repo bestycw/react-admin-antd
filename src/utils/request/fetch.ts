@@ -21,9 +21,9 @@ export class FetchRequest extends BaseRequest {
         }
 
         // 设置默认 Content-Type
-        if (!headers['Content-Type']) {
-          headers['Content-Type'] = 'application/json';
-        }
+        // if (!headers['Content-Type']) {
+        //   headers['Content-Type'] = 'application/json';
+        // }
 
         return {
           ...config,
@@ -144,7 +144,7 @@ export class FetchRequest extends BaseRequest {
         },
         signal: controller.signal
       };
-
+      console.log('requestInit', requestInit);
       // 如果设置了重试，使用重试逻辑
       if (retry && retry > 0) {
         return await this.retryRequest(
@@ -221,6 +221,7 @@ export class FetchRequest extends BaseRequest {
       method: 'POST',
       body: formData,
       headers: {
+        // 'Content-Type': 'multipart/form-data',
         ...config?.headers
       }
     });

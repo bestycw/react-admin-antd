@@ -55,7 +55,7 @@ self.onmessage = async (e: MessageEvent) => {
         totalChunks
       }
     });
-  } catch (error) {
+  } catch (error:any) {
     console.error('Worker error:', error);
     self.postMessage({
       type: 'error',
