@@ -1,5 +1,5 @@
 import React from 'react';
-import { Space, Card } from 'antd';
+import { Space } from 'antd';
 import WebSocketChat from './components/WebSocketChat';
 import StreamChat from './components/StreamChat';
 import BigFileUpload from './components/BigFileUpload';
