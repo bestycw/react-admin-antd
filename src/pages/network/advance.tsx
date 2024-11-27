@@ -1,25 +1,40 @@
 import React from 'react';
-import { Space } from 'antd';
+import { Space, Card } from 'antd';
 import WebSocketChat from './components/WebSocketChat';
 import StreamChat from './components/StreamChat';
+import BigFileUpload from './components/BigFileUpload';
+// import P2PVideoChat from './components/P2PVideoChat';
 import { ApiOutlined } from '@ant-design/icons';
 
 const NetworkAdvance: React.FC = () => {
   return (
-    <div className="p-6">
+    <div >
       <Space direction="vertical" size="large" className="w-full">
-        <WebSocketChat />
-        <StreamChat />
+        {/* <Card title="WebSocket 实时通信" className="w-full"> */}
+          <WebSocketChat />
+        {/* </Card> */}
+        
+        {/* <Card title="流式响应" className="w-full"> */}
+          <StreamChat />
+        {/* </Card> */}
+        
+        {/* <Card title="大文件分片上传" className="w-full"> */}
+          <BigFileUpload />
+        {/* </Card> */}
+{/* 
+        <Card title="P2P 视频聊天 (WebRTC)" className="w-full">
+          <P2PVideoChat />
+        </Card> */}
       </Space>
     </div>
   );
 };
 
-export default NetworkAdvance; 
+export default NetworkAdvance;
 
 export const routeConfig = {
-    title: '基础网络',
-    icon: <ApiOutlined />,
-    layout: true,
-    auth: true,
-};
+  title: '高级网络',
+  icon: <ApiOutlined />,
+  layout: true,
+  auth: true,
+}; 
