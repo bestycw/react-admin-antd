@@ -68,18 +68,41 @@ const BigFileUpload: React.FC = () => {
             // 上传所有分片
             const uploadPromises = chunks.map((chunk: Blob, index: number) => {
               const formData = new FormData();
-              formData.append('chunk', chunk);
+              // 添加一个带索引的文件名，以防止浏览器缓存
+              const chunkFile = new File([chunk], `${fileHash}-${index}`);
+              
+              // 确保所有字段都被正确添加到 FormData 中
+              formData.append('chunk', chunkFile);
               formData.append('hash', `${fileHash}-${index}`);
               formData.append('fileHash', fileHash);
               formData.append('fileName', fileName);
               formData.append('chunkIndex', String(index));
               formData.append('totalChunks', String(chunks.length));
+              formData.append('totalSize', String(totalSize));
 
-              return fetchRequest.post('/api/upload/chunk', formData);
+              // 打印 FormData 内容进行调试
+            //   console.log('Chunk Upload FormData contents:');
+              for (const pair of formData.entries()) {
+                console.log(pair[0], pair[1]);
+              }
+
+              return fetchRequest.upload('/api/upload/chunk', formData);
             });
 
-            // 并发上传分片
-            await Promise.all(uploadPromises);
+            // 并发上传分片，但限制并发数
+            const concurrencyLimit = 3;
+            const results = [];
+            for (let i = 0; i < uploadPromises.length; i += concurrencyLimit) {
+              const batch = uploadPromises.slice(i, i + concurrencyLimit);
+              try {
+                const batchResults = await Promise.all(batch);
+                results.push(...batchResults);
+                console.log(`Batch ${i / concurrencyLimit + 1} uploaded successfully`);
+              } catch (error) {
+                console.error(`Error uploading batch ${i / concurrencyLimit + 1}:`, error);
+                throw error;
+              }
+            }
 
             // 合并分片
             await fetchRequest.post('/api/upload/merge', {

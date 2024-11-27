@@ -31,7 +31,7 @@ export class FetchRequest extends BaseRequest {
         };
       },
       (error) => {
-        console.error('Request interceptor error:', error);
+        // console.error('Request interceptor error:', error);
         return Promise.reject(error);
       }
     );
@@ -82,7 +82,7 @@ export class FetchRequest extends BaseRequest {
       try {
         if (handler.onFulfilled) {
           currentConfig = await handler.onFulfilled(currentConfig);
-          console.log('After request interceptor:', currentConfig);
+          // console.log('After request interceptor:', currentConfig);
         }
       } catch (error) {
         if (handler.onRejected) {
@@ -144,7 +144,7 @@ export class FetchRequest extends BaseRequest {
         },
         signal: controller.signal
       };
-      console.log('requestInit', requestInit);
+      // console.log('requestInit', requestInit);
       // 如果设置了重试，使用重试逻辑
       if (retry && retry > 0) {
         return await this.retryRequest(
