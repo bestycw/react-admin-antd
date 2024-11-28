@@ -18,6 +18,7 @@ import PageTransition from '@/components/PageTransition';
 import AvatarUpload from '@/components/AvatarUpload';
 import classNames from 'classnames';
 import { validateEmail, validateMobile, validateUrl } from '@/utils/validator';
+import { RouteConfig } from '@/types/route';
 
 const Profile: React.FC = observer(() => {
   const { t } = useTranslation();
@@ -364,5 +365,6 @@ export const routeConfig: RouteConfig = {
     title: '个人中心',
     icon: <UserOutlined />,
     layout: true,
+    hiddenMenu: true,
     auth: false,
 }

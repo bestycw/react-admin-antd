@@ -6,7 +6,7 @@ import { CoRouteObject } from "@/types/route";
 
 const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
     const { children } = props;
-    const { UserStore } = useStore();
+    const { UserStore, MenuStore } = useStore();
     const location = useLocation();
 
     // 检查用户是否登录
@@ -19,9 +19,9 @@ const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
     // if (location.pathname === '/') {
     //     return <Navigate to="/dashboard" replace={true} />
     // }
-
     // 查找当前路径对应的路由配置
     const findRouteByPath = (routes: CoRouteObject[], path: string): CoRouteObject | undefined => {
+        // console.log('routes', routes,path)
         for (const route of routes) {
             if (route.path === path) {
                 return route;
@@ -33,14 +33,20 @@ const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
         }
         return undefined;
     };
-
-    // 获取当前路由配置
+    // console.log('MenuStore.routeList', MenuStore.routeList)
+    // if (!MenuStore.routeList.includes(location.pathname)) {
+    //     return <Navigate to="/404" replace={true} />
+    // } else {
+    // 获取当前路由配置  //TODO: 这里需要优化，不能每次都遍历所有路由
     const currentRoute = findRouteByPath(UserStore.allRoutes, location.pathname);
-
+    // console.log('currentRoute', UserStore.allRoutes)
     // 如果找到路由配置且有重定向属性，则进行重定向
     if (currentRoute?.redirect) {
         return <Navigate to={currentRoute.redirect} replace={true} />;
     }
+    // }
+
+
 
     // 用户已登录且有权限，渲染子组件
     return <>{children}</>;

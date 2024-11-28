@@ -3,6 +3,7 @@ import { makeAutoObservable, runInAction } from "mobx"
 import { CoRouteObject } from "../types/route.d"
 import { authService } from '@/services/auth'
 import type { UserInfo as AuthUserInfo } from '@/services/auth'
+import type { NotificationSetting } from '@/types/notification'
 
 interface UserInfo extends AuthUserInfo {
   accessToken: string;
@@ -16,13 +17,6 @@ interface Device {
   location: string;
   lastActive: string;
   current: boolean;
-}
-
-interface NotificationSetting {
-  type: string;
-  email: boolean;
-  browser: boolean;
-  mobile: boolean;
 }
 
 interface ApiToken {
@@ -144,11 +138,14 @@ class UserStore {
     //         ? formatBackendRoutes(this.dynamicRoutes)
     //         : this.dynamicRoutes
     // }
-
+  
     get hasAllRoutes() {
         return this.allRoutes.length > 0
     }
 
+    get routeList(): string[] {
+        return this.allRoutes.map(route => route.path || '')
+    }
     get userName(): string {
         return this.userInfo?.username ?? ''
     }

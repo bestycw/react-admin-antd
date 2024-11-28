@@ -158,7 +158,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                       {channel.icon}
                       <Switch
                         size="small"
-                        checked={setting[channel.key as keyof NotificationSetting]}
+                        checked={Boolean(setting[channel.key as keyof NotificationSetting])}
                         onChange={(checked) => onSettingChange(item.type, channel.key, checked)}
                       />
                     </div>

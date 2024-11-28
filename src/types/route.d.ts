@@ -26,6 +26,7 @@ export interface CoRouteObject extends Omit<RouteObject, 'path'> {
     sort?: number
     layout?: boolean
     auth?: boolean
+    hiddenMenu?: boolean
   }
   children?: CoRouteObject[]
   hidden?: boolean

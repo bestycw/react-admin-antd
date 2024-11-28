@@ -24,6 +24,7 @@ class MenuStore {
     // dynamicRoutes: CoRouteObject[] = []
     
     menuList: MenuItem[] = []
+    routeList: string[] = []
     selectedKeys: string[] = []
     visitedTags: TagItem[] = []
     showTabs: boolean = true
@@ -47,13 +48,11 @@ class MenuStore {
     }
 
     setMenuList(menuList: MenuItem[]) {
-        // console.log(menuList)
-
         runInAction(() => {
             this.menuList = menuList
             // console.log(this.selectedKeys)
             // if (this.selectedKeys.length === 0) {
-                this.ensureSelectedKeys()
+                // this.ensureSelectedKeys()
             // }
         })
 
@@ -185,16 +184,20 @@ class MenuStore {
     routesToMenuItems(routes: CoRouteObject[]): MenuItem[] {
         const menu =  routes
             .filter(route => !route.hidden)
-            .map(route => ({
-                key: route.path || '',
-                label: route.meta?.title || '',
-                icon: route.meta?.icon,
-                path: route.path,
-                children: route.children && route.children.length > 0 
-                    ? this.routesToMenuItems(route.children) 
-                    : undefined
-            }))
-            .filter(item => item.label);
+            .map(route => {
+                this.routeList.push(route.path || '')
+                return {
+                    key: route.path || '',
+                    label: route.meta?.title || '',
+                    icon: route.meta?.icon,
+                    path: route.path,
+                    hiddenMenu: route.meta?.hiddenMenu,
+                    children: route.children && route.children.length > 0 
+                        ? this.routesToMenuItems(route.children) 
+                        : undefined
+                }
+            })
+            .filter(item => item.label && !item.hiddenMenu);
         return menu
     }
 
