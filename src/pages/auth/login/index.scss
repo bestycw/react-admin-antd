@@ -51,7 +51,7 @@
       @apply p-1.5 bg-gray-100/50 dark:bg-gray-700/30 rounded-lg backdrop-blur-sm;
 
       .ant-segmented-item {
-        @apply transition-all duration-300 ease-out;
+        @apply transition-all duration-300 ease-in-out;
 
         .ant-segmented-item-label {
           @apply min-h-[2.5rem] px-4 flex items-center justify-center
@@ -87,7 +87,7 @@
 
   /* 登录表单样式 */
   .login-form {
-    @apply space-y-5;
+    @apply space-y-5 relative;
 
     .form-item-group {
       @apply space-y-5;
@@ -150,7 +150,7 @@
         @apply text-sm text-gray-600 dark:text-gray-400;
       }
 
-      .forgot-password {
+      .forgot-password, .register-link {
         @apply text-sm text-blue-500 hover:text-blue-600 
           dark:text-blue-400 dark:hover:text-blue-300
           transition-colors duration-300;
@@ -165,6 +165,33 @@
         border-none rounded-lg
         transform hover:scale-[1.02] hover:shadow-lg
         transition-all duration-300;
+    }
+
+    /* 添加动画相关样式 */
+    .form-animation-container {
+      @apply absolute w-full;
+      
+      &.fade-enter {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      
+      &.fade-enter-active {
+        opacity: 1;
+        transform: translateX(0);
+        transition: all 0.3s ease-in-out;
+      }
+      
+      &.fade-exit {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      
+      &.fade-exit-active {
+        opacity: 0;
+        transform: translateX(-20px);
+        transition: all 0.3s ease-in-out;
+      }
     }
   }
 
@@ -213,6 +240,9 @@
     .action-button {
       @apply text-sm text-blue-500 hover:text-blue-600 
         dark:text-blue-400 dark:hover:text-blue-300
+        border border-blue-500/50 dark:border-blue-400/50
+        hover:border-blue-600 dark:hover:border-blue-300
+        rounded-md px-4 py-1.5
         transition-colors duration-300;
     }
   }

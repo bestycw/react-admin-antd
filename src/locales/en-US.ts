@@ -8,6 +8,7 @@ export default {
     accountLogin: 'Account Login',
     mobileLogin: 'Mobile Login',
     qrCodeLogin: 'QR Code Login',
+    smsPlaceholder: 'SMS Code',
     register: 'Register',
     sendCode: 'Send Code',
     scanQRCodeTip: 'Please scan the QR code with your mobile phone',

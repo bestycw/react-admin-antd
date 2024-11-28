@@ -10,6 +10,7 @@ export default {
     backToLogin: '返回登录',
     mobilePlaceholder: '手机号',
     qrCodePlaceholder: '二维码',
+    smsPlaceholder: '短信验证码',
     verificationCodePlaceholder: '验证码',
     sendCode: '发送验证码',
     scanQrcode: '扫描二维码',
