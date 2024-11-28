@@ -12,6 +12,10 @@ export default {
     qrCodePlaceholder: '二维码',
     smsPlaceholder: '短信验证码',
     verificationCodePlaceholder: '验证码',
+    mobileRequired: '请输入手机号',
+    qrCodeRequired: '请扫描二维码',
+    smsRequired: '请输入短信验证码',
+    
     sendCode: '发送验证码',
     scanQrcode: '扫描二维码',
     // qrCodeLogin: '二维码登录',
