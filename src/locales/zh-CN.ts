@@ -115,5 +115,72 @@ export default {
     success: '密码重置成功',
     failed: '密码重置失败',
     backToLogin: '返回登录'
+  },
+  profile: {
+    basicInfo: '基本信息',
+    security: '安全设置',
+    activity: '账号动态',
+    notification: '通知设置',
+    apiAccess: 'API 访问',
+    username: '用户名',
+    email: '邮箱',
+    mobile: '手机号',
+    uploadAvatar: '上传头像',
+    save: '保存',
+    oldPassword: '原密码',
+    newPassword: '新密码',
+    confirmPassword: '确认密码',
+    changePassword: '修改密码',
+    updateSuccess: '更新成功',
+    updateFailed: '更新失败',
+    passwordChanged: '密码修改成功',
+    passwordChangeFailed: '密码修改失败',
+    avatarUpdateSuccess: '头像更新成功',
+    avatarUpdateFailed: '头像更新失败',
+    invalidMobile: '请输入正确的手机号',
+    twoFactor: '两步验证',
+    loginDevices: '登录设备',
+    notificationSettings: '通知设置',
+    loginHistory: '登录历史',
+    operationLog: '操作记录',
+    apiTokens: 'API 令牌',
+    webhooks: 'Webhook 设置',
+    loginDays: '登录天数',
+    lastActive: '最近活跃',
+    deviceInfo: {
+      browser: '浏览器',
+      os: '操作系统',
+      ip: 'IP 地址',
+      location: '登录地点',
+      time: '登录时间'
+    },
+    notificationTypes: {
+      all: '所有通知',
+      system: '系统通知',
+      security: '安全通知',
+      activity: '活动通知'
+    },
+    apiTokenSettings: {
+      create: '创建令牌',
+      name: '令牌名称',
+      token: '令牌',
+      permissions: '权限',
+      expiresAt: '过期时间',
+      lastUsed: '最后使用',
+      created: '创建时间',
+      status: '状态',
+      active: '生效中',
+      expired: '已过期',
+      revoked: '已撤销'
+    },
+    webhookSettings: {
+      create: '创建 Webhook',
+      url: '回调 URL',
+      secret: '密钥',
+      events: '事件类型',
+      status: '状态',
+      lastDelivery: '最后推送',
+      deliveryStatus: '推送状态'
+    }
   }
 } 

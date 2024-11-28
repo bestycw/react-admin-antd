@@ -83,6 +83,9 @@ export const useUserActions = () => {
       } catch (error) {
         console.error('Logout failed:', error);
       }
+    } else if (key === 'profile') {
+      console.log('profile')
+      navigate('/profile');
     }
   }
 

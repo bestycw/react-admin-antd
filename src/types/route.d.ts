@@ -11,6 +11,7 @@ export interface RouteConfig {
   roles?: string[]
   sort?: number
   hidden?: boolean
+  hiddenMenu?: boolean
   // 可以添加更多配置项
 }
 // 扩展 RouteObject 类型，使 path 必须以 '/' 开头

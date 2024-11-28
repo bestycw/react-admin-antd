@@ -89,5 +89,72 @@ export default {
     success: 'Password reset successful',
     failed: 'Password reset failed',
     backToLogin: 'Back to Login'
+  },
+  profile: {
+    basicInfo: 'Basic Information',
+    security: 'Security Settings',
+    activity: 'Account Activity',
+    notification: 'Notifications',
+    apiAccess: 'API Access',
+    username: 'Username',
+    email: 'Email',
+    mobile: 'Mobile',
+    uploadAvatar: 'Upload Avatar',
+    save: 'Save',
+    oldPassword: 'Old Password',
+    newPassword: 'New Password',
+    confirmPassword: 'Confirm Password',
+    changePassword: 'Change Password',
+    updateSuccess: 'Update successful',
+    updateFailed: 'Update failed',
+    passwordChanged: 'Password changed successfully',
+    passwordChangeFailed: 'Failed to change password',
+    avatarUpdateSuccess: 'Avatar updated successfully',
+    avatarUpdateFailed: 'Failed to update avatar',
+    invalidMobile: 'Please enter a valid mobile number',
+    twoFactor: 'Two-Factor Authentication',
+    loginDevices: 'Login Devices',
+    notificationSettings: 'Notification Settings',
+    loginHistory: 'Login History',
+    operationLog: 'Operation Log',
+    apiTokens: 'API Tokens',
+    webhooks: 'Webhooks',
+    loginDays: 'Login Days',
+    lastActive: 'Last Active',
+    deviceInfo: {
+      browser: 'Browser',
+      os: 'OS',
+      ip: 'IP Address',
+      location: 'Location',
+      time: 'Time'
+    },
+    notificationTypes: {
+      all: 'All Notifications',
+      system: 'System',
+      security: 'Security',
+      activity: 'Activity'
+    },
+    apiTokenSettings: {
+      create: 'Create Token',
+      name: 'Token Name',
+      token: 'Token',
+      permissions: 'Permissions',
+      expiresAt: 'Expires At',
+      lastUsed: 'Last Used',
+      created: 'Created',
+      status: 'Status',
+      active: 'Active',
+      expired: 'Expired',
+      revoked: 'Revoked'
+    },
+    webhookSettings: {
+      create: 'Create Webhook',
+      url: 'Callback URL',
+      secret: 'Secret',
+      events: 'Event Types',
+      status: 'Status',
+      lastDelivery: 'Last Delivery',
+      deliveryStatus: 'Delivery Status'
+    }
   }
 } 

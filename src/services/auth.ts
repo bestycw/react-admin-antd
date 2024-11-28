@@ -115,6 +115,40 @@ class AuthService {
   async resetPassword(params: ResetPasswordParams): Promise<void> {
     await fetchRequest.post('/api/auth/reset-password', params);
   }
+
+  async updateProfile(data: Partial<UserInfo>): Promise<UserInfo> {
+    return await fetchRequest.put<UserInfo>('/api/auth/profile', data);
+  }
+
+  async uploadAvatar(file: File): Promise<{ url: string }> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return await fetchRequest.post('/api/auth/avatar', formData);
+  }
+
+  async getDevices(): Promise<any[]> {
+    return await fetchRequest.get('/api/auth/devices');
+  }
+
+  async revokeDevice(deviceId: string): Promise<void> {
+    await fetchRequest.delete(`/api/auth/devices/${deviceId}`);
+  }
+
+  async getApiTokens(): Promise<any[]> {
+    return await fetchRequest.get('/api/auth/tokens');
+  }
+
+  async createApiToken(data: any): Promise<any> {
+    return await fetchRequest.post('/api/auth/tokens', data);
+  }
+
+  async revokeApiToken(tokenId: string): Promise<void> {
+    await fetchRequest.delete(`/api/auth/tokens/${tokenId}`);
+  }
+
+  async updateNotificationSettings(settings: any): Promise<void> {
+    await fetchRequest.put('/api/auth/notifications/settings', settings);
+  }
 }
 
 export const authService = new AuthService(); 
