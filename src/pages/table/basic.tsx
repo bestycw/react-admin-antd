@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Card } from 'antd'
+import {  Card } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { observer } from 'mobx-react-lite'
 import { TableOutlined } from '@ant-design/icons'
 import type { RouteConfig } from '@/types/route'
+import Table from '@/components/Table'
 
 // 在组件内部定义路由配置
 export const routeConfig: RouteConfig = {

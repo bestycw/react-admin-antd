@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Select, DatePicker, Tag, Space, message } from 'antd';
+import {  Button, Modal, Form, Input, Select, DatePicker, Tag, Space, message } from 'antd';
 import { PlusOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import classNames from 'classnames';
+// import classNames from 'classnames';
+import { observer } from 'mobx-react-lite';
+import { useStore } from '@/store';
+import Table from '@/components/Table';
 
 dayjs.extend(relativeTime);
 
@@ -25,7 +28,7 @@ interface ApiTokenManagerProps {
   onRevokeToken: (tokenId: string) => Promise<void>;
 }
 
-const ApiTokenManager: React.FC<ApiTokenManagerProps> = ({
+const ApiTokenManager: React.FC<ApiTokenManagerProps> = observer(({
   tokens,
   onCreateToken,
   onRevokeToken
@@ -34,16 +37,9 @@ const ApiTokenManager: React.FC<ApiTokenManagerProps> = ({
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const { ConfigStore } = useStore();
+  const isMobile = ConfigStore.isDrawerMode;
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const handleCreate = async (values: any) => {
     try {
@@ -143,7 +139,7 @@ const ApiTokenManager: React.FC<ApiTokenManagerProps> = ({
             onClick={() => onRevokeToken(record.id)}
             disabled={record.status !== 'active'}
           >
-            {!isMobile && 'Revoke'}
+            {/* {!isMobile && 'Revoke'} */}
           </Button>
         ),
       }
@@ -195,20 +191,15 @@ const ApiTokenManager: React.FC<ApiTokenManagerProps> = ({
         </Button>
       </div>
 
-      <Table
-        columns={getColumns()}
+      <Table<ApiToken>
         dataSource={tokens}
-        rowKey="id"
+        columns={getColumns()}
         pagination={false}
-        scroll={{ x: isMobile ? 400 : true }}
+        // scroll={{ x: isMobile ? 400 : true }}
         expandable={isMobile ? {
-          expandedRowRender,
+          expandedRowRender: (record: ApiToken) => expandedRowRender(record),
           expandRowByClick: true
         } : undefined}
-        className={classNames(
-          'api-token-table',
-          { 'mobile-view': isMobile }
-        )}
       />
 
       <Modal
@@ -269,6 +260,6 @@ const ApiTokenManager: React.FC<ApiTokenManagerProps> = ({
       </Modal>
     </div>
   );
-};
+});
 
 export default ApiTokenManager; 

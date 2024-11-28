@@ -121,7 +121,7 @@ const SearchForm: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
+    <div>
       <Card className="mb-4 shadow-sm">
         {/* 搜索表单部分 */}
         <div className="mb-4">

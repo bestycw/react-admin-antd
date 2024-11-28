@@ -161,7 +161,7 @@ const NetworkBasic: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
+    <div >
       <Space direction="vertical" size="large" className="w-full">
         {/* 基础请求测试 */}
         <Card 
