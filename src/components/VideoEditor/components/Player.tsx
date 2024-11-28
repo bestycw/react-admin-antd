@@ -1,11 +1,11 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Button, Slider } from 'antd';
-import { 
-  PlayCircleOutlined, 
-  PauseCircleOutlined,
-  StepForwardOutlined,
-  StepBackwardOutlined
-} from '@ant-design/icons';
+import React, { useRef, useState } from 'react';
+// import { Button, Slider } from 'antd';
+// import { 
+//   PlayCircleOutlined, 
+//   PauseCircleOutlined,
+//   StepForwardOutlined,
+//   StepBackwardOutlined
+// } from '@ant-design/icons';
 
 interface PlayerProps {
   media: {

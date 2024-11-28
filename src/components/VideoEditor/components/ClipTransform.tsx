@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Slider, InputNumber, Space, Button } from 'antd';
-import { ZoomInOutlined, ScissorOutlined, UndoOutlined } from '@ant-design/icons';
+import {  ScissorOutlined, UndoOutlined } from '@ant-design/icons';
 import type { CropSettings } from '../types';
 
 interface ClipTransformProps {

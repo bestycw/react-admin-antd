@@ -6,7 +6,7 @@ import { CoRouteObject } from "@/types/route";
 
 const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
     const { children } = props;
-    const { UserStore, MenuStore } = useStore();
+    const { UserStore } = useStore();
     const location = useLocation();
 
     // 检查用户是否登录

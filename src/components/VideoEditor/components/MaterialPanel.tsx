@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { Upload, Tabs, List, Button, message, Tooltip, Progress } from 'antd';
+import { Upload, Tabs, List, Button, message, Tooltip } from 'antd';
 import { 
   InboxOutlined, 
   DeleteOutlined, 
   PlayCircleOutlined,
   VideoCameraOutlined,
   AudioOutlined,
-  FileImageOutlined
+  // FileImageOutlined
 } from '@ant-design/icons';
-import type { UploadFile } from 'antd/es/upload/interface';
+// import type { UploadFile } from 'antd/es/upload/interface';
 import { MediaFile } from '../types';
 
 interface MaterialPanelProps {

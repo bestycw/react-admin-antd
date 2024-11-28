@@ -13,7 +13,7 @@ interface KeyframePanelProps {
 
 const KeyframePanel: React.FC<KeyframePanelProps> = ({
   keyframes,
-  currentTime,
+  // currentTime,
   onAddKeyframe,
   onUpdateKeyframe,
   onDeleteKeyframe

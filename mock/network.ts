@@ -92,7 +92,7 @@ if (ENABLE_MOCK) {
   });
 
   // 文件下载测试
-  Mock.mock('/api/download', 'get', (options) => {
+  Mock.mock('/api/download', 'get', () => {
     // 这里只返回成功状态，实际下载会走真实接口
     return {
       code: 200,

@@ -206,13 +206,13 @@ const DraggablePage: React.FC = () => {
 };
 
 // 垂直列表组件
-const VerticalList = ({ items, setItems }) => {
+const VerticalList = ({ items, setItems }: { items: any[]; setItems: (items: any[]) => void }) => {
   return (
     <DndContext onDragEnd={({ active, over }) => {
       if (over && active.id !== over.id) {
-        setItems((items) => {
-          const oldIndex = items.findIndex((item) => item.id === active.id);
-          const newIndex = items.findIndex((item) => item.id === over.id);
+        setItems((items: any[]) => {
+          const oldIndex = items.findIndex((item: any) => item.id === active.id);
+          const newIndex = items.findIndex((item: any) => item.id === over.id);
           return arrayMove(items, oldIndex, newIndex);
         });
       }
@@ -244,13 +244,13 @@ const VerticalList = ({ items, setItems }) => {
 };
 
 // 水平列表组件
-const HorizontalList = ({ items, setItems }) => {
+const HorizontalList = ({ items, setItems }: { items: any[]; setItems: (items: any[]) => void }) => {
   return (
     <DndContext onDragEnd={({ active, over }) => {
       if (over && active.id !== over.id) {
         setItems((items) => {
-          const oldIndex = items.findIndex((item) => item.id === active.id);
-          const newIndex = items.findIndex((item) => item.id === over.id);
+          const oldIndex = items.findIndex((item: any) => item.id === active.id);
+          const newIndex = items.findIndex((item: any) => item.id === over.id);
           return arrayMove(items, oldIndex, newIndex);
         });
       }
@@ -278,7 +278,7 @@ const HorizontalList = ({ items, setItems }) => {
 };
 
 // 网格布局组件
-const GridLayout = ({ items, setItems }) => {
+const GridLayout = ({ items, setItems }: { items: any[]; setItems: (items: any[]) => void }) => {
   return (
     <DndContext onDragEnd={({ active, over }) => {
       if (over && active.id !== over.id) {
@@ -330,10 +330,10 @@ const KanbanBoard = ({ items, setItems }) => {
           <div className="bg-gray-50 p-4 rounded-lg">
             <DndContext onDragEnd={({ active, over }) => {
               if (over && active.id !== over.id) {
-                setItems((prev) => {
+                setItems((prev: any) => {
                   const newItems = { ...prev };
-                  const oldIndex = column.items.findIndex((item) => item.id === active.id);
-                  const newIndex = column.items.findIndex((item) => item.id === over.id);
+                  const oldIndex = column.items.findIndex((item: any) => item.id === active.id);
+                  const newIndex = column.items.findIndex((item: any) => item.id === over.id);
                   newItems[column.id] = arrayMove(column.items, oldIndex, newIndex);
                   return newItems;
                 });

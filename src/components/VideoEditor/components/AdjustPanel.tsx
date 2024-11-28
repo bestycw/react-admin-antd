@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
-import { Tabs, Slider, InputNumber, Radio, Space, Switch, Button, Collapse } from 'antd';
+import { Tabs, Slider, InputNumber, Radio, Switch,  Collapse } from 'antd';
 import {
   BgColorsOutlined,
   ControlOutlined,
-  SoundOutlined,
-  FieldTimeOutlined,
-  ScissorOutlined,
-  BorderOutlined,
+
   FilterOutlined,
   StarOutlined,
   SwapOutlined
 } from '@ant-design/icons';
-import type { RadioChangeEvent } from 'antd';
-import { VideoAdjustments, PresetFilter, VideoEffect, Transition } from '../types';
+// import type { RadioChangeEvent } from 'antd';
+import { VideoAdjustments, PresetFilter } from '../types';
 
 const { Panel } = Collapse;
 

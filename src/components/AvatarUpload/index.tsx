@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { Modal, message, Avatar, Button } from 'antd';
-import { UserOutlined, UploadOutlined, LoadingOutlined } from '@ant-design/icons';
+import { UserOutlined, UploadOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { authService } from '@/services/auth';
-import type { RcFile } from 'antd/es/upload/interface';
+// import type { RcFile } from 'antd/es/upload/interface';
 
 interface AvatarUploadProps {
   value?: string;

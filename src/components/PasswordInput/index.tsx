@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input, Tooltip } from 'antd';
+import type { Rule } from 'antd/es/form';
 import { LockOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { validatePassword, getPasswordStrength } from '@/utils/validator';
@@ -21,8 +22,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
 
   const rules = isConfirm ? [
     { required: true, message: t('register.confirmPasswordRequired') },
-    ({ getFieldValue }) => ({
-      validator(_, value) {
+    ({ getFieldValue }: { getFieldValue: (field: string) => string }) => ({
+      validator(_: any, value: any) {
         if (!value || getFieldValue('password') === value) {
           return Promise.resolve();
         }
@@ -32,7 +33,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   ] : [
     { required: true, message: t('register.passwordRequired') },
     {
-      validator: async (_, value) => {
+      validator: async (_: any, value: any) => {
         if (!value) return Promise.resolve();
         const result = validatePassword(value);
         if (!result.isValid) {
