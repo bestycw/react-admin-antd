@@ -99,9 +99,31 @@ export default {
     username: 'Username',
     email: 'Email',
     mobile: 'Mobile',
+    gender: 'Gender',
+    genderOptions: {
+      male: 'Male',
+      female: 'Female',
+      other: 'Other'
+    },
+    birthday: 'Birthday',
+    location: 'Location',
+    bio: 'Bio',
+    company: 'Company',
+    position: 'Position',
+    website: 'Website',
     uploadAvatar: 'Upload Avatar',
     save: 'Save',
-    oldPassword: 'Old Password',
+    validation: {
+      usernameRequired: 'Please enter username',
+      usernameFormat: 'Username can only contain letters, numbers and underscores, length 3-20',
+      emailRequired: 'Please enter email',
+      emailFormat: 'Please enter a valid email',
+      mobileRequired: 'Please enter mobile number',
+      mobileFormat: 'Please enter a valid mobile number',
+      bioMaxLength: 'Bio cannot exceed 200 characters',
+      websiteFormat: 'Please enter a valid URL'
+    },
+    oldPassword: 'Current Password',
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password',
     changePassword: 'Change Password',
@@ -123,10 +145,10 @@ export default {
     lastActive: 'Last Active',
     deviceInfo: {
       browser: 'Browser',
-      os: 'OS',
+      os: 'Operating System',
       ip: 'IP Address',
       location: 'Location',
-      time: 'Time'
+      time: 'Login Time'
     },
     notificationTypes: {
       all: 'All Notifications',

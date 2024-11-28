@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Menu, Form, Input, Button, Upload, message, Avatar, Badge, Statistic } from 'antd';
+import { Card, Menu, Form, Input, Button, Upload, message, Avatar, Badge, Statistic, DatePicker, Radio } from 'antd';
 import { 
   UserOutlined, 
   SecurityScanOutlined,
@@ -11,13 +11,14 @@ import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import type { MenuProps } from 'antd';
-import DeviceManager from '@/components/DeviceManager';
-import ApiTokenManager from '@/components/ApiTokenManager';
-import NotificationSettings from '@/components/NotificationSettings';
+import DeviceManager from '@/pages/profile/components/DeviceManager';
+import ApiTokenManager from '@/pages/profile/components/ApiTokenManager';
+import NotificationSettings from '@/pages/profile/components/NotificationSettings';
 import PasswordInput from '@/components/PasswordInput';
 import PageTransition from '@/components/PageTransition';
 import { authService } from '@/services/auth';
 import classNames from 'classnames';
+import { validateEmail, validateMobile, validateUrl } from '@/utils/validator';
 
 const Profile: React.FC = observer(() => {
   const { t } = useTranslation();
@@ -98,12 +99,120 @@ const Profile: React.FC = observer(() => {
     }
   ];
 
+  const renderBasicInfoForm = () => (
+    <Form
+      layout="vertical"
+      initialValues={UserStore.userInfo || {}}
+      onFinish={handleProfileUpdate}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Form.Item
+          name="username"
+          label={t('profile.username')}
+          rules={[
+            { required: true, message: t('profile.validation.usernameRequired') },
+            { pattern: /^[a-zA-Z0-9_]{3,20}$/, message: t('profile.validation.usernameFormat') }
+          ]}
+        >
+          <Input disabled />
+        </Form.Item>
+
+        <Form.Item
+          name="email"
+          label={t('profile.email')}
+          rules={[
+            { required: true, message: t('profile.validation.emailRequired') },
+            { validator: validateEmail, message: t('profile.validation.emailFormat') }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="mobile"
+          label={t('profile.mobile')}
+          rules={[
+            { required: true, message: t('profile.validation.mobileRequired') },
+            { validator: validateMobile, message: t('profile.validation.mobileFormat') }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="gender"
+          label={t('profile.gender')}
+        >
+          <Radio.Group>
+            <Radio value="male">{t('profile.genderOptions.male')}</Radio>
+            <Radio value="female">{t('profile.genderOptions.female')}</Radio>
+            <Radio value="other">{t('profile.genderOptions.other')}</Radio>
+          </Radio.Group>
+        </Form.Item>
+
+        <Form.Item
+          name="birthday"
+          label={t('profile.birthday')}
+        >
+          <DatePicker className="w-full" />
+        </Form.Item>
+
+        <Form.Item
+          name="location"
+          label={t('profile.location')}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="company"
+          label={t('profile.company')}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="position"
+          label={t('profile.position')}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          name="website"
+          label={t('profile.website')}
+          rules={[
+            { validator: validateUrl, message: t('profile.validation.websiteFormat') }
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      </div>
+
+      <Form.Item
+        name="bio"
+        label={t('profile.bio')}
+        rules={[
+          { max: 200, message: t('profile.validation.bioMaxLength') }
+        ]}
+      >
+        <Input.TextArea rows={4} />
+      </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit" loading={loading}>
+          {t('profile.save')}
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+
   const renderContent = () => {
     switch (activeKey) {
       case 'basic':
         return (
           <Card className="shadow-sm">
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-4xl mx-auto">
               <div className="mb-8 flex justify-center">
                 <Upload
                   name="avatar"
@@ -125,45 +234,7 @@ const Profile: React.FC = observer(() => {
                   </div>
                 </Upload>
               </div>
-
-              <Form
-                layout="vertical"
-                initialValues={UserStore.userInfo || {}}
-                onFinish={handleProfileUpdate}
-              >
-                <Form.Item
-                  name="username"
-                  label={t('profile.username')}
-                  rules={[{ required: true }]}
-                >
-                  <Input />
-                </Form.Item>
-
-                <Form.Item
-                  name="email"
-                  label={t('profile.email')}
-                  rules={[{ required: true, type: 'email' }]}
-                >
-                  <Input />
-                </Form.Item>
-
-                <Form.Item
-                  name="mobile"
-                  label={t('profile.mobile')}
-                  rules={[
-                    { required: true },
-                    { pattern: /^1[3-9]\d{9}$/, message: t('profile.invalidMobile') }
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-
-                <Form.Item>
-                  <Button type="primary" htmlType="submit" loading={loading}>
-                    {t('profile.save')}
-                  </Button>
-                </Form.Item>
-              </Form>
+              {renderBasicInfoForm()}
             </div>
           </Card>
         );
@@ -286,7 +357,7 @@ const Profile: React.FC = observer(() => {
 
   return (
     <PageTransition>
-      <div className="p-4 md:p-6">
+      <div>
         <div className={classNames(
           "flex",
           isMobile ? "flex-col space-y-4" : "flex-row gap-6"

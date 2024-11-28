@@ -1,3 +1,5 @@
+import { Rule } from 'antd/lib/form';
+
 // 密码验证规则
 export interface PasswordRules {
   minLength?: number;      // 最小长度
@@ -84,4 +86,35 @@ export const getPasswordStrength = (password: string): number => {
   if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
 
   return Math.min(strength, 5); // 最高5分
+};
+
+// 邮箱验证
+export const validateEmail = async (_: Rule, value: string) => {
+  if (!value) return Promise.resolve();
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(value)) {
+    return Promise.reject();
+  }
+  return Promise.resolve();
+};
+
+// 手机号验证
+export const validateMobile = async (_: Rule, value: string) => {
+  if (!value) return Promise.resolve();
+  const mobileRegex = /^1[3-9]\d{9}$/;
+  if (!mobileRegex.test(value)) {
+    return Promise.reject();
+  }
+  return Promise.resolve();
+};
+
+// URL验证
+export const validateUrl = async (_: Rule, value: string) => {
+  if (!value) return Promise.resolve();
+  try {
+    new URL(value);
+    return Promise.resolve();
+  } catch {
+    return Promise.reject();
+  }
 }; 

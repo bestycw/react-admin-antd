@@ -40,7 +40,19 @@ export default {
     language: {
       zh: '简体中文',
       en: 'English'
-    }
+    },
+    yes: '确定',
+    no: '取消',
+    confirm: '确认',
+    cancel: '取消',
+    delete: '删除',
+    edit: '编辑',
+    save: '保存',
+    loading: '加载中...',
+    success: '操作成功',
+    failed: '操作失败',
+    unknown: '未知',
+    more: '更多'
   },
   messages: {
     error: {
@@ -125,8 +137,30 @@ export default {
     username: '用户名',
     email: '邮箱',
     mobile: '手机号',
+    gender: '性别',
+    genderOptions: {
+      male: '男',
+      female: '女',
+      other: '其他'
+    },
+    birthday: '生日',
+    location: '所在地',
+    bio: '个人简介',
+    company: '公司',
+    position: '职位',
+    website: '个人网站',
     uploadAvatar: '上传头像',
     save: '保存',
+    validation: {
+      usernameRequired: '请输入用户名',
+      usernameFormat: '用户名只能包含字母、数字、下划线，长度3-20位',
+      emailRequired: '请输入邮箱',
+      emailFormat: '请输入正确的邮箱格式',
+      mobileRequired: '请输入手机号',
+      mobileFormat: '请输入正确的手机号格式',
+      bioMaxLength: '个人简介不能超过200字',
+      websiteFormat: '请输入正确的网址格式'
+    },
     oldPassword: '原密码',
     newPassword: '新密码',
     confirmPassword: '确认密码',
@@ -152,7 +186,11 @@ export default {
       os: '操作系统',
       ip: 'IP 地址',
       location: '登录地点',
-      time: '登录时间'
+      time: '登录时间',
+      current: '当前设备',
+      lastActive: '最后活跃',
+      revokeAccess: '撤销访问',
+      revokeConfirm: '确定要撤销此设备的访问权限吗？'
     },
     notificationTypes: {
       all: '所有通知',
