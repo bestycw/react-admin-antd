@@ -29,6 +29,9 @@ import Captcha from '@/components/Captcha';
 import LanguageSwitch from '@/components/LanguageSwitch';
 import logo from '@/assets/logo.svg';
 import './index.scss';
+import AccountLogin from './components/AccountLogin';
+import PhoneLogin from './components/PhoneLogin';
+import QrCodeLogin from './components/QrCodeLogin';
 
 interface LoginForm {
   username: string;
@@ -55,14 +58,24 @@ const LoginPage: React.FC = observer(() => {
   };
 
   // 处理登录
-  const handleLogin = async (values: LoginForm) => {
+  const handleLogin = async (values: any) => {
     setLoading(true);
     try {
       const response = await authService.login({
         ...values,
         loginType
       });
-      UserStore.setUserInfo(response.user);
+      
+      // 确保返回的用户信息符合 UserStore 的要求
+      const userInfo = {
+        ...response.user,
+        roles: response.user.roles || [],
+        accessToken: response.token,
+        dynamicRoutesList: response.routes || [],
+        permissions: response.permissions || []
+      };
+      
+      UserStore.setUserInfo(userInfo);
       message.success(t('login.loginSuccess'));
       navigate('/', { replace: true });
     } catch (error) {
@@ -122,95 +135,11 @@ const LoginPage: React.FC = observer(() => {
   const renderLoginForm = () => {
     switch (loginType) {
       case 'account':
-        return (
-          <div className="form-item-group">
-            <Form.Item
-              name="username"
-              rules={[{ required: true, message: t('login.usernameRequired') }]}
-            >
-              <Input
-                prefix={<UserOutlined />}
-                placeholder={t('login.usernamePlaceholder')}
-                className="login-input"
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[{ required: true, message: t('login.passwordRequired') }]}
-            >
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder={t('login.passwordPlaceholder')}
-                className="login-input"
-              />
-            </Form.Item>
-            <div className="captcha-container">
-              <Form.Item
-                name="captcha"
-                rules={[{ required: true, message: t('login.captchaRequired') }]}
-                className="captcha-input"
-              >
-                <Input
-                  prefix={<LockOutlined />}
-                  placeholder={t('login.captchaPlaceholder')}
-                  className="login-input"
-                />
-              </Form.Item>
-              <Captcha onChange={(code) => {
-                // 只显示验证码，不自动填入
-                console.log('验证码:', code);
-              }} />
-            </div>
-          </div>
-        );
+        return <AccountLogin />;
       case 'mobile':
-        return (
-          <div className="form-item-group">
-            <Form.Item
-              name="mobile"
-              rules={[{ required: true, message: t('login.mobileRequired') }]}
-            >
-              <Input
-                prefix={<MobileOutlined />}
-                placeholder={t('login.mobilePlaceholder')}
-                className="login-input"
-              />
-            </Form.Item>
-            <div className="captcha-container">
-              <Form.Item
-                name="verificationCode"
-                rules={[{ required: true, message: t('login.smsRequired') }]}
-                className="captcha-input"
-              >
-                <Input
-                  prefix={<LockOutlined />}
-                  placeholder={t('login.smsPlaceholder')}
-                  className="login-input"
-                />
-              </Form.Item>
-              <Button
-                className="verification-code-button"
-                disabled={countdown > 0}
-                onClick={handleSendCode}
-              >
-                {countdown > 0 ? `${countdown}s` : t('login.sendCode')}
-              </Button>
-            </div>
-          </div>
-        );
+        return <PhoneLogin countdown={countdown} onSendCode={handleSendCode} />;
       case 'qrcode':
-        return (
-          <div className="qrcode-container">
-            <div className="qrcode-wrapper">
-              <div className="qrcode-content">
-                {/* QR Code content */}
-              </div>
-            </div>
-            <div className="qrcode-tip">
-              {t('login.scanQrcode')}
-            </div>
-          </div>
-        );
+        return <QrCodeLogin />;
     }
   };
 
