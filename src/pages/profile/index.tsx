@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Menu, Form, Input, Button, Upload, message, Avatar, Badge, Statistic, DatePicker, Radio } from 'antd';
+import { Card, Menu, Form, Input, Button, message, Avatar, Badge, Statistic, DatePicker, Radio } from 'antd';
 import { 
   UserOutlined, 
   SecurityScanOutlined,
   BellOutlined,
   ApiOutlined,
-  UploadOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
@@ -16,7 +15,7 @@ import ApiTokenManager from '@/pages/profile/components/ApiTokenManager';
 import NotificationSettings from '@/pages/profile/components/NotificationSettings';
 import PasswordInput from '@/components/PasswordInput';
 import PageTransition from '@/components/PageTransition';
-import { authService } from '@/services/auth';
+import AvatarUpload from '@/components/AvatarUpload';
 import classNames from 'classnames';
 import { validateEmail, validateMobile, validateUrl } from '@/utils/validator';
 
@@ -214,25 +213,10 @@ const Profile: React.FC = observer(() => {
           <Card className="shadow-sm">
             <div className="max-w-4xl mx-auto">
               <div className="mb-8 flex justify-center">
-                <Upload
-                  name="avatar"
-                  showUploadList={false}
-                  beforeUpload={handleAvatarUpload}
-                >
-                  <div className="text-center">
-                    <Avatar
-                      size={100}
-                      src={UserStore.userInfo?.avatar}
-                      icon={<UserOutlined />}
-                      className="mb-4"
-                    />
-                    <div>
-                      <Button icon={<UploadOutlined />}>
-                        {t('profile.uploadAvatar')}
-                      </Button>
-                    </div>
-                  </div>
-                </Upload>
+                <AvatarUpload
+                  value={UserStore.userInfo?.avatar}
+                  onChange={(url) => UserStore.updateProfile({ avatar: url })}
+                />
               </div>
               {renderBasicInfoForm()}
             </div>
@@ -330,17 +314,10 @@ const Profile: React.FC = observer(() => {
           <p className="text-gray-500">{UserStore.userInfo?.email}</p>
           <div className={classNames(
             "grid gap-4 mt-4",
-            isMobile ? "grid-cols-3" : "grid-cols-2"
+            isMobile ? "grid-cols-2" : "grid-cols-2"
           )}>
             <Statistic title={t('profile.loginDays')} value={365} />
             <Statistic title={t('profile.lastActive')} value="2h" />
-            {isMobile && (
-              <div className="flex items-center justify-end">
-                <Button type="primary" icon={<UploadOutlined />}>
-                  {t('profile.uploadAvatar')}
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </div>

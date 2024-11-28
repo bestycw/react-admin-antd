@@ -123,7 +123,8 @@ class AuthService {
   async uploadAvatar(file: File): Promise<{ url: string }> {
     const formData = new FormData();
     formData.append('avatar', file);
-    return await fetchRequest.post('/api/auth/avatar', formData);
+    const response = await fetchRequest.post('/api/auth/upload-avatar', formData);
+    return response.data;
   }
 
   async getDevices(): Promise<any[]> {
