@@ -79,7 +79,7 @@ export const useUserActions = () => {
     if (key === 'logout') {
       try {
         await UserStore.logout();
-        navigate('/login', { replace: true });
+        navigate('/auth/login', { replace: true });
       } catch (error) {
         console.error('Logout failed:', error);
       }

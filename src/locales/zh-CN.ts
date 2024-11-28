@@ -71,7 +71,30 @@ export default {
     submit: '注册',
     success: '注册成功',
     failed: '注册失败',
-    backToLogin: '返回登录'
+    backToLogin: '返回登录',
+    passwordRules: {
+      minLength: '密码长度不能少于{length}位',
+      maxLength: '密码长度不能超过{length}位',
+      requireNumber: '密码必须包含数字',
+      requireLower: '密码必须包含小写字母',
+      requireUpper: '密码必须包含大写字母',
+      requireSpecial: '密码必须包含特殊字符'
+    },
+    passwordStrength: {
+      veryWeak: '极弱',
+      weak: '弱',
+      medium: '中等',
+      strong: '强',
+      veryStrong: '极强'
+    },
+    passwordRequirements: {
+      title: '密码要求',
+      length: '长度在8-20个字符之间',
+      number: '必须包含数字',
+      upper: '必须包含大写字母',
+      lower: '必须包含小写字母',
+      special: '必须包含特殊字符'
+    }
   },
   forgotPassword: {
     subtitle: '重置您的密码',

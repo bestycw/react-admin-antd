@@ -15,7 +15,9 @@ export interface UserInfo {
   id: string;
   username: string;
   email: string;
-  role: string;
+  roles: string[];
+  permissions: string[];
+  dynamicRoutesList: string[];
   avatar: string;
   status: string;
   lastLogin: string;
@@ -29,6 +31,23 @@ export interface LoginResponse {
 export interface QRCodeResponse {
   qrUrl: string;
   qrToken: string;
+}
+
+export interface RegisterParams {
+  username: string;
+  password: string;
+  mobile: string;
+  verificationCode: string;
+}
+
+interface ApiResponse<T> {
+  code: number;
+  data: T;
+  message: string;
+}
+
+interface VerificationCodeData {
+  verifyCode: string;
 }
 
 class AuthService {
@@ -56,8 +75,8 @@ class AuthService {
     return await fetchRequest.get<UserInfo>('/api/auth/me');
   }
 
-  async sendVerificationCode(mobile: string, type: 'login' | 'register' | 'reset'): Promise<void> {
-    await fetchRequest.post('/api/auth/send-code', { mobile, type });
+  async sendVerificationCode(mobile: string, type: 'login' | 'register' | 'reset'): Promise<ApiResponse<VerificationCodeData>> {
+    return await fetchRequest.post('/api/auth/send-code', { mobile, type });
   }
 
   async getQRCode(): Promise<QRCodeResponse> {
@@ -81,6 +100,10 @@ class AuthService {
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  async register(params: RegisterParams): Promise<void> {
+    await fetchRequest.post('/api/auth/register', params);
   }
 }
 

@@ -74,8 +74,8 @@ const LoginPage: React.FC = observer(() => {
                 ...response.user,
                 roles: response.user.roles || [],
                 accessToken: response.token,
-                dynamicRoutesList: response.routes || [],
-                permissions: response.permissions || []
+                dynamicRoutesList: response.user.dynamicRoutesList || [],
+                permissions: response.user.permissions || []
             };
 
             // 传递 remember 参数给 UserStore.setUserInfo
