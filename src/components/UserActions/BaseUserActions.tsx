@@ -78,7 +78,7 @@ export const useUserActions = () => {
   const handleUserMenuClick: MenuProps['onClick'] = async({ key }) => {
     if (key === 'logout') {
       try {
-        await UserStore.logout();
+        await authService.logout();
         navigate('/auth/login', { replace: true });
       } catch (error) {
         console.error('Logout failed:', error);

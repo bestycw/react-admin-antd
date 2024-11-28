@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, message } from 'antd';
-import { UserOutlined, LockOutlined, MobileOutlined } from '@ant-design/icons';
+import { Form, Button, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Particles from 'react-particles';
@@ -14,6 +13,9 @@ import logo from '@/assets/logo.svg';
 import '../login/index.scss';
 import { RouteConfig } from '@/types/route';
 import PageTransition from '@/components/PageTransition';
+import MobileVerification from '@/components/MobileVerification';
+import PasswordInput from '@/components/PasswordInput';
+import { useVerificationCode } from '@/hooks/useVerificationCode';
 
 export const routeConfig: RouteConfig = {
     title: '忘记密码',
@@ -26,52 +28,28 @@ const ForgotPasswordPage: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [countdown, setCountdown] = useState(0);
+    // const { countdown, sendCode } = useVerificationCode('reset');
 
-    // 粒子背景初始化
-    const particlesInit = async (engine: Engine) => {
-        await loadSlim(engine);
-    };
-
-    // 处理重置密码
     const handleReset = async (values: any) => {
         setLoading(true);
         try {
-            await authService.resetPassword(values);
-            message.success(t('forgotPassword.success'));
+            await authService.resetPassword({
+                mobile: values.mobile,
+                verificationCode: values.verificationCode,
+                newPassword: values.password
+            });
+            message.success(t('reset.success'));
             navigate('/auth/login');
         } catch (error) {
             console.error('Reset password failed:', error);
-            message.error(t('forgotPassword.failed'));
+            message.error(t('reset.failed'));
         } finally {
             setLoading(false);
         }
     };
 
-    // 发送验证码
-    const handleSendCode = async () => {
-        try {
-            const mobile = form.getFieldValue('mobile');
-            if (!mobile) {
-                message.error(t('forgotPassword.mobileRequired'));
-                return;
-            }
-
-            await authService.sendVerificationCode(mobile, 'reset');
-            message.success(t('forgotPassword.smsSent'));
-            let count = 60;
-            setCountdown(count);
-            const timer = setInterval(() => {
-                count -= 1;
-                setCountdown(count);
-                if (count === 0) {
-                    clearInterval(timer);
-                }
-            }, 1000);
-        } catch (error) {
-            console.error('Send verification code failed:', error);
-            message.error(t('forgotPassword.smsFailed'));
-        }
+    const particlesInit = async (engine: Engine) => {
+        await loadSlim(engine);
     };
 
     return (
@@ -92,7 +70,7 @@ const ForgotPasswordPage: React.FC = () => {
                         <div className="header-section">
                             <img src={logo} alt="Logo" className="logo" />
                             <TypeWriter text="Coffee Admin" loop={true} loopDelay={2000} />
-                            <p className="subtitle">{t('forgotPassword.subtitle')}</p>
+                            <p className="subtitle">{t('reset.subtitle')}</p>
                         </div>
 
                         <Form
@@ -101,73 +79,22 @@ const ForgotPasswordPage: React.FC = () => {
                             className="login-form"
                         >
                             <div className="form-item-group">
-                                <Form.Item
-                                    name="mobile"
-                                    rules={[{ required: true, message: t('forgotPassword.mobileRequired') }]}
-                                >
-                                    <Input
-                                        prefix={<MobileOutlined />}
-                                        placeholder={t('forgotPassword.mobilePlaceholder')}
-                                        className="login-input"
-                                    />
-                                </Form.Item>
+                                <MobileVerification
+                                    // onSendCode={sendCode}
+                                    // countdown={countdown}
+                                    type="reset"
+                                    form={form}
+                                />
 
-                                <div className="captcha-container">
-                                    <Form.Item
-                                        name="verificationCode"
-                                        rules={[{ required: true, message: t('forgotPassword.smsRequired') }]}
-                                        className="captcha-input"
-                                    >
-                                        <Input
-                                            prefix={<LockOutlined />}
-                                            placeholder={t('forgotPassword.smsPlaceholder')}
-                                            className="login-input"
-                                        />
-                                    </Form.Item>
-                                    <Button
-                                        className="verification-code-button"
-                                        disabled={countdown > 0}
-                                        onClick={handleSendCode}
-                                    >
-                                        {countdown > 0 ? `${countdown}s` : t('forgotPassword.sendCode')}
-                                    </Button>
-                                </div>
+                                <PasswordInput
+                                    name="password"
+                                />
 
-                                <Form.Item
-                                    name="newPassword"
-                                    rules={[
-                                        { required: true, message: t('forgotPassword.newPasswordRequired') },
-                                        { min: 6, message: t('forgotPassword.passwordMinLength') }
-                                    ]}
-                                >
-                                    <Input.Password
-                                        prefix={<LockOutlined />}
-                                        placeholder={t('forgotPassword.newPasswordPlaceholder')}
-                                        className="login-input"
-                                    />
-                                </Form.Item>
-
-                                <Form.Item
+                                <PasswordInput
                                     name="confirmPassword"
-                                    dependencies={['newPassword']}
-                                    rules={[
-                                        { required: true, message: t('forgotPassword.confirmPasswordRequired') },
-                                        ({ getFieldValue }) => ({
-                                            validator(_, value) {
-                                                if (!value || getFieldValue('newPassword') === value) {
-                                                    return Promise.resolve();
-                                                }
-                                                return Promise.reject(new Error(t('forgotPassword.passwordNotMatch')));
-                                            },
-                                        }),
-                                    ]}
-                                >
-                                    <Input.Password
-                                        prefix={<LockOutlined />}
-                                        placeholder={t('forgotPassword.confirmPasswordPlaceholder')}
-                                        className="login-input"
-                                    />
-                                </Form.Item>
+                                    dependencies={['password']}
+                                    isConfirm
+                                />
                             </div>
 
                             <Button
@@ -176,7 +103,7 @@ const ForgotPasswordPage: React.FC = () => {
                                 className="submit-button"
                                 loading={loading}
                             >
-                                {t('forgotPassword.submit')}
+                                {t('reset.submit')}
                             </Button>
 
                             <div className="text-center mt-4">
@@ -185,7 +112,7 @@ const ForgotPasswordPage: React.FC = () => {
                                     onClick={() => navigate('/auth/login')}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    {t('forgotPassword.backToLogin')}
+                                    {t('reset.backToLogin')}
                                 </a>
                             </div>
                         </Form>

@@ -19,10 +19,10 @@ export default {
     sendCode: '发送验证码',
     scanQrcode: '扫描二维码',
     // qrCodeLogin: '二维码登录',
-    usernamePlaceholder: '请输入用户名',
+    usernamePlaceholder: '请输入用户名/手机号',
     passwordPlaceholder: '请输入密码',
     captchaPlaceholder: '请输入验证码',
-    usernameRequired: '请输入用户名',
+    usernameRequired: '请输入用户名/手机号',
     passwordRequired: '请输入密码',
     captchaRequired: '请输入验证码',
     captchaError: '验证码错误',
@@ -96,7 +96,7 @@ export default {
       special: '必须包含特殊字符'
     }
   },
-  forgotPassword: {
+  reset: {
     subtitle: '重置您的密码',
     mobilePlaceholder: '请输入手机号',
     smsPlaceholder: '请输入短信验证码',

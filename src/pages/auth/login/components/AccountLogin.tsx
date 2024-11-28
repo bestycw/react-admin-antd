@@ -11,7 +11,13 @@ const AccountLogin: React.FC = () => {
     <div className="form-item-group">
       <Form.Item
         name="username"
-        rules={[{ required: true, message: t('login.usernameRequired') }]}
+        rules={[
+          { required: true, message: t('login.usernameRequired') },
+          {
+            pattern: /^[a-zA-Z0-9_-]{3,30}$|^1[3-9]\d{9}$/,
+            message: '请输入正确的用户名或手机号'
+          }
+        ]}
       >
         <Input
           prefix={<UserOutlined />}

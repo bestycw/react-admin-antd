@@ -2,7 +2,7 @@ export default {
   login: {
     title: 'CoffeeAdmin',
     subtitle: 'Lightweight Admin System',
-    usernamePlaceholder: 'Username',
+    usernamePlaceholder: 'Username/Mobile',
     mobilePlaceholder: 'Mobile',
     qrCodePlaceholder: 'QR Code',
     accountLogin: 'Account Login',
@@ -18,7 +18,7 @@ export default {
     qrCodeRequired: 'Please scan the QR code!',
     smsRequired: 'Please input your SMS code!',
     verificationCodePlaceholder: 'Verification Code',
-    usernameRequired: 'Please input your username!',
+    usernameRequired: 'Please input your username or mobile!',
     passwordRequired: 'Please input your password!',
     captchaRequired: 'Please input verification code!',
     captchaError: 'Invalid verification code',
@@ -70,7 +70,7 @@ export default {
     failed: 'Registration failed',
     backToLogin: 'Back to Login'
   },
-  forgotPassword: {
+  reset: {
     subtitle: 'Reset Your Password',
     mobilePlaceholder: 'Mobile Number',
     smsPlaceholder: 'SMS Code',

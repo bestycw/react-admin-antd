@@ -14,7 +14,10 @@ import logo from '@/assets/logo.svg';
 import '../login/index.scss';
 import { RouteConfig } from '@/types/route';
 import PageTransition from '@/components/PageTransition';
-import { validatePassword, getPasswordStrength } from '@/utils/validator';
+// import { validatePassword, getPasswordStrength } from '@/utils/validator';
+import MobileVerification from '@/components/MobileVerification';
+import PasswordInput from '@/components/PasswordInput';
+// import { useVerificationCode } from '@/hooks/useVerificationCode';
 
 export const routeConfig: RouteConfig = {
     title: '注册',
@@ -29,8 +32,8 @@ const RegisterPage: React.FC = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [countdown, setCountdown] = useState(0);
-    const [passwordStrength, setPasswordStrength] = useState(0);
+    // const [passwordStrength, setPasswordStrength] = useState(0);
+    // const { countdown, sendCode } = useVerificationCode('register');
 
     // 添加返回登录处理函数
     const handleBackToLogin = () => {
@@ -59,41 +62,6 @@ const RegisterPage: React.FC = () => {
             message.error(t('register.failed'));
         } finally {
             setLoading(false);
-        }
-    };
-
-    // 发送验证码
-    const handleSendCode = async () => {
-        try {
-            const mobile = form.getFieldValue('mobile');
-            if (!mobile) {
-                message.error(t('register.mobileRequired'));
-                return;
-            }
-
-            const response:any= await authService.sendVerificationCode(mobile, 'register');
-            console.log('response', response);
-            // 先设置验证码
-            if (response?.verifyCode) {
-                form.setFieldsValue({ verificationCode: response.verifyCode });
-            }
-
-            // 开始倒计时
-            let count = 60;
-            setCountdown(count);
-            const timer = setInterval(() => {
-                count -= 1;
-                setCountdown(count);
-                if (count === 0) {
-                    clearInterval(timer);
-                }
-            }, 1000);
-
-            // 最后显示成功消息
-            message.success(response.verifyCode);
-        } catch (error) {
-            console.error('Send verification code failed:', error);
-            message.error(t('register.smsFailed'));
         }
     };
 
@@ -136,116 +104,23 @@ const RegisterPage: React.FC = () => {
                                     />
                                 </Form.Item>
 
-                                <Form.Item
-                                    name="mobile"
-                                    rules={[{ required: true, message: t('register.mobileRequired') }]}
-                                >
-                                    <Input
-                                        prefix={<MobileOutlined />}
-                                        placeholder={t('register.mobilePlaceholder')}
-                                        className="login-input"
-                                    />
-                                </Form.Item>
+                                <MobileVerification
+                                    // onSendCode={sendCode}
+                                    // countdown={countdown}
+                                    type="register"
+                                    form={form}
+                                />
 
-                                <div className="captcha-container">
-                                    <Form.Item
-                                        name="verificationCode"
-                                        rules={[{ required: true, message: t('register.smsRequired') }]}
-                                        className="captcha-input"
-                                    >
-                                        <Input
-                                            prefix={<LockOutlined />}
-                                            placeholder={t('register.smsPlaceholder')}
-                                            className="login-input"
-                                        />
-                                    </Form.Item>
-                                    <Button
-                                        className="verification-code-button"
-                                        disabled={countdown > 0}
-                                        onClick={handleSendCode}
-                                    >
-                                        {countdown > 0 ? `${countdown}s` : t('register.sendCode')}
-                                    </Button>
-                                </div>
-
-                                <Form.Item
+                                <PasswordInput
                                     name="password"
-                                    rules={[
-                                        { required: true, message: t('register.passwordRequired') },
-                                        {
-                                            validator: async (_, value) => {
-                                                if (!value) return Promise.resolve();
-                                                
-                                                const result = validatePassword(value);
-                                                if (!result.isValid) {
-                                                    return Promise.reject(new Error(result.message));
-                                                }
-                                                return Promise.resolve();
-                                            }
-                                        }
-                                    ]}
-                                >
-                                    <div className="relative flex items-center">
-                                        <Input.Password
-                                            prefix={<LockOutlined />}
-                                            placeholder={t('register.passwordPlaceholder')}
-                                            className="login-input"
-                                            onChange={(e) => {
-                                                const strength = getPasswordStrength(e.target.value);
-                                                setPasswordStrength(strength);
-                                            }}
-                                        />
-                                        <Tooltip
-                                            title={
-                                                <ul className="text-xs space-y-1">
-                                                    <li>• {t('register.passwordRequirements.length')}</li>
-                                                    <li>• {t('register.passwordRequirements.number')}</li>
-                                                    <li>• {t('register.passwordRequirements.upper')}</li>
-                                                    <li>• {t('register.passwordRequirements.lower')}</li>
-                                                    <li>• {t('register.passwordRequirements.special')}</li>
-                                                </ul>
-                                            }
-                                            placement="right"
-                                        >
-                                            <QuestionCircleOutlined className="ml-2 text-gray-400 hover:text-blue-500 cursor-help" />
-                                        </Tooltip>
-                                        {/* 密码强度指示器 - 只在输入时显示 */}
-                                        {form.getFieldValue('password') && (
-                                            <div 
-                                                className={`absolute -bottom-1 left-0 h-0.5 transition-all duration-300 ${
-                                                    ['bg-red-500 w-1/5', 
-                                                     'bg-orange-500 w-2/5',
-                                                     'bg-yellow-500 w-3/5', 
-                                                     'bg-blue-500 w-4/5',
-                                                     'bg-green-500 w-full'
-                                                    ][passwordStrength]
-                                                }`}
-                                            />
-                                        )}
-                                    </div>
-                                </Form.Item>
+                                    // onChange={setPasswordStrength}
+                                />
 
-                                <Form.Item
+                                <PasswordInput
                                     name="confirmPassword"
                                     dependencies={['password']}
-                                    rules={[
-                                        { required: true, message: t('register.confirmPasswordRequired') },
-                                        ({ getFieldValue }) => ({
-                                            validator(_, value) {
-                                                if (!value || getFieldValue('password') === value) {
-                                                    return Promise.resolve();
-                                                }
-                                                return Promise.reject(new Error(t('register.passwordNotMatch')));
-                                            },
-                                        }),
-                                    ]}
-                                >
-                                    <Input.Password
-                                        prefix={<LockOutlined />}
-                                        placeholder={t('register.confirmPasswordPlaceholder')}
-                                        className="login-input"
-                                    />
-                                </Form.Item>
+                                    isConfirm
+                                />
                             </div>
 
                             <Form.Item

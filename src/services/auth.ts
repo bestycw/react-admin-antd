@@ -50,6 +50,12 @@ interface VerificationCodeData {
   verifyCode: string;
 }
 
+interface ResetPasswordParams {
+  mobile: string;
+  verificationCode: string;
+  newPassword: string;
+}
+
 class AuthService {
   async login(params: LoginParams): Promise<LoginResponse> {
     const response = await fetchRequest.post<LoginResponse>('/api/auth/login', params);
@@ -104,6 +110,10 @@ class AuthService {
 
   async register(params: RegisterParams): Promise<void> {
     await fetchRequest.post('/api/auth/register', params);
+  }
+
+  async resetPassword(params: ResetPasswordParams): Promise<void> {
+    await fetchRequest.post('/api/auth/reset-password', params);
   }
 }
 
