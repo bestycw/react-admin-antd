@@ -12,6 +12,8 @@ export interface UserInfo {
     permissions: string[]
 }
 
+export type ThemeStyle = 'light' | 'dark' | 'dynamic';
+
 class UserStore {
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true })

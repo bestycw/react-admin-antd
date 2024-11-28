@@ -1,9 +1,13 @@
 import { fetchRequest } from '@/utils/request';
 
 export interface LoginParams {
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
+  mobile?: string;
+  verificationCode?: string;
   captcha?: string;
+  qrToken?: string;
+  loginType: 'account' | 'mobile' | 'qrcode';
   remember?: boolean;
 }
 
@@ -22,11 +26,15 @@ export interface LoginResponse {
   user: UserInfo;
 }
 
+export interface QRCodeResponse {
+  qrUrl: string;
+  qrToken: string;
+}
+
 class AuthService {
   async login(params: LoginParams): Promise<LoginResponse> {
     const response = await fetchRequest.post<LoginResponse>('/api/auth/login', params);
     
-    // 保存 token 到 localStorage 或 sessionStorage
     if (params.remember) {
       localStorage.setItem('token', response.token);
     } else {
@@ -39,15 +47,25 @@ class AuthService {
     try {
       await fetchRequest.post('/api/auth/logout');
     } finally {
-      // 无论请求是否成功，都清除本地存储的 token
       localStorage.removeItem('token');
       sessionStorage.removeItem('token');
     }
   }
 
   async getCurrentUser(): Promise<UserInfo> {
-    const response = await fetchRequest.get<UserInfo>('/api/auth/me');
-    return response;
+    return await fetchRequest.get<UserInfo>('/api/auth/me');
+  }
+
+  async sendVerificationCode(mobile: string, type: 'login' | 'register' | 'reset'): Promise<void> {
+    await fetchRequest.post('/api/auth/send-code', { mobile, type });
+  }
+
+  async getQRCode(): Promise<QRCodeResponse> {
+    return await fetchRequest.get<QRCodeResponse>('/api/auth/qrcode');
+  }
+
+  async checkQRCodeStatus(qrToken: string): Promise<LoginResponse | { status: 'pending' | 'expired' }> {
+    return await fetchRequest.get<LoginResponse | { status: 'pending' | 'expired' }>(`/api/auth/qrcode/check/${qrToken}`);
   }
 
   async changePassword(oldPassword: string, newPassword: string): Promise<void> {

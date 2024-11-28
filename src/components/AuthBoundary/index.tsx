@@ -12,7 +12,7 @@ const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
     // 检查用户是否登录
     if (!UserStore.isLogin || !UserStore.userInfo) {
         // 未登录或无用户信息，跳转到登录页
-        return <Navigate to="/login" replace={true} />
+        return <Navigate to="/auth/login" replace={true} />
     }
 
     // // 处理根路径重定向

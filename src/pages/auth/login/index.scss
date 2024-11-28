@@ -1,0 +1,251 @@
+/* 定义动画关键帧 */
+@keyframes cursor-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.login-page {
+  .login-container {
+    @apply min-h-screen flex flex-col items-center justify-center 
+      bg-gradient-to-br from-blue-50 to-indigo-100 
+      dark:from-slate-900 dark:to-slate-800
+      px-4;
+  }
+
+  .login-form-container {
+    @apply relative w-full max-w-md p-6 md:p-8
+      bg-white/80 dark:bg-gray-800/80 
+      backdrop-blur-xl backdrop-saturate-150 
+      border border-white/20 dark:border-gray-700/30
+      rounded-xl shadow-lg;
+
+    .header-section {
+      @apply text-center mb-8;
+
+      .logo {
+        @apply h-14 mx-auto mb-4 transform hover:scale-105 transition-transform duration-300;
+      }
+
+      .title {
+        @apply text-xl md:text-2xl font-bold mb-2
+          bg-gradient-to-r from-blue-600 to-indigo-600
+          dark:from-blue-400 dark:to-indigo-400
+          bg-clip-text text-transparent;
+      }
+
+      .subtitle {
+        @apply text-sm text-gray-600 dark:text-gray-400;
+      }
+    }
+  }
+
+  /* 登录方式切换 */
+  .login-segment {
+    @apply mb-6;
+
+    :global(.ant-segmented) {
+      @apply p-1.5 bg-gray-100/50 dark:bg-gray-700/30 rounded-lg backdrop-blur-sm;
+
+      .ant-segmented-item {
+        @apply transition-all duration-300 ease-out;
+
+        .ant-segmented-item-label {
+          @apply min-h-[2.5rem] px-4 flex items-center justify-center
+            text-gray-500 dark:text-gray-400;
+
+          .anticon {
+            @apply mr-2 text-base opacity-75 transition-all duration-300;
+          }
+        }
+
+        &:hover:not(.ant-segmented-item-selected) {
+          @apply text-blue-500 dark:text-blue-400;
+
+          .anticon {
+            @apply opacity-100 scale-105;
+          }
+        }
+
+        &.ant-segmented-item-selected {
+          @apply bg-white dark:bg-gray-800 shadow-md rounded-md;
+
+          .ant-segmented-item-label {
+            @apply text-blue-600 dark:text-blue-400 font-medium;
+
+            .anticon {
+              @apply opacity-100 scale-105;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* 登录表单样式 */
+  .login-form {
+    @apply space-y-5;
+
+    .form-item-group {
+      @apply space-y-5;
+    }
+
+    .login-input {
+      @apply h-10 text-sm px-3
+        bg-white/50 dark:bg-gray-800/50
+        border border-gray-200 dark:border-gray-700
+        hover:border-blue-400 dark:hover:border-blue-500
+        focus:border-blue-500 dark:focus:border-blue-400
+        focus:ring-2 focus:ring-blue-500/20
+        rounded-lg
+        transition-all duration-200;
+
+      .anticon {
+        @apply text-base text-gray-400 dark:text-gray-500;
+      }
+
+      &::placeholder {
+        @apply text-sm text-gray-400;
+      }
+    }
+
+    /* 验证码容器 */
+    .captcha-container {
+      @apply flex space-x-4;
+
+      .captcha-input {
+        @apply flex-1;
+      }
+
+      .captcha-image-container {
+        @apply h-10 w-28 rounded-lg overflow-hidden
+          bg-gray-800 dark:bg-gray-900
+          border border-gray-200 dark:border-gray-700
+          transition-all duration-200
+          hover:border-blue-400 dark:hover:border-blue-500
+          cursor-pointer
+          transform hover:scale-105;
+      }
+    }
+
+    /* 手机验证码按钮 */
+    .verification-code-button {
+      @apply min-w-[100px] h-10 text-sm
+        bg-gradient-to-r from-blue-500 to-indigo-500
+        hover:from-blue-600 hover:to-indigo-600
+        text-white font-medium
+        rounded-lg transition-all duration-300
+        disabled:opacity-50 disabled:cursor-not-allowed
+        transform hover:scale-105 hover:shadow-md;
+    }
+
+    /* 记住我和忘记密码 */
+    .form-footer {
+      @apply flex items-center justify-between mt-2 mb-6;
+
+      .ant-checkbox-wrapper {
+        @apply text-sm text-gray-600 dark:text-gray-400;
+      }
+
+      .forgot-password {
+        @apply text-sm text-blue-500 hover:text-blue-600 
+          dark:text-blue-400 dark:hover:text-blue-300
+          transition-colors duration-300;
+      }
+    }
+
+    /* 提交按钮 */
+    .submit-button {
+      @apply w-full h-10 text-sm font-medium
+        bg-gradient-to-r from-blue-500 to-indigo-500
+        hover:from-blue-600 hover:to-indigo-600
+        border-none rounded-lg
+        transform hover:scale-[1.02] hover:shadow-lg
+        transition-all duration-300;
+    }
+  }
+
+  /* 二维码登录样式 */
+  .qrcode-container {
+    @apply py-4;
+
+    .qrcode-wrapper {
+      @apply relative p-4 mx-auto
+        bg-white dark:bg-gray-800
+        rounded-xl shadow-lg
+        transition-all duration-300
+        hover:shadow-xl
+        max-w-[240px];
+
+      &::before {
+        content: '';
+        @apply absolute -inset-0.5
+          bg-gradient-to-r from-blue-500 to-indigo-500
+          rounded-xl opacity-50 blur
+          transition-opacity duration-300;
+      }
+
+      &:hover::before {
+        @apply opacity-75;
+      }
+
+      .qrcode-content {
+        @apply relative bg-white dark:bg-gray-800
+          w-full aspect-square rounded-lg
+          flex items-center justify-center;
+      }
+    }
+
+    .qrcode-tip {
+      @apply mt-6 text-sm text-center
+        text-gray-500 dark:text-gray-400
+        animate-pulse;
+    }
+  }
+
+  /* 其他操作按钮 */
+  .action-buttons {
+    @apply text-center mt-6 space-x-4;
+
+    .action-button {
+      @apply text-sm text-blue-500 hover:text-blue-600 
+        dark:text-blue-400 dark:hover:text-blue-300
+        transition-colors duration-300;
+    }
+  }
+}
+
+/* 顶部操作按钮 */
+.header-actions {
+  @apply absolute top-4 right-4 
+    flex items-center space-x-3
+    z-10;
+
+  .theme-switch {
+    @apply w-8 h-8 rounded-full
+      flex items-center justify-center
+      bg-white/10 dark:bg-gray-800/30
+      hover:bg-white/20 dark:hover:bg-gray-800/50
+      backdrop-blur-sm
+      transition-all duration-300
+      shadow-lg;
+
+    .anticon {
+      @apply text-base transition-transform duration-300;
+    }
+
+    &:hover .anticon {
+      @apply transform rotate-45;
+    }
+  }
+}
+
+/* 版权信息 */
+.copyright {
+  @apply fixed bottom-3 left-0 right-0
+    text-center text-xs
+    text-gray-500 dark:text-gray-400;
+} 
