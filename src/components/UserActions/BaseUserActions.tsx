@@ -77,9 +77,12 @@ export const useUserActions = () => {
   // 用户菜单点击处理
   const handleUserMenuClick: MenuProps['onClick'] = async({ key }) => {
     if (key === 'logout') {
-     await authService.logout()
-     navigate('/login')
-     UserStore.clearUserInfo()
+      try {
+        await UserStore.logout();
+        navigate('/login', { replace: true });
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
     }
   }
 

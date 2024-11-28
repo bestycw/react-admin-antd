@@ -1,51 +1,69 @@
-import Request from '../utils/request/'
-import { UserInfo } from '../store/UserStore'
-import { CoRouteObject } from '../types/route'
+import { fetchRequest } from '@/utils/request';
 
 export interface LoginParams {
-    username: string
-    password: string
-    captcha: string
-    remember?: boolean
+  username: string;
+  password: string;
+  captcha?: string;
+  remember?: boolean;
 }
 
-export interface LoginResult {
-    token: string
-    userInfo: UserInfo
+export interface UserInfo {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  avatar: string;
+  status: string;
+  lastLogin: string;
 }
 
-export const authService = {
-    // 登录
-    login(params: LoginParams){
-        const { username, password } = params
-        return Request.post<UserInfo>('/api/auth/login', { username, password }, {
-            retry: 2
-        })
-    },
+export interface LoginResponse {
+  token: string;
+  user: UserInfo;
+}
 
-    // 获取动态路由
-    getDynamicRoutes() {
-        return Request.get<CoRouteObject[]>('/api/auth/routes', {
-            retry: 1,
-            headers: {
-                // 确保请求带上 token
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-    },
-
-    // 获取用户信息
-    getUserInfo() {
-        return Request.get<UserInfo>('/api/auth/userInfo', {
-            retry: 1,
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-    },
-
-    // 登出
-    logout() {
-        return Request.post('/api/auth/logout')
+class AuthService {
+  async login(params: LoginParams): Promise<LoginResponse> {
+    const response = await fetchRequest.post<LoginResponse>('/api/auth/login', params);
+    
+    // 保存 token 到 localStorage 或 sessionStorage
+    if (params.remember) {
+      localStorage.setItem('token', response.token);
+    } else {
+      sessionStorage.setItem('token', response.token);
     }
-} 
+    return response;
+  }
+
+  async logout(): Promise<void> {
+    try {
+      await fetchRequest.post('/api/auth/logout');
+    } finally {
+      // 无论请求是否成功，都清除本地存储的 token
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
+    }
+  }
+
+  async getCurrentUser(): Promise<UserInfo> {
+    const response = await fetchRequest.get<UserInfo>('/api/auth/me');
+    return response;
+  }
+
+  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    await fetchRequest.post('/api/auth/change-password', {
+      oldPassword,
+      newPassword
+    });
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token') || sessionStorage.getItem('token');
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+}
+
+export const authService = new AuthService(); 
