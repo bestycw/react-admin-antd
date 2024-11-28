@@ -1,8 +1,9 @@
 import { generateRoutes } from './generator'
 import { CoRouteObject } from '../types/route.d'
 import Layout from '../layout'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Routes, useLocation } from 'react-router-dom'
 import AuthBoundary from '@/components/AuthBoundary'
+import { AnimatePresence } from 'framer-motion'
 
 // 生成路由配置
 export function createRoutes(): CoRouteObject[] {
@@ -34,5 +35,17 @@ export function createRoutes(): CoRouteObject[] {
 
     return routes
 }
+
+export const Router: React.FC = () => {
+    const location = useLocation();
+
+    return (
+        <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+                {/* ... 现有路由配置保持不变 */}
+            </Routes>
+        </AnimatePresence>
+    );
+};
 
 export default createRoutes()

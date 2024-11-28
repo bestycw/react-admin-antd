@@ -89,9 +89,9 @@
   .login-form {
     @apply space-y-5 relative;
 
-    .form-item-group {
-      @apply space-y-5;
-    }
+    // .form-item-group {
+    //   @apply space-y-3;
+    // }
 
     .login-input {
       @apply h-10 text-sm px-3

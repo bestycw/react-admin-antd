@@ -1,52 +1,23 @@
 import React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useLocation } from 'react-router-dom'
-import { slideAnimation, fadeAnimation, scaleAnimation, transitions } from './animations'
-import { useStore } from '@/store'
+import { motion } from 'framer-motion'
 
 interface PageTransitionProps {
   children: React.ReactNode
-  animation?: 'slide' | 'fade' | 'scale'
 }
 
-const PageTransition: React.FC<PageTransitionProps> = ({ 
-  children, 
-  animation = 'slide' 
-}) => {
-  const location = useLocation()
-  const { ConfigStore } = useStore()
-
-  const getAnimation = () => {
-    switch (animation) {
-      case 'slide':
-        return slideAnimation
-      case 'fade':
-        return fadeAnimation
-      case 'scale':
-        return scaleAnimation
-      default:
-        return slideAnimation
-    }
-  }
-
-  // 如果是抽屉模式，禁用动画
-  if (ConfigStore.isDrawerMode) {
-    return <>{children}</>
-  }
-
+const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        variants={getAnimation()}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        transition={transitions.spring}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{
+        duration: 0.3,
+        ease: "easeInOut"
+      }}
+    >
+      {children}
+    </motion.div>
   )
 }
 

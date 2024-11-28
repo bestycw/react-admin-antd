@@ -3,16 +3,15 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
 import {
     UserOutlined,
-    LockOutlined,
+
     MobileOutlined,
     QrcodeOutlined,
-    LoginOutlined,
+
     SunOutlined,
     MoonOutlined,
 } from '@ant-design/icons';
 import {
     Form,
-    Input,
     Button,
     Checkbox,
     message,
@@ -25,7 +24,7 @@ import { loadSlim } from 'tsparticles-slim';
 import type { Engine } from 'tsparticles-engine';
 import { ParticlesOptions } from '@/config/particles';
 import { authService } from '@/services/auth';
-import Captcha from '@/components/Captcha';
+
 import LanguageSwitch from '@/components/LanguageSwitch';
 import logo from '@/assets/logo.svg';
 import './index.scss';
@@ -34,15 +33,17 @@ import PhoneLogin from './components/PhoneLogin';
 import QrCodeLogin from './components/QrCodeLogin';
 import TypeWriter from '@/components/TypeWriter';
 import { AnimatePresence, motion } from 'framer-motion';
+import { RouteConfig } from '@/types/route';
+import PageTransition from '@/components/PageTransition';
 
-interface LoginForm {
-    username: string;
-    password: string;
-    mobile: string;
-    verificationCode: string;
-    captcha: string;
-    remember: boolean;
+export const routeConfig: RouteConfig = {
+    title: '登录',
+    // icon: <StopOutlined />,
+    layout: false,
+    auth: false,
+    // hidden: true // 在菜单中隐藏
 }
+
 
 const LoginPage: React.FC = observer(() => {
     const { t } = useTranslation();
@@ -52,7 +53,6 @@ const LoginPage: React.FC = observer(() => {
     const [loading, setLoading] = useState(false);
     const [loginType, setLoginType] = useState<'account' | 'mobile' | 'qrcode'>('account');
     const [countdown, setCountdown] = useState(0);
-    //   const isDynamic = ConfigStore.themeStyle === 'dynamic';
 
     // 粒子背景初始化
     const particlesInit = async (engine: Engine) => {
@@ -65,7 +65,8 @@ const LoginPage: React.FC = observer(() => {
         try {
             const response = await authService.login({
                 ...values,
-                loginType
+                loginType,
+                remember: values.remember  // 确保这个值被传递到后端
             });
 
             // 确保返回的用户信息符合 UserStore 的要求
@@ -77,7 +78,9 @@ const LoginPage: React.FC = observer(() => {
                 permissions: response.permissions || []
             };
 
-            UserStore.setUserInfo(userInfo);
+            // 传递 remember 参数给 UserStore.setUserInfo
+            UserStore.setUserInfo(userInfo, values.remember);
+            
             message.success(t('login.loginSuccess'));
             navigate('/', { replace: true });
         } catch (error) {
@@ -160,85 +163,103 @@ const LoginPage: React.FC = observer(() => {
         );
     };
 
-    return (
-        <div className="login-page">
-            <div className="login-container">
-                <Particles
-                    className="absolute inset-0"
-                    init={particlesInit}
-                    options={ParticlesOptions}
+    // 渲染主要内容
+    const renderMainContent = () => {
+        return (
+            <>
+                <div className="header-section">
+                    <img src={logo} alt="Logo" className="logo" />
+                    <TypeWriter text="Coffee Admin" loop={true} loopDelay={2000} />
+                    <p className="subtitle">{t('login.subtitle')}</p>
+                </div>
+
+                <Segmented
+                    block
+                    className="login-segment"
+                    value={loginType}
+                    onChange={(value) => setLoginType(value as typeof loginType)}
+                    options={loginOptions}
                 />
 
-                <div className="absolute top-4 right-4 flex items-center space-x-3">
-                    <LanguageSwitch />
-                    <button
-                        className="theme-switch"
-                        onClick={() => ConfigStore.setThemeMode(ConfigStore.isDark ? 'light' : 'dark')}
-                    >
-                        {ConfigStore.isDark ? (
-                            <SunOutlined className="text-amber-500" />
-                        ) : (
-                            <MoonOutlined className="text-blue-500" />
-                        )}
-                    </button>
-                </div>
+                <Form
+                    form={form}
+                    onFinish={handleLogin}
+                    className="login-form"
+                    initialValues={{ remember: true }}
+                >
+                    {renderLoginForm()}
 
-                <div className="login-form-container">
-                    <div className="header-section">
-                        <img src={logo} alt="Logo" className="logo" />
-                        <TypeWriter text="Coffee Admin" loop={true} loopDelay={2000} />
-                        <p className="subtitle">{t('login.subtitle')}</p>
+                    <div className="form-footer">
+                        <Form.Item name="remember" valuePropName="checked" noStyle>
+                            <Checkbox>{t('login.rememberMe')}</Checkbox>
+                        </Form.Item>
+                        <div className="flex items-center space-x-4">
+                            <a 
+                                className="register-link" 
+                                onClick={() => navigate('/auth/register')}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                {t('login.register')}
+                            </a>
+
+                            <div className="h-4 w-px bg-gray-300 dark:bg-gray-600" />
+                            <a 
+                                className="forgot-password"
+                                onClick={() => navigate('/auth/forgot-password')}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                {t('login.forgotPassword')}
+                            </a>
+                        </div>
                     </div>
 
-                    <Segmented
-                        block
-                        className="login-segment"
-                        value={loginType}
-                        onChange={(value) => setLoginType(value as typeof loginType)}
-                        options={loginOptions}
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="submit-button"
+                        loading={loading}
+                    >
+                        {t('login.loginButton')}
+                    </Button>
+                </Form>
+            </>
+        );
+    };
+
+    return (
+        <PageTransition>
+            <div className="login-page">
+                <div className="login-container">
+                    <Particles
+                        className="absolute inset-0"
+                        init={particlesInit}
+                        options={ParticlesOptions}
                     />
 
-                    <Form
-                        form={form}
-                        onFinish={handleLogin}
-                        className="login-form"
-                        initialValues={{ remember: true }}
-                    >
-                        {renderLoginForm()}
-
-                        <div className="form-footer">
-                            <Form.Item name="remember" valuePropName="checked" noStyle>
-                                <Checkbox>{t('login.rememberMe')}</Checkbox>
-                            </Form.Item>
-                            <div className="flex items-center space-x-4">
-                                <a className="register-link" href="#/auth/register">
-                                    {t('login.register')}
-                                </a>
-
-                                <div className="h-4 w-px bg-gray-300 dark:bg-gray-600" />
-                                <a className="forgot-password" href="#/auth/reset-password">
-                                    {t('login.forgotPassword')}
-                                </a>
-                            </div>
-                        </div>
-
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            className="submit-button"
-                            loading={loading}
-                            // icon={<LoginOutlined />}
+                    <div className="absolute top-4 right-4 flex items-center space-x-3">
+                        <LanguageSwitch />
+                        <button
+                            className="theme-switch"
+                            onClick={() => ConfigStore.setThemeMode(ConfigStore.isDark ? 'light' : 'dark')}
                         >
-                            {t('login.loginButton')}
-                        </Button>
-                    </Form>
-                </div>
+                            {ConfigStore.isDark ? (
+                                <SunOutlined className="text-amber-500" />
+                            ) : (
+                                <MoonOutlined className="text-blue-500" />
+                            )}
+                        </button>
+                    </div>
 
-                <div className="copyright">
-                    Copyright © {new Date().getFullYear()} Coffee Admin
+                    <div className="login-form-container">
+                        {renderMainContent()}
+                    </div>
+
+                    <div className="copyright">
+                        Copyright © {new Date().getFullYear()} Coffee Admin
+                    </div>
                 </div>
             </div>
-        </div>
+        </PageTransition>
     );
 });
 
