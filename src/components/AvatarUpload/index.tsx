@@ -129,12 +129,20 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ value, onChange }) => {
         selectedFile.name
       );
 
+      console.log('Uploading cropped file:', {
+        name: croppedFile.name,
+        type: croppedFile.type,
+        size: croppedFile.size
+      });
+
       const response = await authService.uploadAvatar(croppedFile);
+      console.log('Upload response:', response);
       if (response.url) {
         onChange?.(response.url);
         message.success(t('profile.avatarUpdateSuccess'));
       }
     } catch (error) {
+      console.error('Avatar upload error:', error);
       message.error(t('profile.avatarUpdateFailed'));
     } finally {
       setLoading(false);

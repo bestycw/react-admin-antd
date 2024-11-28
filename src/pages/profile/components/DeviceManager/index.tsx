@@ -72,20 +72,20 @@ const DeviceManager: React.FC<DeviceManagerProps> = ({
         <List.Item
           actions={[
             device.current ? (
-              <Tag color="green">Current Device</Tag>
+              <Tag color="green">{t('profile.deviceInfo.current')}</Tag>
             ) : (
               <Popconfirm
-                title="Are you sure you want to revoke access?"
+                title={t('profile.deviceInfo.revokeConfirm')}
                 onConfirm={() => onRevokeAccess(device.id)}
-                okText="Yes"
-                cancelText="No"
+                okText={t('common.yes')}
+                cancelText={t('common.no')}
               >
                 <Button
                   type="text"
                   danger
                   icon={<DisconnectOutlined />}
                 >
-                  Revoke Access
+                  {t('profile.deviceInfo.revokeAccess')}
                 </Button>
               </Popconfirm>
             )
@@ -107,7 +107,7 @@ const DeviceManager: React.FC<DeviceManagerProps> = ({
                 <span>{device.browser} on {device.os}</span>
                 {device.current && (
                   <Tag color="green" className="ml-2">
-                    Current
+                    {t('profile.deviceInfo.current')}
                   </Tag>
                 )}
               </div>
@@ -118,10 +118,10 @@ const DeviceManager: React.FC<DeviceManagerProps> = ({
                   <span className="font-medium">IP:</span> {device.ip}
                 </div>
                 <div>
-                  <span className="font-medium">Location:</span> {device.location}
+                  <span className="font-medium">{t('profile.deviceInfo.location')}:</span> {device.location}
                 </div>
                 <div>
-                  <span className="font-medium">Last Active:</span> {device.lastActive}
+                  <span className="font-medium">{t('profile.deviceInfo.lastActive')}:</span> {device.lastActive}
                 </div>
               </div>
             }

@@ -228,12 +228,26 @@ class UserStore {
 
     async updateProfile(data: Partial<UserInfo>) {
         const response = await authService.updateProfile(data);
+ 
         runInAction(() => {
-            this.userInfo = { 
-                ...this.userInfo, 
-                ...response,
-                accessToken: this.userInfo?.accessToken || ''
-            };
+            if (this.userInfo) {
+                // 只更新响应中包含的字段
+                const updatedUserInfo = {
+                    ...this.userInfo,
+                    ...response,
+                    // 保持这些字段不变
+                    username: this.userInfo.username,
+                    roles: this.userInfo.roles,
+                    permissions: this.userInfo.permissions,
+                    dynamicRoutesList: this.userInfo.dynamicRoutesList,
+                    accessToken: this.userInfo.accessToken
+                };
+
+                this.userInfo = updatedUserInfo;
+                // 更新本地存储
+                const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
+                storage.setItem('userInfo', JSON.stringify(updatedUserInfo));
+            }
         });
     }
 

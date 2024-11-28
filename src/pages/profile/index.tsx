@@ -64,16 +64,16 @@ const Profile: React.FC = observer(() => {
     }
   };
 
-  const handleAvatarUpload = async (file: RcFile) => {
-    try {
-      const response = await authService.uploadAvatar(file);
-      message.success(t('profile.avatarUpdateSuccess'));
-      return false;
-    } catch (error) {
-      message.error(t('profile.avatarUpdateFailed'));
-      return Upload.LIST_IGNORE;
-    }
-  };
+  // const handleAvatarUpload = async (file: RcFile) => {
+  //   try {
+  //     const response = await authService.uploadAvatar(file);
+  //     message.success(t('profile.avatarUpdateSuccess'));
+  //     return false;
+  //   } catch (error) {
+  //     message.error(t('profile.avatarUpdateFailed'));
+  //     return Upload.LIST_IGNORE;
+  //   }
+  // };
 
   const menuItems: MenuProps['items'] = [
     {
@@ -359,3 +359,10 @@ const Profile: React.FC = observer(() => {
 });
 
 export default Profile; 
+
+export const routeConfig: RouteConfig = {
+    title: '个人中心',
+    icon: <UserOutlined />,
+    layout: true,
+    auth: false,
+}
