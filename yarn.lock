@@ -5202,6 +5202,11 @@
     "unist-util-visit" "^5.0.0"
     "vfile" "^6.0.0"
 
+"react-masonry-css@^1.0.16":
+  "integrity" "sha512-KSW0hR2VQmltt/qAa3eXOctQDyOu7+ZBevtKgpNDSzT7k5LA/0XntNa9z9HKCdz3QlxmJHglTZ18e4sX4V8zZQ=="
+  "resolved" "https://registry.npmmirror.com/react-masonry-css/-/react-masonry-css-1.0.16.tgz"
+  "version" "1.0.16"
+
 "react-particles@^2.12.2":
   "integrity" "sha512-Bo9DdrBRPFy8uiT7BA8P36Rdmz6GhB/RG9kkWUyZGIsS8AxWyuUjpVxw9Lr23K0LVE2aenAJ0vnqEbbLDpBgQw=="
   "resolved" "https://registry.npmmirror.com/react-particles/-/react-particles-2.12.2.tgz"

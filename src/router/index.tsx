@@ -4,6 +4,7 @@ import Layout from '../layout'
 import { Navigate, Routes, useLocation } from 'react-router-dom'
 import AuthBoundary from '@/components/AuthBoundary'
 import { AnimatePresence } from 'framer-motion'
+// import WaterfallPage from '@/pages/function/waterfall/waterfall';
 
 // 生成路由配置
 export function createRoutes(): CoRouteObject[] {
