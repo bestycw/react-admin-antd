@@ -1,10 +1,10 @@
-import { FormOutlined } from "@ant-design/icons";
-// import React from "react";
+import { FormOutlined } from '@ant-design/icons';
+import type { RouteConfig } from '@/types/route';
 
-export const routeConfig = {
-  title: '表单',
-  icon: <FormOutlined />,
-  layout: true,
-  auth: true,
-  sort: 1,
-}
+export const routeConfig: RouteConfig = {
+    title: '表单页面',
+    icon: <FormOutlined />,
+    layout: true,
+    auth: true,
+    sort: 3
+};
