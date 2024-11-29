@@ -42,87 +42,83 @@ interface RouteNode extends CoRouteObject {
 
 // 路由工具函数
 const routeUtils = {
+    // 路径处理工具
+    paths: {
+        // 标准化路径
+        normalize(path: string): string {
+            return path.replace(/^(@\/pages\/|\/src\/pages\/)/, '')
+                      .replace(/^\/+/, '/')
+                      .replace(/\/$/, '');
+        },
+
+        // 获取路径的最后一部分
+        getLastPart(path: string): string {
+            return path.split('/').pop() || '';
+        },
+
+        // 获取父路径
+        getParentPath(path: string): string {
+            const parts = this.normalize(path).split('/').filter(Boolean);
+            return parts.length > 1 ? `/${parts.slice(0, -1).join('/')}` : '/';
+        },
+
+        // 连接路径
+        join(...parts: string[]): string {
+            return '/' + parts.filter(Boolean).join('/');
+        }
+    },
+
     // 获取组件名称
     getComponentName(path: string): string {
-        const parts = path.split('/')
-        return parts[parts.length - 1] === 'index.tsx'
-            ? parts[parts.length - 2]
-            : parts[parts.length - 1].replace('.tsx', '')
+        const fileName = this.paths.getLastPart(path);
+        return fileName === 'index.tsx' 
+            ? this.paths.getLastPart(this.paths.getParentPath(path))
+            : fileName.replace('.tsx', '');
+    },
+
+    // 判断是否是单文件路由
+    isSingleFileRoute(allPaths: string[], currentPath: string): boolean {
+        const normalizedPath = this.paths.normalize(currentPath);
+        const dirFiles = allPaths.filter(path => 
+            !path.includes('/components/') && 
+            !path.endsWith('.config.ts') && 
+            !path.endsWith('.config.tsx') &&
+            this.paths.normalize(path).startsWith(normalizedPath + '/'));
+
+        return dirFiles.length === 1 && (
+            dirFiles[0].endsWith('/index.tsx') || 
+            dirFiles[0].endsWith(`/${this.paths.getLastPart(normalizedPath)}.tsx`)
+        );
     },
 
     // 生成图标
     generateIcon(iconName: string) {
-        const Icon = iconMap.get(iconName.toLowerCase())
-        return Icon ? React.createElement(Icon as React.ComponentType) : null
+        const Icon = iconMap.get(iconName.toLowerCase());
+        return Icon ? React.createElement(Icon as React.ComponentType) : null;
     },
 
-    // 格式化路径
-    formatRoutePath(parts: string[]): string {
-        const path = parts
-            .filter(part => part !== 'index.tsx')
-            .map(part => part.replace('.tsx', ''))
-            .join('/');
-        return path ? `/${path}` : '/';
+    // 格式化路由路径
+    formatRoutePath(parts: string[] | string): string {
+        if (Array.isArray(parts)) {
+            return this.paths.join(...parts.filter(part => part !== 'index.tsx')
+                .map(part => part.replace('.tsx', '')));
+        }
+        return this.paths.normalize(parts).replace(/\.tsx$/, '');
     },
 
     // 获取相对路径
-    getRelativePath(fullPath: string): string[] {
-        return fullPath
-            .replace(/^@\/pages\//, '')
-            .replace(/^\/src\/pages\//, '')
-            .split('/')
+    getRelativePath(path: string): string[] {
+        return this.paths.normalize(path)
+                        .replace(/\.tsx$/, '')
+                        .split('/')
+                        .filter(Boolean);
     },
 
-    // 判断是否是同级路由
-    isSameLevel(fileName: string, parentName: string): boolean {
-        return fileName === 'index.tsx' || fileName.replace('.tsx', '') === parentName
-    },
-
-    // 判断是否是单文件路由（index.tsx 或同名文件）
-    isSingleFileRoute(allPaths: string[], currentPath: string): boolean {
-        // 标准化当前路径，确保以 /src/pages/ 开头
-        const targetPath = currentPath.startsWith('/src/pages/') 
-            ? currentPath 
-            : `/src/pages/${currentPath}`;
-
-        // 获取当前目录下的所有有效文件
-        const dirFiles = allPaths
-            .filter(path => {
-                // 排除配置文件和组件
-                if (path.includes('/components/') || 
-                    path.endsWith('.config.ts') || 
-                    path.endsWith('.config.tsx')) {
-                    return false;
-                }
-
-                // 检查是否属于当前目录
-                const isInCurrentDir = path.startsWith(targetPath + '/');
-                if (!isInCurrentDir) return false;
-
-                // 检查是否是直接子文件（不是更深层级的文件）
-                const remainingPath = path.slice(targetPath.length + 1);
-                return !remainingPath.includes('/');
-            });
-
-        // console.log('Target path:', targetPath);
-        // console.log('Dir files:', dirFiles);
-
-        // 如果只有一个文件，检查是否是 index.tsx 或同名文件
-        if (dirFiles.length === 1) {
-            const fileName = dirFiles[0].split('/').pop() || '';
-            const dirName = targetPath.split('/').pop() || '';
-            const isValid = fileName === 'index.tsx' || fileName === `${dirName}.tsx`;
-            
-            console.log('File name:', fileName);
-            console.log('Dir name:', dirName);
-            console.log('Is valid single file:', isValid);
-            
-            return isValid;
-        }
-
-        return false;
+    // 判断是否同级
+    isSameLevel(fileName: string, dirName: string): boolean {
+        return fileName === 'index.tsx' || fileName === `${dirName}.tsx`;
     }
-}
+};
 
 // 路由配置处理函数
 const routeConfigHandler = {
@@ -166,11 +162,13 @@ const routeConfigHandler = {
 
     // 创建路由节点
     createRouteNode(path: string, config: RouteConfig): RouteNode {
-        const component = lazy(() => PagesList[path]() as Promise<{ default: React.ComponentType<any> }>)
+        const element = config.element || React.createElement(
+            lazy(() => PagesList[path]() as Promise<{ default: React.ComponentType<any> }>)
+        );
+
         return {
             path: routeUtils.formatRoutePath(routeUtils.getRelativePath(path)),
-
-            element: React.createElement(component),
+            element,
             meta: {
                 title: config.title,
                 icon: config.icon,
