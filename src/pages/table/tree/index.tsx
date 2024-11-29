@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Space, Tag, message, Modal, Form, Input } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
-import type { TableParams, TableColumnType } from '@/components/Table/types';
+import type {  TableColumnType } from '@/components/Table/types';
 
 interface TreeUser {
   key: string;
@@ -15,11 +15,7 @@ interface TreeUser {
   children?: TreeUser[];
 }
 
-interface FormValues {
-  name: string;
-  email: string;
-  status: 'active' | 'inactive';
-}
+
 
 const TreeTable: React.FC = () => {
   const [form] = Form.useForm();

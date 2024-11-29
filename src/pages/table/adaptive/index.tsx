@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tag, Tooltip, Space } from 'antd';
+import { Tag, Tooltip } from 'antd';
 import Table from '@/components/Table';
 import type { TableColumnType } from '@/components/Table/types';
 

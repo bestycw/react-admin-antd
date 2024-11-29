@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  Button, Space, Tag, message, Modal, Dropdown, Tooltip } from 'antd';
+import { Button, Space, Tag, message, Modal, Dropdown, Tooltip } from 'antd';
 import { 
   EditOutlined, 
   DeleteOutlined, 
@@ -12,9 +12,6 @@ import {
 import Table from '@/components/Table';
 import type { TableParams, TableColumnType } from '@/components/Table/types';
 import type { MenuProps } from 'antd';
-// import dayjs from 'dayjs';
-
-// const { RangePicker } = DatePicker;
 
 interface AdvancedUser {
   id: number;
@@ -231,7 +228,7 @@ const AdvancedTable: React.FC = () => {
     {
       key: 'delete',
       icon: <DeleteOutlined />,
-      label: '批量删除',
+      label: '���量删除',
       danger: true,
       onClick: handleBatchDelete,
     },

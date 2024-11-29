@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Input, InputNumber, Select, Button, Space, Tag, message, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
-import type { TableParams, TableColumnType } from '@/components/Table/types';
+import type {  TableColumnType } from '@/components/Table/types';
 
 interface EditableUser {
   id: number;
