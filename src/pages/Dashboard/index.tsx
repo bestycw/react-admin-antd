@@ -219,31 +219,30 @@ const Dashboard: React.FC = () => {
             bordered={false}
             extra={<Button type="link">查看全部</Button>}
           >
-            <Timeline style={{ padding: '20px 0' }}>
-              {todos.map(todo => (
-                <Timeline.Item
-                  key={todo.id}
-                  dot={
-                    todo.status === 'completed' 
-                      ? <CheckCircleOutlined style={{ color: '#52c41a' }} />
-                      : <ClockCircleOutlined style={{ color: '#faad14' }} />
-                  }
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>{todo.title}</span>
-                    <Tag color={
-                      todo.priority === 'high' ? 'red' : 
-                      todo.priority === 'medium' ? 'orange' : 'blue'
-                    }>
-                      {todo.priority.toUpperCase()}
-                    </Tag>
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
-                    {todo.deadline}
-                  </div>
-                </Timeline.Item>
-              ))}
-            </Timeline>
+            <Timeline 
+              style={{ padding: '20px 0' }}
+              items={todos.map(todo => ({
+                dot: todo.status === 'completed' 
+                  ? <CheckCircleOutlined style={{ color: '#52c41a' }} />
+                  : <ClockCircleOutlined style={{ color: '#faad14' }} />,
+                children: (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>{todo.title}</span>
+                      <Tag color={
+                        todo.priority === 'high' ? 'red' : 
+                        todo.priority === 'medium' ? 'orange' : 'blue'
+                      }>
+                        {todo.priority.toUpperCase()}
+                      </Tag>
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
+                      {todo.deadline}
+                    </div>
+                  </>
+                )
+              }))}
+            />
           </Card>
         </Col>
       </Row>

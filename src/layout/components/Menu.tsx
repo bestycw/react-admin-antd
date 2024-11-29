@@ -108,10 +108,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
                 {...MenuOptions}
                 onClick={onClick}
                 selectedKeys={MenuStore.selectedKeys}
-                // openKeys={ MenuStore.openKeys}
-                // onOpenChange={(keys) => MenuStore.openKeys = keys}
                 mode={mode}
-                inlineCollapsed={collapsed}
                 className="menu-component !border-none"
                 items={getMenuItems() as ItemType<MenuItemType>[]}
             />
