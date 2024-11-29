@@ -21,6 +21,7 @@ export interface TableColumnType<T = any> {
   filteredValue?: string[];
   filterMode?: 'menu' | 'tree';
   filterSearch?: boolean;
+  ellipsis?: boolean | { showTitle?: boolean };
 }
 
 export interface TableParams {

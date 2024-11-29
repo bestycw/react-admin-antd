@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Select, Button, Space, Tag, message, Modal, DatePicker, Dropdown, Layout } from 'antd';
+import {  Button, Space, Tag, message, Modal, Dropdown, Tooltip } from 'antd';
 import { 
   EditOutlined, 
   DeleteOutlined, 
@@ -14,7 +14,7 @@ import type { TableParams, TableColumnType } from '@/components/Table/types';
 import type { MenuProps } from 'antd';
 // import dayjs from 'dayjs';
 
-const { RangePicker } = DatePicker;
+// const { RangePicker } = DatePicker;
 
 interface AdvancedUser {
   id: number;
@@ -68,11 +68,13 @@ const AdvancedTable: React.FC = () => {
       dataIndex: 'name',
       width: 120,
       fixed: 'left' as const,
+      ellipsis: true,
       render: (text: string) => <a>{text}</a>,
     },
     {
       title: '部门',
       dataIndex: 'department',
+      ellipsis: true,
       width: 120,
       filters: [
         { text: '技术部', value: '技术部' },
@@ -82,12 +84,21 @@ const AdvancedTable: React.FC = () => {
     {
       title: '职位',
       dataIndex: 'role',
+      ellipsis: {
+        showTitle: false, // 不使用原生 title 属性
+      },
       width: 120,
+      render: (text: string) => (
+        <Tooltip placement="topLeft" title={text}>
+          <span>{text}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '邮箱',
       dataIndex: 'email',
       width: 200,
+      ellipsis: true,
     },
     {
       title: '状态',
