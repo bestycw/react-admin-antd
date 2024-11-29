@@ -5,7 +5,7 @@ import type { RouteConfig } from '@/types/route';
 
 export const routeConfig: RouteConfig = {
     title: '基础表单',
-    icon: <FormOutlined />,
+    // icon: <FormOutlined />,
     layout: true,
     auth: true,
     sort: 1
@@ -38,7 +38,7 @@ const BasicForm: React.FC = () => {
     };
 
     return (
-        <div className="p-6">
+        <div>
             <Card title="基础表单" className="shadow-md">
                 <Form
                     form={form}

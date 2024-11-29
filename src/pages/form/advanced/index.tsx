@@ -6,7 +6,7 @@ import type { UploadFile } from 'antd/es/upload/interface';
 
 export const routeConfig: RouteConfig = {
     title: '高级表单',
-    icon: <FormOutlined />,
+    // icon: <FormOutlined />,
     layout: true,
     auth: true,
     sort: 3
@@ -43,7 +43,7 @@ const AdvancedForm: React.FC = () => {
     };
 
     return (
-        <div className="p-6">
+        <div >
             <Card title="高级表单" className="shadow-md">
                 <Form
                     form={form}

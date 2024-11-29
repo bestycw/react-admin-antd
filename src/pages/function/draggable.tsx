@@ -39,6 +39,16 @@ interface NestedItem {
   color?: string;
 }
 
+interface DraggableItem {
+  id: string;
+  content: string;
+}
+
+interface DraggableListProps {
+  items: DraggableItem[];
+  setItems: React.Dispatch<React.SetStateAction<DraggableItem[]>>;
+}
+
 // 生成示例数据
 const generateItems = (count: number) => 
   Array.from({ length: count }, (_, index) => ({
