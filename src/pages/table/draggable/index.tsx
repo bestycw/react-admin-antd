@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Button, Tag, message } from 'antd';
 import { DragOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
@@ -36,7 +36,12 @@ const DraggableBodyRow = ({ index, ...restProps }: BodyRowProps) => {
             {...provided.dragHandleProps}
             {...restProps}
             style={style}
-            className={`${restProps.className} ${snapshot.isDragging ? 'dragging' : ''} ${snapshot.draggingOver ? 'dragging-over' : ''}`}
+            className={`
+              ${restProps.className || ''} 
+              ${snapshot.isDragging ? 'dragging' : ''} 
+              ${snapshot.draggingOver ? 'drop-over-downward' : ''} 
+              ${snapshot.isDropAnimating ? 'drop-over-upward' : ''}
+            `.trim()}
           />
         );
       }}
@@ -63,7 +68,7 @@ const DraggableTable: React.FC = () => {
       ...item,
       sort: index + 1,
     }));
-
+    console.log(newData);
     setDataSource(newData);
     message.success('排序成功');
   };
@@ -80,7 +85,9 @@ const DraggableTable: React.FC = () => {
           )}
         </Droppable>
       ),
-      row: ({ index, ...props }: BodyRowProps) => <DraggableBodyRow index={index} {...props} />,
+      row: (props: any) => {
+        return <DraggableBodyRow index={props['data-index']} {...props} />;
+      },
     },
   };
 
@@ -144,10 +151,14 @@ const DraggableTable: React.FC = () => {
     <DragDropContext onDragEnd={onDragEnd}>
       <Table
         columns={columns}
-        dataSource={dataSource.sort((a, b) => a.sort - b.sort)}
+        dataSource={dataSource}
         loading={loading}
         components={components}
         rowKey="id"
+        onRow={(record, index) => ({
+          'data-index': index,
+          style: { cursor: 'move' },
+        })}
         cardProps={{
           title: '拖拽排序表格',
         }}

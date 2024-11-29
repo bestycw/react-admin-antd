@@ -1,15 +1,7 @@
 // @import '@/styles/variables.scss';
 
 .dragging {
-  background: #fafafa !important;
-  opacity: 0.8;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  
-  td {
-    background: #fafafa !important;
-    border-top: 2px dashed transparent !important;
-    border-bottom: 2px dashed transparent !important;
-  }
+  background: rgba(24, 144, 255, 0.05);
 }
 
 tr.ant-table-row {
@@ -43,11 +35,22 @@ tr.ant-table-row {
   }
 }
 
+tr.drop-over-downward td {
+  border-bottom: 2px dashed #1890ff !important;
+}
+
+tr.drop-over-upward td {
+  border-top: 2px dashed #1890ff !important;
+}
+
 .drag-handle {
-  display: flex;
+  cursor: move;
+  display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
-  color: #666;
+  
+  &:hover {
+    color: #1890ff;
+  }
 }
 
 @keyframes borderBlink {
