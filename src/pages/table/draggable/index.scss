@@ -1,0 +1,60 @@
+// @import '@/styles/variables.scss';
+
+.dragging {
+  background: #fafafa !important;
+  opacity: 0.8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  
+  td {
+    background: #fafafa !important;
+    border-top: 2px dashed transparent !important;
+    border-bottom: 2px dashed transparent !important;
+  }
+}
+
+tr.ant-table-row {
+  cursor: move;
+  transition: all 0.2s;
+  
+  &:hover {
+    td {
+      background: #e6f7ff;
+    }
+  }
+  
+  &.dragging {
+    background: #f5f5f5;
+    
+    td {
+      background: #f5f5f5 !important;
+    }
+  }
+
+  &.dragging-over {
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #1890ff;
+      animation: borderBlink 0.5s infinite;
+    }
+  }
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: #666;
+}
+
+@keyframes borderBlink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
