@@ -58,10 +58,11 @@ const routeUtils = {
 
     // 格式化路径
     formatRoutePath(parts: string[]): string {
-        return '/' + parts
+        const path = parts
             .filter(part => part !== 'index.tsx')
             .map(part => part.replace('.tsx', ''))
-            .join('/')
+            .join('/');
+        return path ? `/${path}` : '/';
     },
 
     // 获取相对路径
@@ -75,6 +76,51 @@ const routeUtils = {
     // 判断是否是同级路由
     isSameLevel(fileName: string, parentName: string): boolean {
         return fileName === 'index.tsx' || fileName.replace('.tsx', '') === parentName
+    },
+
+    // 判断是否是单文件路由（index.tsx 或同名文件）
+    isSingleFileRoute(allPaths: string[], currentPath: string): boolean {
+        // 标准化当前路径，确保以 /src/pages/ 开头
+        const targetPath = currentPath.startsWith('/src/pages/') 
+            ? currentPath 
+            : `/src/pages/${currentPath}`;
+
+        // 获取当前目录下的所有有效文件
+        const dirFiles = allPaths
+            .filter(path => {
+                // 排除配置文件和组件
+                if (path.includes('/components/') || 
+                    path.endsWith('.config.ts') || 
+                    path.endsWith('.config.tsx')) {
+                    return false;
+                }
+
+                // 检查是否属于当前目录
+                const isInCurrentDir = path.startsWith(targetPath + '/');
+                if (!isInCurrentDir) return false;
+
+                // 检查是否是直接子文件（不是更深层级的文件）
+                const remainingPath = path.slice(targetPath.length + 1);
+                return !remainingPath.includes('/');
+            });
+
+        // console.log('Target path:', targetPath);
+        // console.log('Dir files:', dirFiles);
+
+        // 如果只有一个文件，检查是否是 index.tsx 或同名文件
+        if (dirFiles.length === 1) {
+            const fileName = dirFiles[0].split('/').pop() || '';
+            const dirName = targetPath.split('/').pop() || '';
+            const isValid = fileName === 'index.tsx' || fileName === `${dirName}.tsx`;
+            
+            console.log('File name:', fileName);
+            console.log('Dir name:', dirName);
+            console.log('Is valid single file:', isValid);
+            
+            return isValid;
+        }
+
+        return false;
     }
 }
 
@@ -154,41 +200,62 @@ const routeTreeHandler = {
             const parts = routeUtils.getRelativePath(path)
             const config = routeConfigHandler.getRouteConfig(pages[path], path)
             const route = routeConfigHandler.createRouteNode(path, config)
-
+            // console.log(paths)
             // 处理路由层级
-            this.handleRouteLevels(route, parts, tree, moduleMap)
+            this.handleRouteLevels(route, parts, tree, moduleMap, paths)
         })
 
         return this.sortRoutes(tree)
     },
 
     // 处理路由层级
-    handleRouteLevels(route: RouteNode, parts: string[], tree: RouteNode[], moduleMap: Map<string, RouteNode>) {
-        const fileName = parts[parts.length - 1]
+    handleRouteLevels(route: RouteNode, parts: string[], tree: RouteNode[], moduleMap: Map<string, RouteNode>, allPaths: string[]) {
+        const fileName = parts[parts.length - 1];
+        const currentPath = parts.slice(0, -1).join('/');
+        
+        // 判断是否是一级路由
         const isFirstLevel = parts.length === 1 || 
-            (parts.length === 2 && routeUtils.isSameLevel(fileName, parts[0]))
+            (parts.length === 2 && routeUtils.isSameLevel(fileName, parts[0]));
 
-        if (isFirstLevel) {
-            tree.push(route)
-            return
+        // 判断当前路径是否是单文件路由
+        const isSingleFile = routeUtils.isSingleFileRoute(allPaths, currentPath);
+
+        if (isFirstLevel || isSingleFile) {
+            // 如果是单文件路由，修改路由路径为父级路径
+            if (isSingleFile) {
+                const parentParts = parts.slice(0, -1);
+                const lastPart = parentParts[parentParts.length - 1];
+                route.path = `/${parentParts.slice(0, -1).join('/')}/${lastPart}`.replace(/^\/+/, '/');
+            } else if (route.path) {
+                // 确保一级路由路径格式正确
+                route.path = route.path.replace(/^\/+/, '/');
+            }
+            
+            // 找到父级路由
+            const parentPath = parts.slice(0, -2).join('/');
+            const parentRoute = parentPath ? moduleMap.get(parentPath) : undefined;
+
+            if (parentRoute?.children) {
+                parentRoute.children.push(route);
+            } else {
+                tree.push(route);
+            }
+            return;
         }
 
-        // 处理多级路由
-        // let currentPath = ''
-        let currentParent: RouteNode | undefined
+        // 处理常规嵌套路由
+        let currentParent: RouteNode | undefined;
         
         // 逐级创建或获取父级路由
         for (let i = 0; i < parts.length - 1; i++) {
-            const parentPath = parts.slice(0, i + 1).join('/')
-        //   const  currentPath = parentPath
+            const parentPath = parts.slice(0, i + 1).join('/');
 
             if (!moduleMap.has(parentPath)) {
-                // 尝试获取父级配置
-                const configPath = `/src/pages/${parentPath}/${CONFIG_FILE_REGEX}`
+                const configPath = `/src/pages/${parentPath}/${CONFIG_FILE_REGEX}`;
                 const parentConfig = configs[configPath]?.routeConfig || {
                     title: parts[i].charAt(0).toUpperCase() + parts[i].slice(1),
                     icon: routeUtils.generateIcon(parts[i])
-                }
+                };
 
                 const parentRoute: RouteNode = {
                     path: `/${parentPath}`,
@@ -202,25 +269,22 @@ const routeTreeHandler = {
                     },
                     hidden: parentConfig.hidden,
                     children: []
-                }
+                };
 
-                moduleMap.set(parentPath, parentRoute)
+                moduleMap.set(parentPath, parentRoute);
 
                 if (i === 0) {
-                    // 一级路由直接添加到树中
-                    tree.push(parentRoute)
+                    tree.push(parentRoute);
                 } else if (currentParent?.children) {
-                    // 将当前路由添加到父路由的子路由中
-                    currentParent.children.push(parentRoute)
+                    currentParent.children.push(parentRoute);
                 }
             }
 
-            currentParent = moduleMap.get(parentPath)
+            currentParent = moduleMap.get(parentPath);
         }
 
-        // 将当前路由添加到最后一级父路由的子路由中
         if (currentParent?.children) {
-            currentParent.children.push(route)
+            currentParent.children.push(route);
         }
     },
 

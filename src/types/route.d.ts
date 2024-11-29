@@ -7,6 +7,7 @@ export interface RouteConfig {
   title?: string
   icon?: ReactNode
   layout?: boolean
+  element?: ReactNode 
   auth?: boolean
   roles?: string[]
   sort?: number
