@@ -6,7 +6,8 @@ import {
   DownloadOutlined, 
   UploadOutlined,
   MoreOutlined,
-  EyeOutlined
+  EyeOutlined,
+  DownOutlined
 } from '@ant-design/icons';
 import Table from '@/components/Table';
 import type { TableParams, TableColumnType } from '@/components/Table/types';
@@ -28,8 +29,8 @@ interface AdvancedUser {
 }
 
 const AdvancedTable: React.FC = () => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedRows, setSelectedRows] = useState<AdvancedUser[]>([]);
   const [dataSource, setDataSource] = useState<AdvancedUser[]>([
     {
       id: 1,
@@ -44,6 +45,8 @@ const AdvancedTable: React.FC = () => {
     },
     // 添加更多示例数据...
   ]);
+
+  const hasSelected = selectedRowKeys.length > 0;
 
   // 状态映射
   const statusMap = {
@@ -156,61 +159,51 @@ const AdvancedTable: React.FC = () => {
     },
   ];
 
-//   // 搜索表单
-//   const searchForm = (
-//     <>
-//       <Form.Item name="name" label="姓名">
-//         <Input placeholder="请输入姓名" allowClear />
-//       </Form.Item>
-//       <Form.Item name="department" label="部门">
-//         <Select
-//           placeholder="请选择部门"
-//           allowClear
-//           options={[
-//             { label: '技术部', value: '技术部' },
-//             { label: '产品部', value: '产品部' },
-//           ]}
-//         />
-//       </Form.Item>
-//       <Form.Item name="status" label="状态">
-//         <Select
-//           placeholder="请选择状态"
-//           allowClear
-//           options={Object.entries(statusMap).map(([value, { text }]) => ({
-//             label: text,
-//             value,
-//           }))}
-//         />
-//       </Form.Item>
-//       <Form.Item name="dateRange" label="创建时间">
-//         <RangePicker />
-//       </Form.Item>
-//     </>
-//   );
+  // 处理新建
+  const handleAdd = () => {
+    message.info('点击了新建按钮');
+  };
+
+  // 处理导入
+  const handleImport = () => {
+    message.info('点击了导入按钮');
+  };
+
+  // 处理导出
+  const handleExport = () => {
+    message.info('点击了导出按钮');
+  };
+
+  // 2. 添加工具栏按钮
+  const toolbarRight = (
+    <Space>
+      <Button icon={<UploadOutlined />} onClick={handleImport}>导入</Button>
+      <Button icon={<DownloadOutlined />} onClick={handleExport}>导出</Button>
+      <Button type="primary" onClick={handleAdd}>新建</Button>
+    </Space>
+  );
 
   // 处理导出选中
   const handleExportSelected = () => {
-    if (selectedRows.length === 0) {
+    if (selectedRowKeys.length === 0) {
       message.warning('请选择要导出的记录');
       return;
     }
-    message.success(`导出 ${selectedRows.length} 条记录`);
+    message.success(`导出 ${selectedRowKeys.length} 条记录`);
   };
 
   // 处理批量删除
   const handleBatchDelete = () => {
-    if (selectedRows.length === 0) {
+    if (selectedRowKeys.length === 0) {
       message.warning('请选择要删除的记录');
       return;
     }
-
     Modal.confirm({
       title: '确认批量删除',
-      content: `确定要删除选中的 ${selectedRows.length} 条记录吗？`,
+      content: `确定要删除选中的 ${selectedRowKeys.length} 条记录吗？`,
       onOk: () => {
-        const ids = selectedRows.map(row => row.id);
-        setDataSource(dataSource.filter(item => !ids.includes(item.id)));
-        setSelectedRows([]);
+        setDataSource(dataSource.filter(item => !selectedRowKeys.includes(item.id)));
+        setSelectedRowKeys([]);
         message.success('批量删除成功');
       },
     });
@@ -232,6 +225,16 @@ const AdvancedTable: React.FC = () => {
       onClick: handleBatchDelete,
     },
   ];
+
+  // 3. 批量操作工具栏
+  const toolbarLeft = hasSelected ? (
+    <Space>
+      <span>已选择 {selectedRowKeys.length} 项</span>
+      <Dropdown menu={{ items: batchActionItems }}>
+        <Button>批量操作<DownOutlined /></Button>
+      </Dropdown>
+    </Space>
+  ) : null;
 
   // 模拟API请求
   const fetchData = (params: TableParams) => {
@@ -280,61 +283,30 @@ const AdvancedTable: React.FC = () => {
     });
   };
 
-  // 处理新建
-  const handleAdd = () => {
-    message.info('点击了新建按钮');
-  };
-
-  // 处理导入
-  const handleImport = () => {
-    message.info('点击了导入按钮');
-  };
-
-  // 处理导出
-  const handleExport = () => {
-    message.info('点击了导出按钮');
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (newSelectedRowKeys: React.Key[]) => {
+      console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+      setSelectedRowKeys(newSelectedRowKeys);
+    },
   };
 
   return (
     <Table
+      rowSelection={rowSelection}
       columns={columns}
       dataSource={dataSource}
     //   searchForm={searchForm}
-      toolbarLeft={
-        selectedRows.length > 0 ? (
-          <Space>
-            <span>已选择 {selectedRows.length} 项</span>
-            <Dropdown menu={{ items: batchActionItems }}>
-              <Button>
-                批量操作
-              </Button>
-            </Dropdown>
-          </Space>
-        ) : null
-      }
-      toolbarRight={
-        <Space>
-          <Button icon={<UploadOutlined />} onClick={handleImport}>
-            导入
-          </Button>
-          <Button icon={<DownloadOutlined />} onClick={handleExport}>
-            导出
-          </Button>
-          <Button type="primary" onClick={handleAdd}>
-            新建
-          </Button>
-        </Space>
-      }
+      toolbarLeft={toolbarLeft}
+      toolbarRight={toolbarRight}
       loading={loading}
+      rowKey="id"
       onChange={handleTableChange}
       onRefresh={() => fetchData({})}
-      rowSelection={{
-        selectedRowKeys: selectedRows.map(row => row.id),
-        onChange: (_, rows) => setSelectedRows(rows),
-      }}
       cardProps={{
         title: '高级表格',
       }}
+      scroll={{ x: 1300 }}
     />
   );
 };
