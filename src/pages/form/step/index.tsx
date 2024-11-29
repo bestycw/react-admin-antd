@@ -204,7 +204,7 @@ const StepForm: React.FC = () => {
     };
 
     return (
-        <div className="p-6">
+        <div>
             <Card title="分步表单" className="shadow-md">
                 <Steps current={currentStep} items={steps.map(item => ({ title: item.title }))} className="mb-8" />
                 {renderContent()}

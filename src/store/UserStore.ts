@@ -182,7 +182,8 @@ class UserStore {
             // 检查路由是否需要权限控制
             if (newRoute.meta?.roles?.length) {
                 if (!this.hasAnyRole(newRoute.meta.roles)) {
-                    newRoute.hidden = true
+                    newRoute.meta = newRoute.meta || {};
+                    newRoute.meta.hidden = true;
                 }
             }
 
@@ -191,16 +192,17 @@ class UserStore {
                 newRoute.children = this.filterRoutesByRoles(newRoute.children)
                 
                 // 如果所有子路由都被隐藏，则也隐藏父路由
-                if (newRoute.children.every(child => child.hidden)) {
-                    newRoute.hidden = true
+                if (newRoute.children.every(child => child.meta?.hidden)) {
+                    newRoute.meta = newRoute.meta || {};
+                    newRoute.meta.hidden = true;
                 }
             }
 
             return newRoute
         }).filter(route => {
             // 过滤掉不需要显示的路由
-            if (route.hidden) {
-                return false
+            if (route.meta?.hidden) {
+                return false;
             }
 
             // 如果是根路由或没有子路由，直接返回
@@ -209,7 +211,7 @@ class UserStore {
             }
 
             // 如果有子路由，确保至少有一个可见的子路由
-            return route.children.some(child => !child.hidden)
+            return route.children.some(child => !child.meta?.hidden);
         })
     }
 

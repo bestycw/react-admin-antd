@@ -365,6 +365,6 @@ export const routeConfig: RouteConfig = {
     title: '个人中心',
     icon: <UserOutlined />,
     layout: true,
-    hidden: true,
+    hiddenInMenu: true,
     auth: false,
 }

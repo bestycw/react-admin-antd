@@ -176,9 +176,10 @@ const routeConfigHandler = {
                 sort: config.sort,
                 layout: config.layout,
                 hidden: config.hidden,
+                hiddenInMenu: config.hiddenInMenu,
                 auth: config.auth
             },
-            hidden: config.hidden,
+            // hidden: config.hidden,
             isFile: true
         }
     }
@@ -204,7 +205,7 @@ const routeTreeHandler = {
                 layout: parentConfig.layout,
                 auth: parentConfig.auth
             },
-            hidden: parentConfig.hidden,
+            // hidden: parentConfig.hidden,
             children: []
         };
     },
@@ -324,7 +325,7 @@ const routeTreeHandler = {
         return routes.map(route => {
             // 如果有子路由但没有 element
             if (route.children?.length && !route.element && !route.isFile) {
-                const firstVisibleChild = route.children.find(child => !child.hidden);
+                const firstVisibleChild = route.children.find(child => !child.meta?.hidden);
                 if (firstVisibleChild) {
                     route.redirect = firstVisibleChild.path;
                 }

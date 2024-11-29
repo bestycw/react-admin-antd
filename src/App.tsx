@@ -5,13 +5,10 @@ import './App.css'
 import './index.css'
 import { Suspense } from 'react'
 import routes from './router/index'
-
 import { useStore } from './store'
-// import React from 'react'
-// import PageProgress from '@/components/PageProgress'
 import { CoRouteObject } from './types/route.d'
 import { runInAction } from 'mobx'
-console.log('routes', routes)
+
 const App = observer(() => {
     const { UserStore, MenuStore ,ConfigStore} = useStore()
     let renderRoutes = routes
@@ -31,7 +28,7 @@ const App = observer(() => {
             renderRoutes = UserStore.allRoutes
         }
     }
-
+    console.log('renderRoutes', renderRoutes)
 
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>

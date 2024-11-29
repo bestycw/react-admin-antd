@@ -183,7 +183,7 @@ class MenuStore {
 
     routesToMenuItems(routes: CoRouteObject[]): MenuItem[] {
         const menu =  routes
-            .filter(route => !route.hidden)
+            .filter(route => !route.meta?.hidden)
             .map(route => {
                 this.routeList.push(route.path || '')
                 return {
@@ -191,7 +191,7 @@ class MenuStore {
                     label: route.meta?.title || '',
                     icon: route.meta?.icon,
                     path: route.path,
-                    hidden: route.meta?.hidden,
+                    hidden: route.meta?.hiddenInMenu,
                     children: route.children && route.children.length > 0 
                         ? this.routesToMenuItems(route.children) 
                         : undefined
