@@ -8,7 +8,7 @@ export interface TableColumnType<T = any> {
   dataIndex?: keyof T;
   key?: string;
   fixed?: 'left' | 'right';
-  width?: number;
+  width?: number | string;
   hideInSearch?: boolean;
   valueType?: ValueType;
   valueEnum?: Record<string, { text: string; status?: string }>;

@@ -14,7 +14,7 @@ export interface TableColumnType {
     valueType?: 'text' | 'select' | 'date' | 'dateRange' | 'number' | 'custom';
     hideInSearch?: boolean;
     hideInTable?: boolean;
-    width?: number;
+    width?: number | string;
     fixed?: 'left' | 'right' | boolean;
     required?: boolean;
     rules?: any[];
