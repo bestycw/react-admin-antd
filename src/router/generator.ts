@@ -186,6 +186,29 @@ const routeConfigHandler = {
 
 // 路由树处理函数
 const routeTreeHandler = {
+    // 创建父级路由节点
+    createParentRoute(parentPath: string, parts: string[]): RouteNode {
+        const configPath = `/src/pages/${parentPath}/${CONFIG_FILE_REGEX}`;
+        const parentConfig = configs[configPath]?.routeConfig || {
+            title: parts[parts.length - 1].charAt(0).toUpperCase() + parts[parts.length - 1].slice(1),
+            icon: routeUtils.generateIcon(parts[parts.length - 1])
+        };
+
+        return {
+            path: `/${parentPath}`,
+            meta: {
+                title: parentConfig.title,
+                icon: parentConfig.icon,
+                roles: parentConfig.roles,
+                sort: parentConfig.sort,
+                layout: parentConfig.layout,
+                auth: parentConfig.auth
+            },
+            hidden: parentConfig.hidden,
+            children: []
+        };
+    },
+
     // 创建路由树
     createRouteTree(paths: string[]): RouteNode[] {
         const tree: RouteNode[] = []
@@ -208,7 +231,7 @@ const routeTreeHandler = {
 
     // 处理路由层级
     handleRouteLevels(route: RouteNode, parts: string[], tree: RouteNode[], moduleMap: Map<string, RouteNode>, allPaths: string[]) {
-        const fileName = parts[parts.length - 1];
+        const fileName = routeUtils.paths.getLastPart(parts[parts.length - 1]);
         const currentPath = parts.slice(0, -1).join('/');
         
         // 判断是否是一级路由
@@ -229,9 +252,23 @@ const routeTreeHandler = {
                 route.path = route.path.replace(/^\/+/, '/');
             }
             
-            // 找到父级路由
+            // 找到或创建父级路由
             const parentPath = parts.slice(0, -2).join('/');
-            const parentRoute = parentPath ? moduleMap.get(parentPath) : undefined;
+            let parentRoute = parentPath ? moduleMap.get(parentPath) : undefined;
+
+            // 如果父级路由不存在且不是一级路由，创建父级路由
+            if (!parentRoute && parts.length > 2) {
+                parentRoute = this.createParentRoute(parentPath, parts.slice(0, -2));
+                moduleMap.set(parentPath, parentRoute);
+                // 递归处理父级路由
+                this.handleRouteLevels(
+                    parentRoute,
+                    parts.slice(0, -2),
+                    tree,
+                    moduleMap,
+                    allPaths
+                );
+            }
 
             if (parentRoute?.children) {
                 parentRoute.children.push(route);
@@ -249,26 +286,7 @@ const routeTreeHandler = {
             const parentPath = parts.slice(0, i + 1).join('/');
 
             if (!moduleMap.has(parentPath)) {
-                const configPath = `/src/pages/${parentPath}/${CONFIG_FILE_REGEX}`;
-                const parentConfig = configs[configPath]?.routeConfig || {
-                    title: parts[i].charAt(0).toUpperCase() + parts[i].slice(1),
-                    icon: routeUtils.generateIcon(parts[i])
-                };
-
-                const parentRoute: RouteNode = {
-                    path: `/${parentPath}`,
-                    meta: {
-                        title: parentConfig.title,
-                        icon: parentConfig.icon,
-                        roles: parentConfig.roles,
-                        sort: parentConfig.sort,
-                        layout: parentConfig.layout,
-                        auth: parentConfig.auth
-                    },
-                    hidden: parentConfig.hidden,
-                    children: []
-                };
-
+                const parentRoute = this.createParentRoute(parentPath, parts.slice(0, i + 1));
                 moduleMap.set(parentPath, parentRoute);
 
                 if (i === 0) {
@@ -283,6 +301,8 @@ const routeTreeHandler = {
 
         if (currentParent?.children) {
             currentParent.children.push(route);
+        } else {
+            tree.push(route);
         }
     },
 
