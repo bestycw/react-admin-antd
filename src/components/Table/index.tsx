@@ -1,21 +1,22 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react';
-import { Table as AntTable, Card, Space, Button, Tooltip, Form } from 'antd';
-import type { TableProps, TablePaginationConfig } from 'antd';
-import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import React, { useCallback, useState, useMemo } from 'react';
+import { Table as AntTable, Card, Space, Button, Tooltip } from 'antd';
+import type { TableProps } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
-import type { FilterValue, SorterResult } from 'antd/es/table/interface';
+import type { TablePaginationConfig } from 'antd/es/table';
+import type { FilterValue } from 'antd/es/table/interface';
+import SearchForm, { TableColumnType } from '../SearchForm';
 
 export interface TableParams {
   pagination?: TablePaginationConfig;
   sortField?: string;
   sortOrder?: string;
-  filters?: Record<string, FilterValue>;
+  filters?: Record<string, FilterValue | null>;
   [key: string]: any;
 }
 
-export interface ResponsiveTableProps<T> extends Omit<TableProps<T>, 'onChange'> {
-  className?: string;
-  searchForm?: React.ReactNode;
+export interface EnhancedTableProps<T> extends Omit<TableProps<T>, 'columns'> {
+  columns: TableColumnType[];
   toolbarLeft?: React.ReactNode;
   toolbarRight?: React.ReactNode;
   onSearch?: (values: any) => void;
@@ -28,12 +29,16 @@ export interface ResponsiveTableProps<T> extends Omit<TableProps<T>, 'onChange'>
     extra?: React.ReactNode;
   };
   loading?: boolean;
+  hideSearch?: boolean;
+  searchConfig?: {
+    defaultCollapsed?: boolean;
+    showCollapseButton?: boolean;
+  };
 }
 
-function Table<T extends object = any>(props: ResponsiveTableProps<T>) {
+function Table<T extends object = any>(props: EnhancedTableProps<T>) {
   const {
-    className,
-    searchForm,
+    columns: rawColumns,
     toolbarLeft,
     toolbarRight,
     onSearch,
@@ -43,12 +48,11 @@ function Table<T extends object = any>(props: ResponsiveTableProps<T>) {
     defaultParams,
     cardProps,
     loading,
-    columns = [],
-    scroll,
+    hideSearch = false,
+    searchConfig,
     ...restProps
   } = props;
 
-  const [form] = Form.useForm();
   const [tableParams, setTableParams] = useState<TableParams>(() => ({
     pagination: {
       current: 1,
@@ -60,9 +64,22 @@ function Table<T extends object = any>(props: ResponsiveTableProps<T>) {
     ...defaultParams,
   }));
 
-  // 计算所有列的最小总宽度
+  // 转换列配置为Table列配置
+  const columns = useMemo(() => {
+    return rawColumns
+      .filter(col => !col.hideInTable)
+      .map(col => ({
+        ...col,
+        render: col.render || undefined,
+      }));
+  }, [rawColumns]);
+
+  // 计算表格最小宽度
   const minWidth = useMemo(() => {
-    return columns.reduce((total, col) => total + ((col.width as number) || 150), 0);
+    return columns.reduce((total, col) => {
+      const width = typeof col.width === 'number' ? col.width : 150;
+      return total + width;
+    }, 0);
   }, [columns]);
 
   // 处理表格变化
@@ -70,19 +87,15 @@ function Table<T extends object = any>(props: ResponsiveTableProps<T>) {
     (
       pagination: TablePaginationConfig,
       filters: Record<string, FilterValue | null>,
-      sorter: SorterResult<T> | SorterResult<T>[],
-      extra: TableCurrentDataSource<T>
+      sorter: any
     ) => {
       const params: TableParams = {
+        ...tableParams,
         pagination,
-        filters: Object.fromEntries(
-          Object.entries(filters).filter(([_, value]) => value !== null)
-        ),
-        ...form.getFieldsValue(),
+        filters,
       };
 
-      // 处理排序
-      if ('field' in sorter && sorter.field && sorter.order) {
+      if (sorter.field && sorter.order) {
         params.sortField = sorter.field as string;
         params.sortOrder = sorter.order;
       }
@@ -90,25 +103,26 @@ function Table<T extends object = any>(props: ResponsiveTableProps<T>) {
       setTableParams(params);
       onChange?.(params);
     },
-    [form, onChange]
+    [onChange, tableParams]
   );
 
   // 处理搜索
-  const handleSearch = useCallback(async () => {
-    const values = await form.validateFields();
-    const newParams = {
-      ...tableParams,
-      pagination: { ...tableParams.pagination, current: 1 },
-      ...values,
-    };
-    setTableParams(newParams);
-    onSearch?.(values);
-    onChange?.(newParams);
-  }, [form, onSearch, onChange, tableParams]);
+  const handleSearch = useCallback(
+    (values: any) => {
+      const newParams = {
+        ...tableParams,
+        ...values,
+        pagination: { ...tableParams.pagination, current: 1 },
+      };
+      setTableParams(newParams);
+      onSearch?.(values);
+      onChange?.(newParams);
+    },
+    [onChange, onSearch, tableParams]
+  );
 
   // 处理重置
   const handleReset = useCallback(() => {
-    form.resetFields();
     const newParams = {
       ...defaultParams,
       pagination: { ...tableParams.pagination, current: 1 },
@@ -116,13 +130,7 @@ function Table<T extends object = any>(props: ResponsiveTableProps<T>) {
     setTableParams(newParams);
     onReset?.();
     onChange?.(newParams);
-  }, [form, onReset, onChange, defaultParams, tableParams]);
-
-  // 处理刷新
-  const handleRefresh = useCallback(() => {
-    onChange?.(tableParams);
-    onRefresh?.();
-  }, [onChange, onRefresh, tableParams]);
+  }, [defaultParams, onChange, onReset, tableParams]);
 
   // 渲染工具栏
   const renderToolbar = () => {
@@ -135,7 +143,7 @@ function Table<T extends object = any>(props: ResponsiveTableProps<T>) {
           {toolbarRight}
           {onRefresh && (
             <Tooltip title="刷新">
-              <Button icon={<ReloadOutlined />} onClick={handleRefresh} />
+              <Button icon={<ReloadOutlined />} onClick={() => onRefresh()} />
             </Tooltip>
           )}
         </Space>
@@ -143,43 +151,31 @@ function Table<T extends object = any>(props: ResponsiveTableProps<T>) {
     );
   };
 
-  // 渲染搜索表单
-  const renderSearchForm = () => {
-    if (!searchForm) return null;
-
-    return (
-      <Form form={form} className="mb-4">
-        <div className="flex flex-wrap gap-4">
-          {searchForm}
-          <Form.Item className="flex-none mb-0">
-            <Space>
-              <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
-                搜索
-              </Button>
-              <Button onClick={handleReset}>重置</Button>
-            </Space>
-          </Form.Item>
-        </div>
-      </Form>
-    );
-  };
-
   return (
     <Card
       {...cardProps}
-      className={classNames('w-full', className)}
+      className={classNames('w-full', props.className)}
       bodyStyle={{ padding: '16px 24px' }}
     >
-      {renderSearchForm()}
+      {!hideSearch && (
+        <SearchForm
+          columns={rawColumns}
+          onSearch={handleSearch}
+          onReset={handleReset}
+          loading={loading}
+          defaultCollapsed={searchConfig?.defaultCollapsed}
+          showCollapseButton={searchConfig?.showCollapseButton}
+        />
+      )}
       {renderToolbar()}
       <div className="w-full overflow-auto">
         <AntTable<T>
           {...restProps}
           columns={columns}
-          scroll={{ x: minWidth, ...scroll }}
           loading={loading}
           onChange={handleTableChange}
           pagination={tableParams.pagination}
+          scroll={{ x: minWidth }}
           className="w-full"
         />
       </div>

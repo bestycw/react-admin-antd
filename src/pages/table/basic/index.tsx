@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Input, Select, Button, Space, Tag, message } from 'antd';
+import { Button, Space, Tag, message } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
-import type { TableParams } from '@/components/Table';
+import type { TableParams, TableColumnType } from '@/components/Table/types';
 
 interface User {
   id: number;
@@ -21,34 +21,43 @@ const BasicTable: React.FC = () => {
   ]);
 
   // 列定义
-  const columns = [
+  const columns: TableColumnType<User>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
       width: 80,
       fixed: 'left' as const,
+      hideInSearch: true
     },
     {
       title: '姓名',
       dataIndex: 'name',
       width: 120,
       fixed: 'left' as const,
+      valueType: 'text'
     },
     {
       title: '年龄',
       dataIndex: 'age',
       width: 100,
       sorter: true,
+      hideInSearch: true
     },
     {
       title: '邮箱',
       dataIndex: 'email',
       width: 200,
+      hideInSearch: true
     },
     {
       title: '状态',
       dataIndex: 'status',
       width: 120,
+      valueType: 'select',
+      valueEnum: {
+        active: { text: '启用', status: 'Success' },
+        inactive: { text: '禁用', status: 'Error' }
+      },
       render: (status: string) => (
         <Tag color={status === 'active' ? 'success' : 'default'}>
           {status === 'active' ? '启用' : '禁用'}
@@ -60,46 +69,19 @@ const BasicTable: React.FC = () => {
       key: 'action',
       fixed: 'right' as const,
       width: 120,
+      hideInSearch: true,
       render: (_: any, record: User) => (
         <Space>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
+          <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             编辑
           </Button>
-          <Button
-            type="link"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record)}
-          >
+          <Button type="link" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record)}>
             删除
           </Button>
         </Space>
       ),
     },
   ];
-
-  // 搜索表单
-  const searchForm = (
-    <>
-      <Form.Item name="name" label="姓名">
-        <Input placeholder="请输入姓名" allowClear />
-      </Form.Item>
-      <Form.Item name="status" label="状态">
-        <Select
-          placeholder="请选择状态"
-          allowClear
-          options={[
-            { label: '启用', value: 'active' },
-            { label: '禁用', value: 'inactive' },
-          ]}
-        />
-      </Form.Item>
-    </>
-  );
 
   // 模拟API请求
   const fetchData = (params: TableParams) => {
@@ -136,7 +118,6 @@ const BasicTable: React.FC = () => {
     <Table
       columns={columns}
       dataSource={dataSource}
-      searchForm={searchForm}
       toolbarRight={
         <Button type="primary" onClick={handleAdd}>
           新建
@@ -153,3 +134,9 @@ const BasicTable: React.FC = () => {
 };
 
 export default BasicTable; 
+
+export const routeConfig ={
+    title: '基础表格',
+    
+    sort:1,
+}

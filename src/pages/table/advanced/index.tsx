@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Select, Button, Space, Tag, message, Modal, DatePicker, Dropdown } from 'antd';
+import { Form, Input, Select, Button, Space, Tag, message, Modal, DatePicker, Dropdown, Layout } from 'antd';
 import { 
   EditOutlined, 
   DeleteOutlined, 
@@ -9,9 +9,9 @@ import {
   EyeOutlined
 } from '@ant-design/icons';
 import Table from '@/components/Table';
-import type { TableParams } from '@/components/Table';
+import type { TableParams, TableColumnType } from '@/components/Table/types';
 import type { MenuProps } from 'antd';
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
 
@@ -53,7 +53,7 @@ const AdvancedTable: React.FC = () => {
   };
 
   // 列定义
-  const columns = [
+  const columns: TableColumnType<AdvancedUser>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -156,37 +156,37 @@ const AdvancedTable: React.FC = () => {
     },
   ];
 
-  // 搜索表单
-  const searchForm = (
-    <>
-      <Form.Item name="name" label="姓名">
-        <Input placeholder="请输入姓名" allowClear />
-      </Form.Item>
-      <Form.Item name="department" label="部门">
-        <Select
-          placeholder="请选择部门"
-          allowClear
-          options={[
-            { label: '技术部', value: '技术部' },
-            { label: '产品部', value: '产品部' },
-          ]}
-        />
-      </Form.Item>
-      <Form.Item name="status" label="状态">
-        <Select
-          placeholder="请选择状态"
-          allowClear
-          options={Object.entries(statusMap).map(([value, { text }]) => ({
-            label: text,
-            value,
-          }))}
-        />
-      </Form.Item>
-      <Form.Item name="dateRange" label="创建时间">
-        <RangePicker />
-      </Form.Item>
-    </>
-  );
+//   // 搜索表单
+//   const searchForm = (
+//     <>
+//       <Form.Item name="name" label="姓名">
+//         <Input placeholder="请输入姓名" allowClear />
+//       </Form.Item>
+//       <Form.Item name="department" label="部门">
+//         <Select
+//           placeholder="请选择部门"
+//           allowClear
+//           options={[
+//             { label: '技术部', value: '技术部' },
+//             { label: '产品部', value: '产品部' },
+//           ]}
+//         />
+//       </Form.Item>
+//       <Form.Item name="status" label="状态">
+//         <Select
+//           placeholder="请选择状态"
+//           allowClear
+//           options={Object.entries(statusMap).map(([value, { text }]) => ({
+//             label: text,
+//             value,
+//           }))}
+//         />
+//       </Form.Item>
+//       <Form.Item name="dateRange" label="创建时间">
+//         <RangePicker />
+//       </Form.Item>
+//     </>
+//   );
 
   // 处理导出选中
   const handleExportSelected = () => {
@@ -299,7 +299,7 @@ const AdvancedTable: React.FC = () => {
     <Table
       columns={columns}
       dataSource={dataSource}
-      searchForm={searchForm}
+    //   searchForm={searchForm}
       toolbarLeft={
         selectedRows.length > 0 ? (
           <Space>
@@ -340,3 +340,9 @@ const AdvancedTable: React.FC = () => {
 };
 
 export default AdvancedTable; 
+
+export const routeConfig ={
+    title: '高级表格',
+    
+    sort:2,
+}
