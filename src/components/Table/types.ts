@@ -3,12 +3,13 @@ import type { FilterValue } from 'antd/es/table/interface';
 
 export type ValueType = 'text' | 'select' | 'number' | 'date' | 'dateRange' | 'custom';
 
-export interface TableColumnType<T = any> {
+export interface TableColumnType<T = any> extends AntTableColumnType {
   title: string;
   dataIndex?: keyof T;
   key?: string;
   fixed?: 'left' | 'right';
   width?: number | string;
+  align?: 'left' | 'center' | 'right';
   hideInSearch?: boolean;
   valueType?: ValueType;
   valueEnum?: Record<string, { text: string; status?: string }>;

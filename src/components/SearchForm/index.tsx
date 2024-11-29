@@ -8,7 +8,7 @@ import classNames from 'classnames';
 const { RangePicker } = DatePicker;
 
 export interface TableColumnType {
-    title: string;
+    title: string | React.ReactNode;
     dataIndex?: string;
     key?: string;
     valueType?: 'text' | 'select' | 'date' | 'dateRange' | 'number' | 'custom';
