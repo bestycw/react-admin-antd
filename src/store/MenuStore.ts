@@ -191,13 +191,13 @@ class MenuStore {
                     label: route.meta?.title || '',
                     icon: route.meta?.icon,
                     path: route.path,
-                    hiddenMenu: route.meta?.hiddenMenu,
+                    hidden: route.meta?.hidden,
                     children: route.children && route.children.length > 0 
                         ? this.routesToMenuItems(route.children) 
                         : undefined
                 }
             })
-            .filter(item => item.label && !item.hiddenMenu);
+            .filter(item => item.label && !item.hidden);
         return menu
     }
 

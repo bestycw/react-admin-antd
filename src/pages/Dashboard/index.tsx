@@ -92,6 +92,9 @@ const Dashboard: React.FC = () => {
     smooth: true,
     areaStyle: {
       fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff',
+    },
+    line: {
+      color: '#1890ff'
     }
   };
 
@@ -101,8 +104,14 @@ const Dashboard: React.FC = () => {
     colorField: 'type',
     radius: 0.8,
     label: {
-      type: 'outer'
-    }
+      type: 'outer',
+      content: '{name} {percentage}'
+    },
+    interactions: [
+      {
+        type: 'element-active'
+      }
+    ]
   };
 
   return (

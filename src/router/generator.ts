@@ -175,7 +175,7 @@ const routeConfigHandler = {
                 roles: config.roles,
                 sort: config.sort,
                 layout: config.layout,
-                hiddenMenu: config.hiddenMenu,
+                hidden: config.hidden,
                 auth: config.auth
             },
             hidden: config.hidden,
