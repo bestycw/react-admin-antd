@@ -8,8 +8,9 @@
   --bg-overlay: rgba(0, 0, 0, 0.05);
   --bg-hover: rgba(0, 0, 0, 0.04);
   --bg-active: rgba(0, 0, 0, 0.08);
-  
-  /* 文字颜色系统 */
+  --layout-bg:  white;  --layout-bg:  radial-gradient(circle at top left, #f0f9ff, transparent),
+  radial-gradient(circle at bottom right, #bfdbfe, transparent),
+  linear-gradient(135deg, #e0f2fe, #dbeafe);/* 文字颜色系统 */
   --text-primary: #1f2937;
   --text-secondary: #4b5563;
   --text-tertiary: #6b7280;
@@ -101,9 +102,9 @@
 :root.theme-dynamic {
   
   /* 背景效果 */
-  --bg-opacity: 0.85;
+  --bg-opacity: 0.70;
   --blur-amount: 4px;
-  
+
   /* 边框效果 */
   /* --style-border: 1px solid rgba(255, 255, 255, 0.2); */
   --style-border: unset;
@@ -141,7 +142,7 @@
   /* 背景效果 */
   --bg-opacity: 1;
   --blur-amount: 0;
-  
+  --layout-bg:  white;
   /* 边框效果 */
   /* --style-border: 1px solid var(--border-primary); */
   --style-radius: 2px;
@@ -180,7 +181,9 @@
   --bg-overlay: rgba(255, 255, 255, 0.1);
   --bg-hover: rgba(255, 255, 255, 0.08);
   --bg-active: rgba(255, 255, 255, 0.12);
-  
+  --layout-bg:      radial-gradient(circle at 100% 100%, #334155 0%, transparent 50%),
+  radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%),
+  linear-gradient(135deg, #334155 0%, #1e293b 50%, #0f172a 100%);
   /* 文字颜色系统 - 调整为更柔和的色调 */
   --text-primary: rgba(255, 255, 255, 0.85);    /* 主要文字，不那么刺眼的白色 */
   --text-secondary: rgba(255, 255, 255, 0.65);  /* 次要文字，更柔和 */
@@ -333,3 +336,11 @@
 }
 
 /* ... 其他主题相关样式 ... */ 
+.bg-gradient-animated {
+  animation: gradientShift 15s ease infinite;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+} 

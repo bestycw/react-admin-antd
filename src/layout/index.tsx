@@ -10,6 +10,8 @@ import SettingDrawer from '@/components/SettingDrawer'
 import PageTransition from '@/components/PageTransition'
 import { Spin } from 'antd'
 import GlobalSearch from '../components/GlobalSearch'
+import './global.css'
+// import bgImage from '@/assets/bg.png'
 // import { useStore } from '../store'
 
 const Layout = observer(() => {
@@ -17,9 +19,9 @@ const Layout = observer(() => {
   // const { MenuStore } = useStore()
 
   return (
-    <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <AntLayout className="min-h-screen bg-gradient bg-gradient-animated" style={{ background:'var(--layout-bg)'}}>
       <Sidebar />     
-      <AntLayout className="bg-gray-100 dark:bg-gray-900 h-screen">
+      <AntLayout className="h-screen bg-transparent">
         <Header style={{ marginBottom: 0 }} />        
         <Tab />
         <Content>
