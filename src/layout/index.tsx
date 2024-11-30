@@ -10,9 +10,6 @@ import SettingDrawer from '@/components/SettingDrawer'
 import PageTransition from '@/components/PageTransition'
 import { Spin } from 'antd'
 import GlobalSearch from '../components/GlobalSearch'
-import './global.css'
-// import bgImage from '@/assets/bg.png'
-// import { useStore } from '../store'
 
 const Layout = observer(() => {
   console.log('layout init')
