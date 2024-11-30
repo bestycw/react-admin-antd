@@ -1,7 +1,8 @@
 import { message } from 'antd';
 import NProgress from '../nprogress';
+import { AxiosRequestConfig, AxiosProgressEvent } from 'axios';
 
-export interface BaseRequestConfig {
+export interface BaseRequestConfig<D = any> extends AxiosRequestConfig<D> {
   headers?: Record<string, string>;
   baseURL?: string;
   url?: string;
@@ -15,8 +16,8 @@ export interface BaseRequestConfig {
   useCache?: boolean;
   cacheTime?: number;
   responseType?: 'json' | 'text' | 'blob' | 'arraybuffer';
-  onUploadProgress?: (progress: number) => void;
-  onDownloadProgress?: (progress: number) => void;
+  onUploadProgress?: (progressEvent: any) => void;
+  onDownloadProgress?: (progressEvent: any) => void;
   signal?: AbortSignal;
 }
 

@@ -3,16 +3,16 @@ import { Button, Tag, Modal, Form, Input, Select, message, Space } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, LockOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
 import type { TableColumnType } from '@/components/Table/types';
-import request from '@/utils/request';
-
-interface UserType {
-  id: number;
-  username: string;
-  email: string;
-  role: 'admin' | 'user';
-  status: 'active' | 'inactive';
-  lastLogin: string;
-}
+import {
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  resetUserPassword,
+  type UserType,
+  type CreateUserParams,
+  type UpdateUserParams,
+} from '@/services/user';
 
 const UserManagement: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -26,8 +26,9 @@ const UserManagement: React.FC = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const { data } = await request.get('/api/users');
-      setDataSource(data.data || []);
+      const response = await getUsers();
+    //   console.log('response', response);
+      setDataSource(response.list || []);
     } catch (error: any) {
       message.error(error.message || '获取用户列表失败');
     } finally {
@@ -133,7 +134,7 @@ const UserManagement: React.FC = () => {
       content: `确定要删除用户"${record.username}"吗？`,
       onOk: async () => {
         try {
-          await request.delete(`/api/users/${record.id}`);
+          await deleteUser(record.id);
           message.success('删除成功');
           fetchUsers();
         } catch (error: any) {
@@ -149,7 +150,7 @@ const UserManagement: React.FC = () => {
       content: `确定要重置用户"${record.username}"的密码吗？`,
       onOk: async () => {
         try {
-          await request.post(`/api/users/${record.id}/reset-password`);
+          await resetUserPassword(record.id);
           message.success('密码重置成功');
         } catch (error: any) {
           message.error(error.message || '密码重置失败');
@@ -163,11 +164,11 @@ const UserManagement: React.FC = () => {
       const values = await form.validateFields();
       if (currentUser) {
         // 更新用户
-        await request.put(`/api/users/${currentUser.id}`, values);
+        await updateUser(currentUser.id, values as UpdateUserParams);
         message.success('更新成功');
       } else {
         // 创建用户
-        await request.post('/api/users', values);
+        await createUser(values as CreateUserParams);
         message.success('创建成功');
       }
       setModalVisible(false);

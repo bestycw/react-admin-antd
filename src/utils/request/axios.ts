@@ -1,4 +1,4 @@
-import { BaseRequest, BaseRequestConfig, ResponseData } from './base';
+import { BaseRequest, BaseRequestConfig } from './base';
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, AxiosProgressEvent } from 'axios';
 import { message } from 'antd';
 
