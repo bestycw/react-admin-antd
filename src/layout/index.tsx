@@ -10,6 +10,7 @@ import SettingDrawer from '@/components/SettingDrawer'
 import PageTransition from '@/components/PageTransition'
 import { Spin } from 'antd'
 import GlobalSearch from '../components/GlobalSearch'
+import Loading from '@/components/Loading'
 
 const Layout = observer(() => {
   console.log('layout init')
@@ -24,7 +25,7 @@ const Layout = observer(() => {
         <Content>
           <Suspense fallback={
             <div className="flex items-center justify-center h-full">
-              <Spin size="large" />
+              <Loading></Loading>
             </div>
           }>
             <PageTransition>
