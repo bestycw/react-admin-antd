@@ -1,4 +1,5 @@
 import { BaseRequest, BaseRequestConfig, Interceptor } from './base';
+import { authService } from '../../services/auth';
 
 export class FetchRequest extends BaseRequest {
   public interceptors = {
@@ -12,18 +13,27 @@ export class FetchRequest extends BaseRequest {
     // 添加默认的请求拦截器
     this.interceptors.request.use(
       async (config: BaseRequestConfig) => {
-        // 处理 token
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const tokenExpires = localStorage.getItem('tokenExpires') || sessionStorage.getItem('tokenExpires');
         const headers = { ...(config.headers || {}) };
         
         if (token) {
-          headers['Authorization'] = `Bearer ${token}`;
+          // 检查 token 是否即将过期
+          if (tokenExpires && Number(tokenExpires) - Date.now() < 300000) { // 5分钟内过期
+            try {
+              await authService.refreshToken();
+              // 获取新的 token
+              const newToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+              if (newToken) {
+                headers['Authorization'] = `Bearer ${newToken}`;
+              }
+            } catch (error) {
+              console.error('Token refresh failed in interceptor:', error);
+            }
+          } else {
+            headers['Authorization'] = `Bearer ${token}`;
+          }
         }
-
-        // 设置默认 Content-Type
-        // if (!headers['Content-Type']) {
-        //   headers['Content-Type'] = 'application/json';
-        // }
 
         return {
           ...config,

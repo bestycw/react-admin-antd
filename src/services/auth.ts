@@ -25,6 +25,8 @@ export interface UserInfo {
 
 export interface LoginResponse {
   token: string;
+  refreshToken: string;
+  expiresIn: number;
   user: UserInfo;
 }
 
@@ -56,24 +58,92 @@ interface ResetPasswordParams {
   newPassword: string;
 }
 
+interface TokenInfo {
+  token: string;
+  refreshToken: string;
+  expiresIn: number;
+}
+
 class AuthService {
-  async login(params: LoginParams): Promise<LoginResponse> {
-    const response = await fetchRequest.post<LoginResponse>('/api/auth/login', params);
-    
-    if (params.remember) {
-      localStorage.setItem('token', response.token);
-    } else {
-      sessionStorage.setItem('token', response.token);
+  private refreshTokenTimeout?: NodeJS.Timeout;
+
+  private startRefreshTokenTimer(expiresIn: number) {
+    this.stopRefreshTokenTimer();
+    const timeout = (expiresIn - 300) * 1000;
+    if (timeout > 0) {
+      this.refreshTokenTimeout = setTimeout(() => this.refreshToken(), timeout);
     }
-    return response;
+  }
+
+  async refreshToken(): Promise<void> {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
+      if (!refreshToken) return;
+
+      const response = await fetchRequest.post<TokenInfo>('/api/auth/refresh-token', { refreshToken });
+      console.log('response', response);
+      if (!response.token || !response.refreshToken || !response.expiresIn) {
+        throw new Error('Invalid token response');
+      }
+
+      const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
+      storage.setItem('token', response.token);
+      storage.setItem('refreshToken', response.refreshToken);
+      storage.setItem('tokenExpires', String(Date.now() + response.expiresIn * 1000));
+
+      this.startRefreshTokenTimer(response.expiresIn);
+    } catch (error:any) {
+      console.error('Token refresh failed:', error);
+      if (error.response?.status === 401) {
+        this.logout();
+        window.location.href = '/auth/login';
+      }
+    }
+  }
+
+  async login(params: LoginParams): Promise<LoginResponse> {
+    try {
+      const response = await fetchRequest.post<LoginResponse>('/api/auth/login', params);
+      // console.log('Login response:', response);
+
+      if (!response || !response.token || !response.refreshToken) {
+        console.error('Invalid login response structure:', response);
+        throw new Error('登录响应格式错误');
+      }
+
+      const storage = params.remember ? localStorage : sessionStorage;
+      storage.setItem('token', response.token);
+      storage.setItem('refreshToken', response.refreshToken);
+      storage.setItem('tokenExpires', String(Date.now() + response.expiresIn * 1000));
+
+      this.startRefreshTokenTimer(response.expiresIn);
+      return response;
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      if (error.response) {
+        throw new Error(error.response.message || '登录失败');
+      }
+      throw error;
+    }
+  }
+
+  private stopRefreshTokenTimer() {
+    if (this.refreshTokenTimeout) {
+      clearTimeout(this.refreshTokenTimeout);
+    }
   }
 
   async logout(): Promise<void> {
     try {
       await fetchRequest.post('/api/auth/logout');
     } finally {
+      this.stopRefreshTokenTimer();
       localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('tokenExpires');
       sessionStorage.removeItem('token');
+      sessionStorage.removeItem('refreshToken');
+      sessionStorage.removeItem('tokenExpires');
     }
   }
 
