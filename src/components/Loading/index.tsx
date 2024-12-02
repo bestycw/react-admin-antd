@@ -1,51 +1,19 @@
-// import { div } from 'framer-motion/client'
-// import { div } from 'framer-motion/client';
-import './index.scss'
-const Loading = () => {
-    //小球交替的Loading组件
-    return (
+import './index.scss';
 
-    <div className='container'>
-          <div className="loading">
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-           <div className="dot"></div>
-        </div>
-    </div>
-      
-    )
+interface LoadingProps {
+  className?: string;
 }
- export default Loading;
+
+const Loading: React.FC<LoadingProps> = ({ className }) => {
+  return (
+    <div className={`container ${className || ''}`}>
+      <div className="loading">
+        {Array.from({ length: 24 }).map((_, index) => (
+          <div key={index} className="dot" />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Loading;
