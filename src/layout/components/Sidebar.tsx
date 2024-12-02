@@ -7,7 +7,7 @@ import { Layout } from 'antd'
 import CustomDrawer from '@/components/CustomDrawer'
 import  { useMemo } from 'react'
 import { useStore } from '@/store'
-import bgImage from '@/assets/bg.png'
+// import bgImage from '@/assets/bg.png'
 const { Sider } = Layout
 
 const Sidebar = observer(() => {

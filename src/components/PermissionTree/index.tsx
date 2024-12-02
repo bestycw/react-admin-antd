@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Input, Collapse, Checkbox, Space, Divider } from 'antd';
+import { Card, Input, Collapse, Checkbox, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 

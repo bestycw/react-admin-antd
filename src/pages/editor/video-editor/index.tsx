@@ -6,7 +6,7 @@ import PropertyPanel from './components/PropertyPanel';
 import Timeline from './components/Timeline';
 import styles from './index.module.scss';
 
-const { Content } = Layout;
+// const { Content } = Layout;
 
 const VideoEditor: React.FC = () => {
   const [selectedClip, setSelectedClip] = useState<string | null>(null);
@@ -14,7 +14,7 @@ const VideoEditor: React.FC = () => {
   const [currentFile, setCurrentFile] = useState<File | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
-
+  console.log(currentFile)
   const handleFileSelect = (file: File) => {
     setCurrentFile(file);
     if (videoRef.current) {

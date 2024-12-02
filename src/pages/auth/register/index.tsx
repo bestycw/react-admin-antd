@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox, message, Tooltip } from 'antd';
-import { UserOutlined, LockOutlined, MobileOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Checkbox, message } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Particles from 'react-particles';
@@ -36,9 +36,9 @@ const RegisterPage: React.FC = () => {
     // const { countdown, sendCode } = useVerificationCode('register');
 
     // 添加返回登录处理函数
-    const handleBackToLogin = () => {
-        navigate('/auth/login');
-    };
+    // const handleBackToLogin = () => {
+    //     navigate('/auth/login');
+    // };
 
     // 粒子背景初始化
     const particlesInit = async (engine: Engine) => {

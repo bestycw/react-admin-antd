@@ -15,7 +15,7 @@ import { RouteConfig } from '@/types/route';
 import PageTransition from '@/components/PageTransition';
 import MobileVerification from '@/components/MobileVerification';
 import PasswordInput from '@/components/PasswordInput';
-import { useVerificationCode } from '@/hooks/useVerificationCode';
+// import { useVerificationCode } from '@/hooks/useVerificationCode';
 
 export const routeConfig: RouteConfig = {
     title: '忘记密码',

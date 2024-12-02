@@ -8,7 +8,7 @@ import Tab from './components/Tab'
 import  { Suspense } from 'react'
 import SettingDrawer from '@/components/SettingDrawer'
 import PageTransition from '@/components/PageTransition'
-import { Spin } from 'antd'
+// import { Spin } from 'antd'
 import GlobalSearch from '../components/GlobalSearch'
 import Loading from '@/components/Loading'
 

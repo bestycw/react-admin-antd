@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Form, Input, Button, Select, DatePicker, InputNumber, Upload, Space, message, Divider } from 'antd';
-import { FormOutlined, InboxOutlined } from '@ant-design/icons';
+import {  InboxOutlined } from '@ant-design/icons';
 import type { RouteConfig } from '@/types/route';
 import type { UploadFile } from 'antd/es/upload/interface';
 

@@ -131,7 +131,7 @@ const Timeline: React.FC<TimelineProps> = ({
     };
     setTracks([...tracks, newTrack]);
   };
-
+  console.log(handleAddTrack);
   // 删除轨道
   const handleDeleteTrack = (trackId: string) => {
     setTracks(tracks.filter(track => track.id !== trackId));

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Upload, Button, Slider, message, Select, Tabs, Radio, InputNumber, Tooltip } from 'antd';
+import { Card, Upload, Button, Slider, message, Select, Tabs, Radio, Tooltip } from 'antd';
 import {
   PictureOutlined,
   UploadOutlined,

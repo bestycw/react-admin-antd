@@ -14,7 +14,7 @@ interface MaterialItem {
   duration: number;
 }
 
-const MaterialPanel: React.FC<MaterialPanelProps> = ({ onSelect, onPreview }) => {
+const MaterialPanel: React.FC<MaterialPanelProps> = ({  onPreview }) => {
   const [materials, setMaterials] = useState<MaterialItem[]>([]);
 
   const handleBeforeUpload = async (file: File) => {

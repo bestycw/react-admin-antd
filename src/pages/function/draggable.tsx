@@ -39,15 +39,15 @@ interface NestedItem {
   color?: string;
 }
 
-interface DraggableItem {
-  id: string;
-  content: string;
-}
+// interface DraggableItem {
+//   id: string;
+//   content: string;
+// }
 
-interface DraggableListProps {
-  items: DraggableItem[];
-  setItems: React.Dispatch<React.SetStateAction<DraggableItem[]>>;
-}
+// interface DraggableListProps {
+//   items: DraggableItem[];
+//   setItems: React.Dispatch<React.SetStateAction<DraggableItem[]>>;
+// }
 
 // 生成示例数据
 const generateItems = (count: number) => 
@@ -126,7 +126,7 @@ const generateNestedItems = (): NestedItem[] => [
 ];
 
 const DraggablePage: React.FC = () => {
-  const [verticalItems, setVerticalItems] = useState(generateItems(6));
+  const [verticalItems, setVerticalItems] = useState<any[]>(generateItems(6));
   const [horizontalItems, setHorizontalItems] = useState(generateItems(8));
   const [gridItems, setGridItems] = useState(generateItems(12));
   const [kanbanItems, setKanbanItems] = useState({
@@ -292,9 +292,9 @@ const GridLayout = ({ items, setItems }: { items: any[]; setItems: (items: any[]
   return (
     <DndContext onDragEnd={({ active, over }) => {
       if (over && active.id !== over.id) {
-        setItems((items) => {
-          const oldIndex = items.findIndex((item) => item.id === active.id);
-          const newIndex = items.findIndex((item) => item.id === over.id);
+        setItems((items: any[]) => {
+          const oldIndex = items.findIndex((item: any) => item.id === active.id);
+          const newIndex = items.findIndex((item: any) => item.id === over.id);
           return arrayMove(items, oldIndex, newIndex);
         });
       }
@@ -322,7 +322,16 @@ const GridLayout = ({ items, setItems }: { items: any[]; setItems: (items: any[]
 };
 
 // 看板视图组件
-const KanbanBoard = ({ items, setItems }) => {
+interface KanbanBoardProps {
+  items: {
+    todo: any[];
+    inProgress: any[];
+    done: any[];
+  };
+  setItems: (items: any) => void;
+}
+
+const KanbanBoard: React.FC<KanbanBoardProps> = ({ items, setItems }) => {
   const columns = [
     { id: 'todo', title: '待办', items: items.todo },
     { id: 'inProgress', title: '进行中', items: items.inProgress },
@@ -453,7 +462,7 @@ const NestedDraggable: React.FC<{
           }}>
             <SortableContext items={group.items?.map(item => item.id) || []}>
               <div className="space-y-2">
-                {group.items?.map(item => (
+                {group.items?.map((item: NestedItem) => (
                   <SortableItem
                     key={item.id}
                     id={item.id}
@@ -478,7 +487,13 @@ const NestedDraggable: React.FC<{
 };
 
 // Add this component definition before your list components
-const SortableItem = ({ id, children, className }) => {
+interface SortableItemProps {
+  id: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const SortableItem: React.FC<SortableItemProps> = ({ id, children, className }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
   
   return (

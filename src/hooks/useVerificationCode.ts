@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { authService } from '@/services/auth';
-import { FormInstance } from 'antd';
+// import { FormInstance } from 'antd';
 
 export const useVerificationCode = (type: 'register' | 'reset') => {
   const { t } = useTranslation();

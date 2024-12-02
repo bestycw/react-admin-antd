@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Tooltip } from 'antd';
-import type { Rule } from 'antd/es/form';
+// import type { Rule } from 'antd/es/form';
 import { LockOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { validatePassword, getPasswordStrength } from '@/utils/validator';

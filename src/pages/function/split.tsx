@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Tabs, Button, Select } from 'antd';
+import { Card, Tabs } from 'antd';
 import Split from 'react-split';
 import { BorderHorizontalOutlined, BorderVerticleOutlined, AppstoreOutlined } from '@ant-design/icons';
 import './split.scss';

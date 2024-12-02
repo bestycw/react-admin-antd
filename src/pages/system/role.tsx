@@ -10,7 +10,6 @@ import {
   updateRole,
   deleteRole,
   type RoleType,
-  type CreateRoleParams,
 } from '@/services/role';
 
 const steps = [
