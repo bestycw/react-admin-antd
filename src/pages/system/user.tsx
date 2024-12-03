@@ -13,6 +13,7 @@ import {
   type CreateUserParams,
   type UpdateUserParams,
 } from '@/services/user';
+import UserForm from './components/UserForm';
 
 const UserManagement: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -26,6 +27,7 @@ const UserManagement: React.FC = () => {
     pageSize: 10,
     total: 0
   });
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   // 获取用户列表
   const fetchUsers = async (params = {}) => {
@@ -183,24 +185,22 @@ const UserManagement: React.FC = () => {
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
+      setConfirmLoading(true);
+
       if (currentUser) {
-        // 更新用户
-        await updateUser(currentUser.id, values as UpdateUserParams);
+        await updateUser(currentUser.id, values);
         message.success('更新成功');
       } else {
-        // 创建用户
-        await createUser(values as CreateUserParams);
+        await createUser(values);
         message.success('创建成功');
       }
+
       setModalVisible(false);
-      setCurrentUser(null);  // 清空当前用户
-      form.resetFields();    // 清空表单
-      fetchUsers();         // 刷新列表
+      fetchUsers();
     } catch (error: any) {
-      if (error.name === 'ValidationError') {
-        return;
-      }
       message.error(error.message || '操作失败');
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -245,69 +245,22 @@ const UserManagement: React.FC = () => {
       />
 
       <Modal
-        title={modalTitle}
+        title={currentUser ? '编辑用户' : '新增用户'}
         open={modalVisible}
+        width={600}
         onOk={handleModalOk}
-        onCancel={handleModalCancel}
-        destroyOnClose
+        onCancel={() => setModalVisible(false)}
+        confirmLoading={confirmLoading}
       >
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ status: 'active', roles: ['user'] }}
+          initialValues={{
+            status: 'active',
+            ...currentUser
+          }}
         >
-          <Form.Item
-            name="username"
-            label="用户名"
-            rules={[
-              { required: true, message: '请输入用户名' },
-              { min: 3, max: 30, message: '用户名长度为3-30个字符' }
-            ]}
-          >
-            <Input placeholder="请输入用户名" />
-          </Form.Item>
-          
-          {!currentUser && (
-            <Form.Item
-              name="password"
-              label="密码"
-              tooltip="不填写将使用默认密码：123456"
-            >
-              <Input.Password placeholder="请输入密码，不填则使用默认密码" />
-            </Form.Item>
-          )}
-          
-          <Form.Item
-            name="email"
-            label="邮箱"
-            rules={[
-              { type: 'email', message: '请输入正确的邮箱格式' }
-            ]}
-          >
-            <Input placeholder="请输入邮箱（选填）" />
-          </Form.Item>
-          
-          <Form.Item
-            name="roles"
-            label="角色"
-            rules={[{ required: true, message: '请选择角色' }]}
-          >
-            <Select mode="multiple">
-              <Select.Option value="admin">管理员</Select.Option>
-              <Select.Option value="user">普通用户</Select.Option>
-            </Select>
-          </Form.Item>
-          
-          <Form.Item
-            name="status"
-            label="状态"
-            rules={[{ required: true, message: '请选择状态' }]}
-          >
-            <Select>
-              <Select.Option value="active">启用</Select.Option>
-              <Select.Option value="inactive">禁用</Select.Option>
-            </Select>
-          </Form.Item>
+          <UserForm initialValues={currentUser} />
         </Form>
       </Modal>
     </>

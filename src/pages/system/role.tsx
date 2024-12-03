@@ -131,7 +131,7 @@ const RoleManagement: React.FC = () => {
     setCurrentStep(0);
     form.setFieldsValue({
       ...record,
-      permissions: record.permissions || []
+      dynamicRoutesList: record.dynamicRoutesList || []
     });
     setModalVisible(true);
   };
@@ -161,8 +161,8 @@ const RoleManagement: React.FC = () => {
         console.log('Basic info saved:', basicInfo);
       } else {
         // 验证权限配置
-        await form.validateFields(['permissions']);
-        const permissionInfo = form.getFieldsValue(['permissions']);
+        await form.validateFields(['dynamicRoutesList']);
+        const permissionInfo = form.getFieldsValue(['dynamicRoutesList']);
         console.log('Permission info saved:', permissionInfo);
       }
       setCurrentStep(currentStep + 1);
@@ -177,26 +177,24 @@ const RoleManagement: React.FC = () => {
 
   const handleModalOk = async () => {
     try {
-      // 验证所有字段
       await form.validateFields([
         'name',
         'code',
         'description',
         'status',
-        'permissions'
+        'dynamicRoutesList'
       ]);
       
-      const values = form.getFieldsValue(true); // 获取所有字段值
-      console.log('Form values:', values);
-      
+      const values = form.getFieldsValue(true); 
+      console.log('values', values)
       const roleData = {
         name: values.name,
         code: values.code,
         description: values.description,
         status: values.status || 'active',
-        permissions: values.permissions || []
+        dynamicRoutesList: checkAll ? ['*'] : values.dynamicRoutesList || [] // 如果全选则设置为 ['*']
       };
-
+      
       if (currentRole) {
         await updateRole(currentRole.id, roleData);
         message.success('更新成功');
@@ -275,14 +273,14 @@ const RoleManagement: React.FC = () => {
                   setCheckAll(newCheckAll);
                   const newKeys = newCheckAll ? allKeys : [];
                   setCheckedKeys(newKeys);
-                  form.setFieldsValue({ permissions: newKeys });
+                  form.setFieldsValue({ dynamicRoutesList: newKeys });
                 }}
               >
                 {checkAll ? '取消全选' : '全部选中'}
               </Button>
             </div>
             <Form.Item
-              name="permissions"
+              name="dynamicRoutesList"
               label="权限"
               rules={[{ required: true, message: '请选择权限' }]}
             >
@@ -305,7 +303,7 @@ const RoleManagement: React.FC = () => {
                 }}
                 onCheck={(keys: any) => {
                   setCheckedKeys(keys);
-                  form.setFieldsValue({ permissions: keys });
+                  form.setFieldsValue({ dynamicRoutesList: keys });
                   setCheckAll(keys.length === allKeys.length);
                 }}
               />
@@ -334,14 +332,14 @@ const RoleManagement: React.FC = () => {
       routes = rootRoute.children;
     }
 
-    // 递归处理所有子路由
+    // 递归处理所有子路由，只返回有 path 的路由作为权限节点
     return routes.map(route => ({
       title: route.meta?.title || route.path || '未命名',
       key: route.path || '',
       children: route.children ? generatePermissionTree(route.children) : undefined,
-      disabled: !route.meta?.title,
-      selectable: !!route.meta?.title
-    })).filter((node): node is TreeNode => !!node.title);
+      disabled: !route.path, // 没有 path 的节点不可选
+      selectable: !!route.path
+    })).filter((node): node is TreeNode => !!node.key);
   };
 
   const getAllKeys = (treeData: TreeNode[]): string[] => {
@@ -416,7 +414,7 @@ const RoleManagement: React.FC = () => {
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ status: 'active', permissions: [] }}
+          initialValues={{ status: 'active', dynamicRoutesList: [] }}
         >
           {renderStepContent()}
         </Form>

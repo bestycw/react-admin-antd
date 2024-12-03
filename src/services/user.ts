@@ -1,12 +1,13 @@
 import { fetchRequest } from '@/utils/request';
 
 export interface UserType {
-  id: number;
+  id: any;
   username: string;
   email: string;
   roles: string[];
   status: 'active' | 'inactive';
   lastLogin: string;
+  createdAt: string;
 }
 
 export interface CreateUserParams {
@@ -24,20 +25,22 @@ export interface UpdateUserParams extends Omit<CreateUserParams, 'password'> {
 // 模拟数据
 const mockUsers: UserType[] = [
   {
-    id: 1,
+    id: '1',
     username: 'admin',
     email: 'admin@example.com',
     roles: ['admin'],
     status: 'active',
     lastLogin: '2024-01-01 00:00:00',
+    createdAt: '2024-01-01 00:00:00',
   },
   {
-    id: 2,  
+    id: '2',  
     username: 'user',
     email: 'user@example.com',
     roles: ['user'],
     status: 'active',
     lastLogin: '2024-01-01 00:00:00',
+    createdAt: '2024-01-01 00:00:00',
   },
 ];
 
@@ -82,16 +85,14 @@ export async function getUser(id: number): Promise<{ data: UserType }> {
 }
 
 // 创建用户
-export async function createUser(data: CreateUserParams): Promise<{ data: UserType }> {
-  console.log('Creating user with data:', data);
-  return fetchRequest.post<{ data: UserType }>('/api/users', data);
-}
+export const createUser = (data: CreateUserParams) => {
+  return fetchRequest.post<UserType>('/api/users', data);
+};
 
 // 更新用户
-export async function updateUser(id: number, data: UpdateUserParams): Promise<{ data: UserType }> {
-  // 修改为实际的 API 调用
-  return fetchRequest.put<{ data: UserType }>(`/api/users/${id}`, data);
-}
+export const updateUser = (id: string, data: Partial<CreateUserParams>) => {
+  return fetchRequest.put<UserType>(`/api/users/${id}`, data);
+};
 
 // 删除用户
 export async function deleteUser(id: number): Promise<{ data: null }> {

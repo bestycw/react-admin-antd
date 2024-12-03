@@ -149,14 +149,10 @@ class UserStore {
     }
 
     hasAnyRole(roles: string[]): boolean {
-        // console.log('Checking roles:', {
-        //     userRoles: this.userInfo?.roles,
-        //     requiredRoles: roles
-        // })
-        if (!roles?.length) return true // 如果没有指定角色要求，则默认有权限
+        if (!roles?.length) return true;
         return this.userInfo?.roles?.some(userRole => 
             roles.includes(userRole)
-        ) ?? false
+        ) ?? false;
     }
 
     hasAllRoles(roles: string[]): boolean {
@@ -167,9 +163,9 @@ class UserStore {
     // 根据用户角色过滤路由
     filterRoutesByRoles(routes: CoRouteObject[]): CoRouteObject[] {
         return routes.map(route => {
-            const newRoute = { ...route }
+            const newRoute = {...route};
 
-            // 检查路由是否需要权限控制
+            // 1. 首先检查用户角色权限
             if (newRoute.meta?.roles?.length) {
                 if (!this.hasAnyRole(newRoute.meta.roles)) {
                     newRoute.meta = newRoute.meta || {};
@@ -177,42 +173,41 @@ class UserStore {
                 }
             }
 
-            // 递归处理子路由
-            if (newRoute.children) {
-                newRoute.children = this.filterRoutesByRoles(newRoute.children)
-                
-                // 如果所有子路由都被隐藏，则也隐藏父路由
-                if (newRoute.children.every(child => child.meta?.hidden)) {
+            // 2. 然后检查动态路由权限
+            if (!newRoute.meta?.hidden && newRoute.path) {
+                const dynamicRoutes = this.userInfo?.dynamicRoutesList || [];
+                const hasPermission = dynamicRoutes.includes('*') || dynamicRoutes.includes(newRoute.path);
+                if (!hasPermission) {
                     newRoute.meta = newRoute.meta || {};
                     newRoute.meta.hidden = true;
                 }
             }
 
-            return newRoute
-        }).filter(route => {
-            // 过滤掉不需要显示的路由
-            if (route.meta?.hidden) {
-                return false;
+            // 递归处理子路由
+            if (newRoute.children) {
+                newRoute.children = this.filterRoutesByRoles(newRoute.children);
+                // 如果所有子路由都被隐藏，则也隐藏父路由
+                if (newRoute.children.every((child: CoRouteObject) => child.meta?.hidden)) {
+                    newRoute.meta = newRoute.meta || {};
+                    newRoute.meta.hidden = true;
+                }
             }
 
-            // 如果是根路由或没有子路由，直接返回
-            if (route.root || !route.children) {
-                return true
-            }
-
-            // 如果有子路由，确保至少有一个可见的子路由
-            return route.children.some(child => !child.meta?.hidden);
-        })
+            return newRoute;
+        }).filter(route => !route.meta?.hidden);
     }
 
-    // 检查是否有某个权限
-    hasPermission(code: string): boolean {
-        // 如果权限列表包含 '*' 或为空，则拥有所有权限
-        if (!this.permissions || this.permissions.includes('*') || this.permissions.length === 0) {
-            return true
-        }
-        
-        return this.permissions.includes(code)
+
+
+    // 检查是否有指定权限
+    hasPermission(permission: string): boolean {
+        return this.userInfo?.permissions?.includes(permission) ?? false;
+    }
+
+    // 检查是否有任一权限
+    hasAnyPermission(permissions: string[]): boolean {
+        if (!permissions?.length) return true;
+        return permissions.some(permission => this.hasPermission(permission));
     }
 
     async updateProfile(data: Partial<UserInfo>) {

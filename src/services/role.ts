@@ -6,7 +6,7 @@ export interface RoleType {
   code: string;
   description?: string;
   status: 'active' | 'inactive';
-  permissions: string[];
+  dynamicRoutesList: string[];
   createdAt: string;
 }
 
@@ -15,7 +15,7 @@ export interface CreateRoleParams {
   code: string;
   description?: string;
   status: 'active' | 'inactive';
-  permissions: string[];
+  dynamicRoutesList: string[];
 }
 
 // 获取角色列表
