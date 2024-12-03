@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Tag, Modal, Form, Input, Select, message, Space, Steps } from 'antd';
+import { Button, Tag, Modal, Form, Input, Select, message, Space, Steps, Tree } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
 import type { TableColumnType } from '@/components/Table/types';
@@ -11,6 +11,9 @@ import {
   deleteRole,
   type RoleType,
 } from '@/services/role';
+import { useStore } from '@/store';
+import { CoRouteObject } from '@/types/route';
+import type { Key } from 'antd/es/table/interface';
 
 const steps = [
   {
@@ -24,12 +27,18 @@ const steps = [
 ];
 
 const RoleManagement: React.FC = () => {
+  const { UserStore } = useStore();
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [currentRole, setCurrentRole] = useState<RoleType | null>(null);
   const [dataSource, setDataSource] = useState<RoleType[]>([]);
   const [form] = Form.useForm();
+  const [expandAll, setExpandAll] = useState(false);
+  const [checkAll, setCheckAll] = useState(false);
+  const treeRef = React.useRef<any>(null);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+  const [checkedKeys, setCheckedKeys] = useState<(string | number)[]>([]);
 
   // 获取角色列表
   const fetchRoles = async () => {
@@ -145,14 +154,20 @@ const RoleManagement: React.FC = () => {
 
   const handleNext = async () => {
     try {
-      // 只验证当前步骤的表单项
-      const fields = currentStep === 0 
-        ? ['name', 'code', 'description', 'status']
-        : ['permissions'];
-      await form.validateFields(fields);
+      if (currentStep === 0) {
+        // 验证并保存基本信息
+        await form.validateFields(['name', 'code', 'status', 'description']);
+        const basicInfo = form.getFieldsValue(['name', 'code', 'status', 'description']);
+        console.log('Basic info saved:', basicInfo);
+      } else {
+        // 验证权限配置
+        await form.validateFields(['permissions']);
+        const permissionInfo = form.getFieldsValue(['permissions']);
+        console.log('Permission info saved:', permissionInfo);
+      }
       setCurrentStep(currentStep + 1);
     } catch (error) {
-      // 表单验证失败
+      console.error('Validation error:', error);
     }
   };
 
@@ -162,17 +177,37 @@ const RoleManagement: React.FC = () => {
 
   const handleModalOk = async () => {
     try {
-      const values = await form.validateFields();
+      // 验证所有字段
+      await form.validateFields([
+        'name',
+        'code',
+        'description',
+        'status',
+        'permissions'
+      ]);
+      
+      const values = form.getFieldsValue(true); // 获取所有字段值
+      console.log('Form values:', values);
+      
+      const roleData = {
+        name: values.name,
+        code: values.code,
+        description: values.description,
+        status: values.status || 'active',
+        permissions: values.permissions || []
+      };
+
       if (currentRole) {
-        await updateRole(currentRole.id, values);
+        await updateRole(currentRole.id, roleData);
         message.success('更新成功');
       } else {
-        await createRole(values);
+        await createRole(roleData);
         message.success('创建成功');
       }
       setModalVisible(false);
       fetchRoles();
     } catch (error: any) {
+      console.error('Submit error:', error);
       message.error(error.message || '操作失败');
     }
   };
@@ -221,20 +256,108 @@ const RoleManagement: React.FC = () => {
           </div>
         );
       case 1:
+        const treeData = generatePermissionTree(UserStore.allRoutes);
+        const allKeys = getAllKeys(treeData);
+
         return (
           <div className="px-4">
+            <div className="mb-4 flex gap-2">
+              <Button 
+                size="small" 
+                onClick={() => setExpandAll(!expandAll)}
+              >
+                {expandAll ? '全部折叠' : '全部展开'}
+              </Button>
+              <Button 
+                size="small" 
+                onClick={() => {
+                  const newCheckAll = !checkAll;
+                  setCheckAll(newCheckAll);
+                  const newKeys = newCheckAll ? allKeys : [];
+                  setCheckedKeys(newKeys);
+                  form.setFieldsValue({ permissions: newKeys });
+                }}
+              >
+                {checkAll ? '取消全选' : '全部选中'}
+              </Button>
+            </div>
             <Form.Item
               name="permissions"
+              label="权限"
               rules={[{ required: true, message: '请选择权限' }]}
-              className="mb-0"
             >
-              <PermissionTree />
+              <Tree
+                ref={treeRef}
+                checkable
+                checkedKeys={checkedKeys}
+                expandedKeys={expandAll ? allKeys : expandedKeys}
+                autoExpandParent={true}
+                treeData={treeData}
+                fieldNames={{
+                  title: 'title',
+                  key: 'key',
+                  children: 'children'
+                }}
+                onExpand={(keys: Key[], info) => {
+                  if (!expandAll) {
+                    setExpandedKeys(keys.map(String));
+                  }
+                }}
+                onCheck={(keys: any) => {
+                  setCheckedKeys(keys);
+                  form.setFieldsValue({ permissions: keys });
+                  setCheckAll(keys.length === allKeys.length);
+                }}
+              />
             </Form.Item>
           </div>
         );
       default:
         return null;
     }
+  };
+
+  // 将路由转换为权限树数据
+  interface TreeNode {
+    title: string;
+    key: string;
+    children: TreeNode[] | undefined;
+    disabled: boolean;
+    selectable: boolean;
+  }
+
+  const generatePermissionTree = (routes: CoRouteObject[]): TreeNode[] => {
+    // 第一层调用时查找根路由
+    if (routes === UserStore.allRoutes) {
+      const rootRoute = routes.find(route => route.root);
+      if (!rootRoute || !rootRoute.children) return [];
+      routes = rootRoute.children;
+    }
+
+    // 递归处理所有子路由
+    return routes.map(route => ({
+      title: route.meta?.title || route.path || '未命名',
+      key: route.path || '',
+      children: route.children ? generatePermissionTree(route.children) : undefined,
+      disabled: !route.meta?.title,
+      selectable: !!route.meta?.title
+    })).filter((node): node is TreeNode => !!node.title);
+  };
+
+  const getAllKeys = (treeData: TreeNode[]): string[] => {
+    const keys: string[] = [];
+    const traverse = (nodes: TreeNode[]) => {
+      nodes.forEach(node => {
+        if (!node.disabled) {
+          keys.push(node.key);
+        }
+        if (node.children) {
+          traverse(node.children);
+        }
+      });
+    };
+    traverse(treeData);
+    return keys;
   };
 
   return (
@@ -256,11 +379,13 @@ const RoleManagement: React.FC = () => {
       <Modal
         title={currentRole ? '编辑角色' : '新增角色'}
         open={modalVisible}
-        width={800}
-        bodyStyle={{ 
-          padding: '24px 0',
-          maxHeight: 'calc(100vh - 200px)',
-          overflowY: 'auto'
+        width={650}
+        styles={{
+          body: {
+            padding: '24px 0',
+            maxHeight: 'calc(100vh - 200px)',
+            overflowY: 'auto'
+          }
         }}
         onCancel={() => setModalVisible(false)}
         footer={[

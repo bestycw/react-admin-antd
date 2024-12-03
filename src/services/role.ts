@@ -1,40 +1,39 @@
 import { fetchRequest } from '@/utils/request';
 
 export interface RoleType {
-  id: number;
+  id: string;
   name: string;
   code: string;
   description?: string;
-  permissions: string[];
   status: 'active' | 'inactive';
+  permissions: string[];
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface CreateRoleParams {
   name: string;
   code: string;
   description?: string;
-  permissions: string[];
   status: 'active' | 'inactive';
+  permissions: string[];
 }
 
 // 获取角色列表
-export async function getRoles() {
+export const getRoles = () => {
   return fetchRequest.get<RoleType[]>('/api/roles');
-}
+};
 
 // 创建角色
-export async function createRole(data: CreateRoleParams) {
+export const createRole = (data: CreateRoleParams) => {
   return fetchRequest.post<RoleType>('/api/roles', data);
-}
+};
 
 // 更新角色
-export async function updateRole(id: number, data: Partial<CreateRoleParams>) {
-  return fetchRequest.put<RoleType>(`/api/roles/${id}`, data);
-}
+export const updateRole = (id: string, data: Partial<RoleType>) => {
+  return fetchRequest.put(`/api/roles/${id}`, data);
+};
 
 // 删除角色
-export async function deleteRole(id: number) {
+export const deleteRole = (id: string) => {
   return fetchRequest.delete(`/api/roles/${id}`);
-} 
+}; 
