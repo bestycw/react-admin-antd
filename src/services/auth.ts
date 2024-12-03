@@ -1,6 +1,7 @@
 import { fetchRequest } from '@/utils/request';
 import { authStorage } from '@/utils/storage/authStorage';
 import { TIME } from '@/config/constants';
+import UserStore from '@/store/UserStore';
 
 export interface LoginParams {
   username?: string;
@@ -138,6 +139,7 @@ class AuthService {
       this.stopRefreshTokenTimer();
       // 清除所有认证相关存储
       authStorage.clearAuth();
+      // UserStore.clearUserInfo();
     }
   }
 

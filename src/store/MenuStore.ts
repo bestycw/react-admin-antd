@@ -50,10 +50,6 @@ class MenuStore {
     setMenuList(menuList: MenuItem[]) {
         runInAction(() => {
             this.menuList = menuList
-            // console.log(this.selectedKeys)
-            // if (this.selectedKeys.length === 0) {
-                // this.ensureSelectedKeys()
-            // }
         })
 
     }

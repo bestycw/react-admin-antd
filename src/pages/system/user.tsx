@@ -67,13 +67,17 @@ const UserManagement: React.FC = () => {
     },
     {
       title: '角色',
-      dataIndex: 'role',
-      key: 'role',
+      dataIndex: 'roles',
+      key: 'roles',
       width: 100,
-      render: (role: string) => (
-        <Tag color={role === 'admin' ? 'blue' : 'default'}>
-          {role === 'admin' ? '管理员' : '普通用户'}
-        </Tag>
+      render: (roles: string[]) => (
+        <Space>
+          {roles.map(role => (
+            <Tag key={role} color={role === 'admin' ? 'blue' : 'default'}>
+              {role === 'admin' ? '管理员' : '普通用户'}
+            </Tag>
+          ))}
+        </Space>
       ),
     },
     {
@@ -135,24 +139,30 @@ const UserManagement: React.FC = () => {
     setModalVisible(true);
   };
 
-  const handleEdit = async (values: any) => {
-    try {
-      await updateUser(values.id, values);
-      message.success('更新成功');
-      fetchUsers();
-    } catch (error) {
-      message.error('更新失败');
-    }
+  const handleEdit = (record: UserType) => {
+    setModalTitle('编辑用户');
+    setCurrentUser(record);
+    form.setFieldsValue(record);  // 设置表单初始值
+    setModalVisible(true);
   };
 
   const handleDelete = async (id: number) => {
-    try {
-      await deleteUser(id);
-      message.success('删除成功');
-      fetchUsers();
-    } catch (error) {
-      message.error('删除失败');
-    }
+    Modal.confirm({
+      title: '确认删除',
+      content: '确定要删除该用户吗？删除后不可恢复',
+      okText: '确认',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          await deleteUser(id);
+          message.success('删除成功');
+          fetchUsers();
+        } catch (error) {
+          message.error('删除失败');
+        }
+      }
+    });
   };
 
   const handleResetPassword = async (record: UserType) => {
@@ -183,14 +193,22 @@ const UserManagement: React.FC = () => {
         message.success('创建成功');
       }
       setModalVisible(false);
-      fetchUsers();
+      setCurrentUser(null);  // 清空当前用户
+      form.resetFields();    // 清空表单
+      fetchUsers();         // 刷新列表
     } catch (error: any) {
       if (error.name === 'ValidationError') {
-        // 表单验证错误
         return;
       }
       message.error(error.message || '操作失败');
     }
+  };
+
+  // Modal 关闭时清理状态
+  const handleModalCancel = () => {
+    setModalVisible(false);
+    setCurrentUser(null);
+    form.resetFields();
   };
 
   // 处理表格变化（搜索、排序、筛选、分页）
@@ -230,13 +248,13 @@ const UserManagement: React.FC = () => {
         title={modalTitle}
         open={modalVisible}
         onOk={handleModalOk}
-        onCancel={() => setModalVisible(false)}
+        onCancel={handleModalCancel}
         destroyOnClose
       >
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ status: 'active', role: 'user' }}
+          initialValues={{ status: 'active', roles: ['user'] }}
         >
           <Form.Item
             name="username"
@@ -248,38 +266,38 @@ const UserManagement: React.FC = () => {
           >
             <Input placeholder="请输入用户名" />
           </Form.Item>
+          
           {!currentUser && (
             <Form.Item
               name="password"
               label="密码"
-              rules={[
-                { required: true, message: '请输入密码' },
-                { min: 6, message: '密码长度至少6个字符' }
-              ]}
+              tooltip="不填写将使用默认密码：123456"
             >
-              <Input.Password placeholder="请输入密码" />
+              <Input.Password placeholder="请输入密码，不填则使用默认密码" />
             </Form.Item>
           )}
+          
           <Form.Item
             name="email"
             label="邮箱"
             rules={[
-              { required: true, message: '请输入邮箱' },
               { type: 'email', message: '请输入正确的邮箱格式' }
             ]}
           >
-            <Input placeholder="请输入邮箱" />
+            <Input placeholder="请输入邮箱（选填）" />
           </Form.Item>
+          
           <Form.Item
-            name="role"
+            name="roles"
             label="角色"
             rules={[{ required: true, message: '请选择角色' }]}
           >
-            <Select>
+            <Select mode="multiple">
               <Select.Option value="admin">管理员</Select.Option>
               <Select.Option value="user">普通用户</Select.Option>
             </Select>
           </Form.Item>
+          
           <Form.Item
             name="status"
             label="状态"
@@ -301,4 +319,5 @@ export default UserManagement;
 export const routeConfig = {
   title: '用户管理',
   sort: 2,
+  roles: ['admin'],
 }; 

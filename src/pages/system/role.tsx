@@ -305,4 +305,5 @@ export default RoleManagement;
 export const routeConfig = {
   title: '角色管理',
   sort: 3,
+  roles: ['admin'],
 }; 

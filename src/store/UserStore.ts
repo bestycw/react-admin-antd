@@ -30,7 +30,7 @@ interface ApiToken {
   status: 'active' | 'expired' | 'revoked';
 }
 
-export type ThemeStyle = 'light' | 'dark' | 'dynamic';
+// export type ThemeStyle = 'light' | 'dark' | 'dynamic';
 
 class UserStore {
     constructor() {
@@ -39,10 +39,9 @@ class UserStore {
     }
 
     userInfo: UserInfo | null = null;
-    isLogin = false;
+    // isLogin = false;
     dynamicRoutes: CoRouteObject[] = [];
     allRoutes: CoRouteObject[] = [];
-    isInitDynamicRoutes = false;
     permissions: string[] = [];
     devices: Device[] = [];
     notificationSettings: NotificationSetting[] = [
@@ -61,13 +60,12 @@ class UserStore {
                 runInAction(() => {
                     this.userInfo = parsedUserInfo;
                     this.permissions = parsedUserInfo?.permissions || [];
-                    this.isLogin = true;
-                    
+                    // this.isLogin = true
                     // 从缓存加载动态路由
                     const cachedRoutes = localStorage.getItem('dynamicRoutes');
                     if (cachedRoutes) {
                         this.dynamicRoutes = JSON.parse(cachedRoutes);
-                        this.isInitDynamicRoutes = true;
+                        // this.isInitDynamicRoutes = true;
                     }
                 });
             } catch (error) {
@@ -94,14 +92,14 @@ class UserStore {
     setDynamicRoutes(routes: CoRouteObject[]) {
         runInAction(() => {
             this.dynamicRoutes = routes
-            this.isInitDynamicRoutes = true
+            // this.isInitDynamicRoutes = true
         })
     }
 
     setUserInfo(userInfo: UserInfo, remember?: boolean) {
         runInAction(() => {
             this.userInfo = userInfo;
-            this.isLogin = true;
+            // this.isLogin = true;
             
             // 存储用户信息
             const storage = remember ? localStorage : sessionStorage;
@@ -123,8 +121,10 @@ class UserStore {
                 accessToken: '',
                 dynamicRoutesList: []
             };
-            this.isLogin = false;
-            this.isInitDynamicRoutes = false;
+            this.dynamicRoutes = [];
+            this.allRoutes = [];
+            // this.isLogin = false;
+            // this.isInitDynamicRoutes = false;
             localStorage.removeItem('token');
             sessionStorage.removeItem('token');
             localStorage.removeItem('userInfo');

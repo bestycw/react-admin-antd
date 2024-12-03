@@ -8,22 +8,23 @@ import routes from './router/index'
 import { useStore } from './store'
 import { CoRouteObject } from './types/route.d'
 import { runInAction } from 'mobx'
-
+import { authService } from "./services/auth";
 const App = observer(() => {
     const { UserStore, MenuStore ,ConfigStore} = useStore()
     let renderRoutes = routes
 
     console.log(' app init')
 
-    if (UserStore.isLogin) {
+    if (authService.isAuthenticated()) {
+        console.log('isAuthenticated',UserStore.hasAllRoutes)
         if (!UserStore.hasAllRoutes) {
             renderRoutes = UserStore.filterRoutesByRoles(routes)
             const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
-            runInAction(() => {
+            // runInAction(() => {
                 UserStore.setAllRoutes(renderRoutes)
                 MenuStore.initRoutesAndMenu(rootRoute)
 
-            })
+            // })
         } else {
             renderRoutes = UserStore.allRoutes
         }

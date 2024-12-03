@@ -4,7 +4,7 @@ export interface UserType {
   id: number;
   username: string;
   email: string;
-  role: 'admin' | 'user';
+  roles: string[];
   status: 'active' | 'inactive';
   lastLogin: string;
 }
@@ -13,7 +13,7 @@ export interface CreateUserParams {
   username: string;
   password: string;
   email: string;
-  role: 'admin' | 'user';
+  roles: string[];
   status: 'active' | 'inactive';
 }
 
@@ -27,15 +27,15 @@ const mockUsers: UserType[] = [
     id: 1,
     username: 'admin',
     email: 'admin@example.com',
-    role: 'admin',
+    roles: ['admin'],
     status: 'active',
     lastLogin: '2024-01-01 00:00:00',
   },
   {
-    id: 2,
+    id: 2,  
     username: 'user',
     email: 'user@example.com',
-    role: 'user',
+    roles: ['user'],
     status: 'active',
     lastLogin: '2024-01-01 00:00:00',
   },
@@ -83,14 +83,8 @@ export async function getUser(id: number): Promise<{ data: UserType }> {
 
 // 创建用户
 export async function createUser(data: CreateUserParams): Promise<{ data: UserType }> {
-  // return request.post<{ data: UserType }>('/api/users', data);
-  const newUser: UserType = {
-    id: mockUsers.length + 1,
-    ...data,
-    lastLogin: new Date().toISOString(),
-  };
-  mockUsers.push(newUser);
-  return Promise.resolve({ data: newUser });
+  console.log('Creating user with data:', data);
+  return fetchRequest.post<{ data: UserType }>('/api/users', data);
 }
 
 // 更新用户
