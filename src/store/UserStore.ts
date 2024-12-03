@@ -57,11 +57,12 @@ class UserStore {
         const storedUserInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
         if (storedUserInfo) {
             try {
+                const parsedUserInfo = JSON.parse(storedUserInfo);
                 runInAction(() => {
-                    const parsedUserInfo = JSON.parse(storedUserInfo);
                     this.userInfo = parsedUserInfo;
                     this.permissions = parsedUserInfo?.permissions || [];
                     this.isLogin = true;
+                    
                     // 从缓存加载动态路由
                     const cachedRoutes = localStorage.getItem('dynamicRoutes');
                     if (cachedRoutes) {
@@ -98,9 +99,14 @@ class UserStore {
     }
 
     setUserInfo(userInfo: UserInfo, remember?: boolean) {
-        this.userInfo = userInfo;
-        const storage = remember ? localStorage : sessionStorage;
-        storage.setItem('userInfo', JSON.stringify(userInfo));
+        runInAction(() => {
+            this.userInfo = userInfo;
+            this.isLogin = true;
+            
+            // 存储用户信息
+            const storage = remember ? localStorage : sessionStorage;
+            storage.setItem('userInfo', JSON.stringify(userInfo));
+        });
     }
 
     clearUserInfo() {
