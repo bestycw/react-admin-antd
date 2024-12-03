@@ -2,16 +2,14 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { theme } from 'antd'
 import type { ThemeConfig } from 'antd'
 import getGlobalConfig from '../config/GlobalConfig'
-import StorageManager from '../utils/storageManager'
+import { configStorage } from '@/utils/storage/configStorage'
 import {
     type IConfigStore,
     type ThemeMode,
     type ThemeStyle,
     type LayoutMode,
-    type StorageKey,
     type ComponentPosition,
     type PresetColor,
-    STORAGE_KEYS
 } from '../types/config'
 
 // 布局位标记（从左到右：UserActions、Menu、Logo）
@@ -88,55 +86,42 @@ class ConfigStore implements IConfigStore {
     isDrawerMode: boolean = false
     drawerVisible: boolean = false
     settingDrawerVisible: boolean = false
-
-    // 用户操作区域的折叠状态
     isActionsCollapsed: boolean = false
-
-    // 搜索弹窗状态
     searchVisible: boolean = false
 
-    isDarkMode = false;
-
-    // 添加预设主题色相关属性
-    presetColors = PRESET_COLORS;
-    currentPresetColor: string;
+    // 预设主题色相关
+    presetColors = PRESET_COLORS
+    currentPresetColor: string
 
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true })
-        this.currentPresetColor = this.storage.get('PRESET_COLOR', PRESET_COLORS[0].color);
+        this.currentPresetColor = configStorage.getPresetColor(PRESET_COLORS[0].color)
         this.initConfig()
-    }
-
-    // 存储操作封装
-    private storage = {
-        get: <T>(key: StorageKey, defaultValue: T) =>
-            StorageManager.get(STORAGE_KEYS[key], defaultValue),
-        set: <T>(key: StorageKey, value: T) =>
-            StorageManager.set(STORAGE_KEYS[key], value),
-        remove: (key: StorageKey) =>
-            StorageManager.remove(STORAGE_KEYS[key])
     }
 
     // 初始化配置
     private initConfig() {
         // 初始化布局状态
-        this.layoutState = this.storage.get('LAYOUT_STATE', LayoutModes.MIX)
+        this.layoutState = configStorage.getLayoutState(LayoutModes.MIX)
 
         // 初始化主题相关
-        this.setThemeStyle(this.storage.get('THEME_STYLE', this.themeStyle))
-        this.setThemeMode(this.storage.get('THEME_MODE', this.themeMode))
+        this.setThemeStyle(configStorage.getThemeStyle(this.themeStyle))
+        this.setThemeMode(configStorage.getThemeMode(this.themeMode))
 
         // 初始化 UI 状态
-        this.showTabs = this.storage.get('SHOW_TABS', true)
-        this.sidebarCollapsed = this.storage.get('SIDEBAR_COLLAPSED', false)
+        this.showTabs = configStorage.getShowTabs(true)
+        this.sidebarCollapsed = configStorage.getSidebarCollapsed(false)
+        this.drawerVisible = configStorage.getDrawerVisible(false)
+        this.settingDrawerVisible = configStorage.getSettingDrawerVisible(false)
+        this.isActionsCollapsed = configStorage.getActionsCollapsed(false)
 
         // 初始化监听器
         this.initViewportListener()
         this.initSystemTheme()
 
         // 初始化主题色
-        const savedColor = this.storage.get('PRESET_COLOR', PRESET_COLORS[0].color);
-        this.setPresetColor(savedColor);
+        const savedColor = configStorage.getPresetColor(PRESET_COLORS[0].color)
+        this.setPresetColor(savedColor)
     }
 
     // 计算属性
@@ -197,28 +182,26 @@ class ConfigStore implements IConfigStore {
     // 方法实现
     setThemeMode(mode: ThemeMode) {
         this.themeMode = mode
-        this.storage.set('THEME_MODE', mode)
+        configStorage.setThemeMode(mode)
         this.updateThemeMode()
     }
 
     setThemeStyle(style: ThemeStyle) {
         this.themeStyle = style
-        this.storage.set('THEME_STYLE', style)
+        configStorage.setThemeStyle(style)
         document.documentElement.classList.remove('theme-dynamic', 'theme-classic')
         document.documentElement.classList.add(`theme-${style}`)
     }
 
     setLayoutMode(mode: LayoutMode) {
         this.layoutState = LayoutModes[mode]
-        this.storage.set('LAYOUT_STATE', this.layoutState)
+        configStorage.setLayoutState(this.layoutState)
     }
 
     toggleTabs() {
         this.showTabs = !this.showTabs
-        this.storage.set('SHOW_TABS', this.showTabs)
+        configStorage.setShowTabs(this.showTabs)
     }
-
-
 
     toggleComponentPosition(
         component: keyof typeof LayoutFlags,
@@ -228,7 +211,7 @@ class ConfigStore implements IConfigStore {
         const positionBit = LayoutFlags[position]
         const mask = 0b11 << shift
         this.layoutState = (this.layoutState & ~mask) | (positionBit << shift)
-        this.storage.set('LAYOUT_STATE', this.layoutState)
+        configStorage.setLayoutState(this.layoutState)
     }
 
     toggleComponentShow(
@@ -256,7 +239,7 @@ class ConfigStore implements IConfigStore {
             newBits = 0b10
         }
         this.layoutState = (this.layoutState & ~mask) | (newBits << shift)
-        StorageManager.set(STORAGE_KEYS.LAYOUT_STATE, this.layoutState)
+        configStorage.setLayoutState(this.layoutState)
     }
     // 获取组件在当前布局下的位置
     getComponentPosition(component: keyof typeof LayoutFlags): ComponentPosition {
@@ -273,9 +256,7 @@ class ConfigStore implements IConfigStore {
     }
 
     clearConfig() {
-        Object.keys(STORAGE_KEYS).forEach(key =>
-            this.storage.remove(key as StorageKey)
-        )
+        configStorage.clearConfig()
     }
 
     // 私有方法
@@ -347,17 +328,17 @@ class ConfigStore implements IConfigStore {
                 if (this.isDrawerMode) {
                     // 抽屉模式：控制抽屉显隐
                     this.drawerVisible = visible ?? !this.drawerVisible
-                    this.storage.set('DRAWER_VISIBLE', this.drawerVisible)
+                    configStorage.setDrawerVisible(this.drawerVisible)
                 } else {
                     // 正常模式：控制折叠状态
                     this.sidebarCollapsed = visible ?? !this.sidebarCollapsed
-                    this.storage.set('SIDEBAR_COLLAPSED', this.sidebarCollapsed)
+                    configStorage.setSidebarCollapsed(this.sidebarCollapsed)
                 }
                 break
             case 'setting':
                 // 设置抽屉显隐
                 this.settingDrawerVisible = visible ?? !this.settingDrawerVisible
-                this.storage.set('SETTING_DRAWER_VISIBLE', this.settingDrawerVisible)
+                configStorage.setSettingDrawerVisible(this.settingDrawerVisible)
                 break
         }
     }
@@ -365,7 +346,7 @@ class ConfigStore implements IConfigStore {
     // 切换用户操作区域的折叠状态
     toggleActionsCollapsed = (isShow:boolean) => {
         this.isActionsCollapsed = isShow
-        this.storage.set('ACTIONS_COLLAPSED', this.isActionsCollapsed)
+        configStorage.setActionsCollapsed(this.isActionsCollapsed)
     }
 
     // 切换搜索弹窗显示状态
@@ -373,18 +354,14 @@ class ConfigStore implements IConfigStore {
         this.searchVisible = visible ?? !this.searchVisible
     }
 
-    setDarkMode = (isDark: boolean) => {
-        this.isDarkMode = isDark;
-    };
-
     // 设置预设主题色
     setPresetColor(color: string) {
-        this.currentPresetColor = color;
+        this.currentPresetColor = color
         this.themeToken = {
             colorPrimary: color,
             borderRadius: this.themeToken.borderRadius,
-        };
-        this.storage.set('PRESET_COLOR', color);
+        }
+        configStorage.setPresetColor(color)
     }
 }
 

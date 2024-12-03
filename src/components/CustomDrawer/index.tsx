@@ -37,7 +37,7 @@ export const CustomDrawer: React.FC<CustomDrawerProps> = ({
   bodyStyle,
 }) => {
   const { ConfigStore } = useStore()
-  const isDark = ConfigStore.isDarkMode
+  const isDark = ConfigStore.isDark
 
   // 处理 ESC 键关闭
   useEffect(() => {

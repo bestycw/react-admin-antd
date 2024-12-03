@@ -58,9 +58,9 @@ const CodeEditorPage: React.FC = () => {
 
   // 监听系统主题变化
   useEffect(() => {
-    const theme = ConfigStore.isDarkMode ? 'vs-dark' : 'light'
+    const theme = ConfigStore.isDark ? 'vs-dark' : 'light'
     setEditorTheme(theme)
-  }, [ConfigStore.isDarkMode])
+  }, [ConfigStore.isDark])
 
   const handleLanguageChange = (value: string) => {
     setLanguage(value)
@@ -69,7 +69,7 @@ const CodeEditorPage: React.FC = () => {
   const handleThemeChange = (value: 'vs-dark' | 'light') => {
     setEditorTheme(value)
     // 同步更新系统主题
-    ConfigStore.setDarkMode(value === 'vs-dark')
+    ConfigStore.setThemeMode(value === 'vs-dark' ? 'dark' : 'light')
   }
 
   const handleSave = useCallback((value: string) => {
@@ -87,15 +87,15 @@ const CodeEditorPage: React.FC = () => {
         title="代码编辑器" 
         className="shadow-md"
         style={{
-          backgroundColor: ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff',
-          color: ConfigStore.isDarkMode ? '#ffffff' : '#000000',
-          border: ConfigStore.isDarkMode ? 'none' : '1px solid #e5e7eb'
+          backgroundColor: ConfigStore.isDark ? '#1e1e1e' : '#ffffff',
+          color: ConfigStore.isDark ? '#ffffff' : '#000000',
+          border: ConfigStore.isDark ? 'none' : '1px solid #e5e7eb'
         }}
       >
         <div className="mb-4 flex justify-between items-center flex-wrap gap-4">
           <Space size="middle">
             <div className="flex items-center gap-2">
-              <span className={ConfigStore.isDarkMode ? 'text-white' : 'text-gray-600'}>
+              <span className={ConfigStore.isDark ? 'text-white' : 'text-gray-600'}>
                 语言：
               </span>
               <Select
@@ -104,15 +104,15 @@ const CodeEditorPage: React.FC = () => {
                 options={languages}
                 style={{ width: 160 }}
                 popupMatchSelectWidth={false}
-                className={`min-w-[160px] ${!ConfigStore.isDarkMode ? 'border-gray-300' : ''}`}
+                className={`min-w-[160px] ${!ConfigStore.isDark ? 'border-gray-300' : ''}`}
                 dropdownStyle={{
-                  backgroundColor: ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff',
-                  border: ConfigStore.isDarkMode ? '1px solid #383838' : '1px solid #d9d9d9'
+                  backgroundColor: ConfigStore.isDark ? '#1e1e1e' : '#ffffff',
+                  border: ConfigStore.isDark ? '1px solid #383838' : '1px solid #d9d9d9'
                 }}
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className={ConfigStore.isDarkMode ? 'text-white' : 'text-gray-600'}>
+              <span className={ConfigStore.isDark ? 'text-white' : 'text-gray-600'}>
                 主题：
               </span>
               <Select
@@ -120,10 +120,10 @@ const CodeEditorPage: React.FC = () => {
                 onChange={handleThemeChange}
                 options={themes}
                 style={{ width: 100 }}
-                className={!ConfigStore.isDarkMode ? 'border-gray-300' : ''}
+                className={!ConfigStore.isDark ? 'border-gray-300' : ''}
                 dropdownStyle={{
-                  backgroundColor: ConfigStore.isDarkMode ? '#1e1e1e' : '#ffffff',
-                  border: ConfigStore.isDarkMode ? '1px solid #383838' : '1px solid #d9d9d9'
+                  backgroundColor: ConfigStore.isDark ? '#1e1e1e' : '#ffffff',
+                  border: ConfigStore.isDark ? '1px solid #383838' : '1px solid #d9d9d9'
                 }}
               />
             </div>
@@ -142,7 +142,7 @@ const CodeEditorPage: React.FC = () => {
           </Space>
         </div>
 
-        <div className={`rounded-md overflow-hidden ${!ConfigStore.isDarkMode ? 'border border-gray-200' : ''}`}>
+        <div className={`rounded-md overflow-hidden ${!ConfigStore.isDark ? 'border border-gray-200' : ''}`}>
           <CodeEditor
             value={code}
             onChange={setCode}

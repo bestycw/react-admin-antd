@@ -33,16 +33,3 @@ export interface CoRouteObject extends Omit<RouteObject, 'path'> {
   children?: CoRouteObject[]
   // hidden?: boolean
 }
-
-// 用于验证路径格式的类型守卫
-export function isValidPath(path: string): path is PathWithSlash {
-  return path.startsWith('/') || path === '/'
-}
-
-// 用于创建路由配置的辅助函数
-export function createRoute(route: CoRouteObject): CoRouteObject {
-  if (route.path && !isValidPath(route.path)) {
-    throw new Error(`Invalid route path: ${route.path}. Path must start with '/'`)
-  }
-  return route
-} 

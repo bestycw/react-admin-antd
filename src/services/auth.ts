@@ -1,4 +1,5 @@
 import { fetchRequest } from '@/utils/request';
+import { authStorage } from '@/utils/storage/authStorage';
 
 export interface LoginParams {
   username?: string;
@@ -77,52 +78,53 @@ class AuthService {
 
   async refreshToken(): Promise<void> {
     try {
-      const refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
+      const refreshToken = authStorage.getRefreshToken() ||
+                          authStorage.getRefreshToken() ||
+                          '';
+      
       if (!refreshToken) return;
 
       const response = await fetchRequest.post<TokenInfo>('/api/auth/refresh-token', { refreshToken });
-      console.log('response', response);
-      if (!response.token || !response.refreshToken || !response.expiresIn) {
+      
+      if (!response.token || !response.refreshToken) {
         throw new Error('Invalid token response');
       }
 
-      const storage = localStorage.getItem('token') ? localStorage : sessionStorage;
-      storage.setItem('token', response.token);
-      storage.setItem('refreshToken', response.refreshToken);
-      storage.setItem('tokenExpires', String(Date.now() + response.expiresIn * 1000));
+      // 使用与当前存储相同的类型
+      const type = authStorage.getStorageType();
+      authStorage.setTokenInfo({
+        token: response.token,
+        refreshToken: response.refreshToken,
+        expiresIn: response.expiresIn,
+        remember: authStorage.getStorageType() === 'local'
+      });
 
       this.startRefreshTokenTimer(response.expiresIn);
-    } catch (error:any) {
+    } catch (error) {
       console.error('Token refresh failed:', error);
-      if (error.response?.status === 401) {
-        this.logout();
-        window.location.href = '/auth/login';
-      }
+      this.logout();
     }
   }
 
   async login(params: LoginParams): Promise<LoginResponse> {
     try {
       const response = await fetchRequest.post<LoginResponse>('/api/auth/login', params);
-      // console.log('Login response:', response);
 
-      if (!response || !response.token || !response.refreshToken) {
-        console.error('Invalid login response structure:', response);
+      if (!response?.token || !response?.refreshToken) {
         throw new Error('登录响应格式错误');
       }
 
-      const storage = params.remember ? localStorage : sessionStorage;
-      storage.setItem('token', response.token);
-      storage.setItem('refreshToken', response.refreshToken);
-      storage.setItem('tokenExpires', String(Date.now() + response.expiresIn * 1000));
+      authStorage.setTokenInfo({
+        token: response.token,
+        refreshToken: response.refreshToken,
+        expiresIn: response.expiresIn,
+        remember: params.remember
+      });
 
       this.startRefreshTokenTimer(response.expiresIn);
       return response;
-    } catch (error: any) {
+    } catch (error) {
       console.error('Login failed:', error);
-      if (error.response) {
-        throw new Error(error.response.message || '登录失败');
-      }
       throw error;
     }
   }
@@ -138,12 +140,8 @@ class AuthService {
       await fetchRequest.post('/api/auth/logout');
     } finally {
       this.stopRefreshTokenTimer();
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('tokenExpires');
-      sessionStorage.removeItem('token');
-      sessionStorage.removeItem('refreshToken');
-      sessionStorage.removeItem('tokenExpires');
+      // 清除所有认证相关存储
+      authStorage.clearAuth();
     }
   }
 
@@ -171,11 +169,13 @@ class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token') || sessionStorage.getItem('token');
+    return authStorage.getToken() ||
+           authStorage.getToken() ||
+           null;
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    return authStorage.isTokenValid();
   }
 
   async register(params: RegisterParams): Promise<void> {

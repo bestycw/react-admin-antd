@@ -10,6 +10,9 @@ export type ThemeStyle = 'dynamic' | 'classic'
 // 主题模式
 export type ThemeMode = 'light' | 'dark' | 'system'
 
+// 语言类型
+export type Locale = 'zh-CN' | 'en-US';
+
 // 存储键定义
 export const STORAGE_KEYS = {
     LAYOUT_STATE: 'layoutState',
