@@ -78,8 +78,7 @@ const LoginPage: React.FC = observer(() => {
                 permissions: response.user.permissions || []
             };
 
-            // 传递 remember 参数给 UserStore.setUserInfo
-            UserStore.setUserInfo(userInfo, values.remember);
+            UserStore.setUserInfo(userInfo);
             
             message.success(t('login.loginSuccess'));
             navigate('/', { replace: true });

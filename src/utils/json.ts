@@ -24,3 +24,46 @@ export const tryParseJsObject = (str: string): string => {
       }
     }
   };
+
+// 判断是否是 React 组件
+const isReactComponent = (value: any): boolean => {
+    return value?.$$typeof || typeof value === 'function' || value instanceof Function;
+};
+
+// 判断是否是普通对象
+const isPlainObject = (obj: any): boolean => {
+    if (!obj || typeof obj !== 'object') return false;
+    const proto = Object.getPrototypeOf(obj);
+    return proto === Object.prototype || proto === null;
+};
+
+/**
+ * 深拷贝，但保留特定值的引用（如 React 组件）
+ * @param obj 要拷贝的对象
+ * @param preserveKeys 需要保留引用的键名数组，默认为 ['element', 'component']
+ */
+export function deepClone<T>(obj: T, preserveKeys: string[] = ['element', 'component']): T {
+    if (!obj || typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) {
+        return obj.map(item => deepClone(item, preserveKeys)) as unknown as T;
+    }
+    if (isReactComponent(obj)) return obj;
+
+    const result = {} as T;
+    for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            const value = obj[key];
+            // 保留特定键名的值引用
+            if (preserveKeys.includes(key) || isReactComponent(value)) {
+                result[key] = value;
+            } else if (isPlainObject(value) || Array.isArray(value)) {
+                result[key] = deepClone(value, preserveKeys);
+            } else {
+                result[key] = value;
+            }
+        }
+    }
+    return result;
+}
+
+  

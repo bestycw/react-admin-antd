@@ -138,8 +138,8 @@ class AuthService {
     } finally {
       this.stopRefreshTokenTimer();
       // 清除所有认证相关存储
-      authStorage.clearAuth();
-      // UserStore.clearUserInfo();
+      authStorage.clearAuth();  
+      UserStore.clearUserInfo();
     }
   }
 

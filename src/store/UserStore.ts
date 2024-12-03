@@ -58,15 +58,8 @@ class UserStore {
             try {
                 const parsedUserInfo = JSON.parse(storedUserInfo);
                 runInAction(() => {
-                    this.userInfo = parsedUserInfo;
+                    this.setUserInfo(parsedUserInfo);
                     this.permissions = parsedUserInfo?.permissions || [];
-                    // this.isLogin = true
-                    // 从缓存加载动态路由
-                    const cachedRoutes = localStorage.getItem('dynamicRoutes');
-                    if (cachedRoutes) {
-                        this.dynamicRoutes = JSON.parse(cachedRoutes);
-                        // this.isInitDynamicRoutes = true;
-                    }
                 });
             } catch (error) {
                 console.error('Failed to parse stored user info:', error);
@@ -122,7 +115,7 @@ class UserStore {
                 dynamicRoutesList: []
             };
             this.dynamicRoutes = [];
-            this.allRoutes = [];
+            // this.allRoutes = [];
             // this.isLogin = false;
             // this.isInitDynamicRoutes = false;
             localStorage.removeItem('token');
@@ -133,18 +126,8 @@ class UserStore {
     }
 
     setAllRoutes(routes: CoRouteObject[]) {
-        // runInAction(() => {
             this.allRoutes = routes
-        // })
     }
-
-    // get realDynamicRoutes() {
-    //     if (!this.dynamicRoutes.length) return []
-        
-    //     return getGlobalConfig('PermissionControl') === 'backend' 
-    //         ? formatBackendRoutes(this.dynamicRoutes)
-    //         : this.dynamicRoutes
-    // }
   
     get hasAllRoutes() {
         return this.allRoutes.length > 0
