@@ -69,19 +69,36 @@ interface TokenInfo {
 
 class AuthService {
   private refreshTokenTimeout?: NodeJS.Timeout;
+  private isRefreshing: boolean = false;
 
   private startRefreshTokenTimer(expiresIn: number) {
     this.stopRefreshTokenTimer();
     const timeout = expiresIn - TIME.TOKEN_REFRESH_AHEAD;
-    if (timeout > 0) {
-      this.refreshTokenTimeout = setTimeout(() => this.refreshToken(), timeout);
+    console.log('Next token refresh in:', timeout / 1000, 'seconds');
+    if (timeout <= 0 || timeout >= TIME.TOKEN_EXPIRE) {
+
+      console.warn('Invalid refresh timeout:', timeout);
+      // this.logout()
+      return;
     }
+    this.refreshTokenTimeout = setTimeout(() => {
+   
+      this.refreshToken();
+    }, Math.max(timeout, 100));
   }
 
   async refreshToken(): Promise<void> {
     try {
       const refreshToken = authStorage.getRefreshToken();
-      if (!refreshToken) return;
+      if (!refreshToken) {
+        this.stopRefreshTokenTimer();
+        authStorage.clearAuth();
+        return;
+      }
+      if (this.isRefreshing) {
+        return;
+      }
+      this.isRefreshing = true;
 
       const response = await fetchRequest.post<TokenInfo>('/api/auth/refresh-token', { refreshToken });
       
@@ -99,7 +116,10 @@ class AuthService {
       this.startRefreshTokenTimer(TIME.TOKEN_EXPIRE);
     } catch (error) {
       console.error('Token refresh failed:', error);
-      this.logout();
+      this.stopRefreshTokenTimer();
+      authStorage.clearAuth();
+    } finally {
+      this.isRefreshing = false;
     }
   }
 
@@ -129,6 +149,7 @@ class AuthService {
   private stopRefreshTokenTimer() {
     if (this.refreshTokenTimeout) {
       clearTimeout(this.refreshTokenTimeout);
+      // this.refreshTokenTimeout = undefined;
     }
   }
 
@@ -136,10 +157,10 @@ class AuthService {
     try {
       await fetchRequest.post('/api/auth/logout');
     } finally {
-      this.stopRefreshTokenTimer();
+      // this.stopRefreshTokenTimer();
       // 清除所有认证相关存储
       authStorage.clearAuth();  
-      UserStore.clearUserInfo();
+      // UserStore.clearUserInfo();
     }
   }
 
