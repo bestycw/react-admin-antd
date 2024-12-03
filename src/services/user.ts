@@ -95,32 +95,18 @@ export async function createUser(data: CreateUserParams): Promise<{ data: UserTy
 
 // 更新用户
 export async function updateUser(id: number, data: UpdateUserParams): Promise<{ data: UserType }> {
-  // return request.put<{ data: UserType }>(`/api/users/${id}`, data);
-  const index = mockUsers.findIndex(u => u.id === id);
-  if (index === -1) {
-    return Promise.reject(new Error('用户不存在'));
-  }
-  mockUsers[index] = { ...mockUsers[index], ...data };
-  return Promise.resolve({ data: mockUsers[index] });
+  // 修改为实际的 API 调用
+  return fetchRequest.put<{ data: UserType }>(`/api/users/${id}`, data);
 }
 
 // 删除用户
 export async function deleteUser(id: number): Promise<{ data: null }> {
-  // return request.delete<{ data: null }>(`/api/users/${id}`);
-  const index = mockUsers.findIndex(u => u.id === id);
-  if (index === -1) {
-    return Promise.reject(new Error('用户不存在'));
-  }
-  mockUsers.splice(index, 1);
-  return Promise.resolve({ data: null });
+  // 修改为实际的 API 调用
+  return fetchRequest.delete<{ data: null }>(`/api/users/${id}`);
 }
 
 // 重置密码
 export async function resetUserPassword(id: number): Promise<{ data: null }> {
-  // return request.post<{ data: null }>(`/api/users/${id}/reset-password`);
-  const user = mockUsers.find(u => u.id === id);
-  if (!user) {
-    return Promise.reject(new Error('用户不存在'));
-  }
-  return Promise.resolve({ data: null });
+  // 修改为实际的 API 调用
+  return fetchRequest.post<{ data: null }>(`/api/users/${id}/reset-password`);
 }

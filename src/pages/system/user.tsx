@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Tag, Modal, Form, Input, Select, message, Space } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, LockOutlined } from '@ant-design/icons';
-import Table from '@/components/Table';
+import Table, { TableParams } from '@/components/Table';
 import type { TableColumnType } from '@/components/Table/types';
 import {
   getUsers,
@@ -21,14 +21,26 @@ const UserManagement: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [dataSource, setDataSource] = useState<UserType[]>([]);
   const [form] = Form.useForm();
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  });
 
   // 获取用户列表
-  const fetchUsers = async () => {
+  const fetchUsers = async (params = {}) => {
     try {
       setLoading(true);
-      const response = await getUsers();
-    //   console.log('response', response);
+      const response = await getUsers({
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+        ...params
+      });
       setDataSource(response.list || []);
+      setPagination({
+        ...pagination,
+        total: response.total
+      });
     } catch (error: any) {
       message.error(error.message || '获取用户列表失败');
     } finally {
@@ -80,10 +92,12 @@ const UserManagement: React.FC = () => {
       dataIndex: 'lastLogin',
       key: 'lastLogin',
       width: 180,
+      hideInSearch: true,
     },
     {
       title: '操作',
       key: 'action',
+      hideInSearch: true,
       width: 250,
       render: (_, record) => (
         <Space>
@@ -105,7 +119,7 @@ const UserManagement: React.FC = () => {
             type="link" 
             danger 
             icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record)}
+            onClick={() => handleDelete(record.id)}
           >
             删除
           </Button>
@@ -121,27 +135,24 @@ const UserManagement: React.FC = () => {
     setModalVisible(true);
   };
 
-  const handleEdit = (record: UserType) => {
-    setModalTitle('编辑用户');
-    setCurrentUser(record);
-    form.setFieldsValue(record);
-    setModalVisible(true);
+  const handleEdit = async (values: any) => {
+    try {
+      await updateUser(values.id, values);
+      message.success('更新成功');
+      fetchUsers();
+    } catch (error) {
+      message.error('更新失败');
+    }
   };
 
-  const handleDelete = async (record: UserType) => {
-    Modal.confirm({
-      title: '确认删除',
-      content: `确定要删除用户"${record.username}"吗？`,
-      onOk: async () => {
-        try {
-          await deleteUser(record.id);
-          message.success('删除成功');
-          fetchUsers();
-        } catch (error: any) {
-          message.error(error.message || '删除失败');
-        }
-      },
-    });
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteUser(id);
+      message.success('删除成功');
+      fetchUsers();
+    } catch (error) {
+      message.error('删除失败');
+    }
   };
 
   const handleResetPassword = async (record: UserType) => {
@@ -182,12 +193,29 @@ const UserManagement: React.FC = () => {
     }
   };
 
+  // 处理表格变化（搜索、排序、筛选、分页）
+  const handleTableChange = (params: TableParams) => {
+    const newPagination = {
+      current: params.pagination?.current || 1,
+      pageSize: params.pagination?.pageSize || 10,
+      total: params.pagination?.total || 0
+    };
+    setPagination(newPagination);
+    fetchUsers({
+      current: newPagination.current,
+      pageSize: newPagination.pageSize,
+      ...params.filters
+    });
+  };
+
   return (
     <>
       <Table
         columns={columns}
         dataSource={dataSource}
         loading={loading}
+        onChange={handleTableChange}
+        pagination={pagination}
         toolbarRight={
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
             新增
