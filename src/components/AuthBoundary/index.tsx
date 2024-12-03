@@ -8,7 +8,7 @@ const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
     const { children } = props;
     const { UserStore } = useStore();
     const location = useLocation();
-
+    // console.log('UserStore.isLogin', UserStore.isLogin)
     // 检查用户是否登录
     if (!UserStore.isLogin || !UserStore.userInfo) {
         // 未登录或无用户信息，跳转到登录页

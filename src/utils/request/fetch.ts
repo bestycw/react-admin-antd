@@ -1,6 +1,7 @@
 import { BaseRequest, BaseRequestConfig, Interceptor } from './base';
 import { authService } from '../../services/auth';
 import { authStorage } from '@/utils/storage/authStorage';
+import { TIME } from '@/config/constants';
 
 export class FetchRequest extends BaseRequest {
   public interceptors = {
@@ -17,13 +18,22 @@ export class FetchRequest extends BaseRequest {
         const token = authStorage.getToken();
         const headers = { ...(config.headers || {}) };
         
-        if (token && !authStorage.isTokenValid()) {
-          // Token 即将过期，尝试刷新
-          await authService.refreshToken();
-        }
-
         if (token) {
-          headers['Authorization'] = `Bearer ${token}`;
+          // 检查 token 是否即将过期
+          if (!authStorage.isTokenValid(TIME.TOKEN_REFRESH_AHEAD)) {
+            try {
+              await authService.refreshToken();
+              // 获取新的 token
+              const newToken = authStorage.getToken();
+              if (newToken) {
+                headers['Authorization'] = `Bearer ${newToken}`;
+              }
+            } catch (error) {
+              console.error('Token refresh failed in interceptor:', error);
+            }
+          } else {
+            headers['Authorization'] = `Bearer ${token}`;
+          }
         }
 
         return {

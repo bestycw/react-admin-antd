@@ -97,10 +97,11 @@ class UserStore {
         })
     }
 
-    setUserInfo = (userInfo: UserInfo | null) => {
+    setUserInfo(userInfo: UserInfo, remember?: boolean) {
         this.userInfo = userInfo;
-        this.isLogin = !!userInfo;
-    };
+        const storage = remember ? localStorage : sessionStorage;
+        storage.setItem('userInfo', JSON.stringify(userInfo));
+    }
 
     clearUserInfo() {
         runInAction(() => {

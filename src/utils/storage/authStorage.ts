@@ -1,4 +1,5 @@
 import StorageManager from './storageManager';
+import { TIME } from '@/config/constants';
 
 /**
  * Auth 存储相关的常量
@@ -25,11 +26,11 @@ class AuthStorage {
   }) {
     const { token, refreshToken, expiresIn, remember = false } = data;
     const type = remember ? 'local' : 'session';
-    const expires = expiresIn * 1000;
+    const expires = Date.now() + expiresIn;
 
-    StorageManager.set(AUTH_STORAGE_KEYS.TOKEN, token, { type, expires });
-    StorageManager.set(AUTH_STORAGE_KEYS.REFRESH_TOKEN, refreshToken, { type, expires });
-    StorageManager.set(AUTH_STORAGE_KEYS.TOKEN_EXPIRES, Date.now() + expires, { type, expires });
+    StorageManager.set(AUTH_STORAGE_KEYS.TOKEN, token, { type });
+    StorageManager.set(AUTH_STORAGE_KEYS.REFRESH_TOKEN, refreshToken, { type });
+    StorageManager.set(AUTH_STORAGE_KEYS.TOKEN_EXPIRES, expires, { type });
   }
 
   /**
@@ -51,14 +52,21 @@ class AuthStorage {
   /**
    * 检查令牌是否有效
    */
-  isTokenValid(threshold = 5 * 60 * 1000) { // 默认5分钟阈值
+  isTokenValid(threshold = TIME.TOKEN_REFRESH_AHEAD): boolean {
     const token = this.getToken();
     if (!token) return false;
 
+    const expires = this.getTokenExpires();
+    if (!expires) return false;
+
+    // 检查是否过期
+    return Date.now() + threshold < expires;
+  }
+
+  getTokenExpires(): number | null {
     const expires = StorageManager.get<number>(AUTH_STORAGE_KEYS.TOKEN_EXPIRES, 0, { type: 'local' }) ||
                    StorageManager.get<number>(AUTH_STORAGE_KEYS.TOKEN_EXPIRES, 0, { type: 'session' });
-    
-    return Date.now() + threshold < expires;
+    return expires || null;
   }
 
   /**

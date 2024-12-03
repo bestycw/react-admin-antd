@@ -113,11 +113,11 @@ class AuthService {
       authStorage.setTokenInfo({
         token: response.token,
         refreshToken: response.refreshToken,
-        expiresIn: response.expiresIn,
+        expiresIn: TIME.TOKEN_EXPIRE,
         remember: params.remember
       });
 
-      this.startRefreshTokenTimer(response.expiresIn);
+      this.startRefreshTokenTimer(TIME.TOKEN_EXPIRE);
       return response;
     } catch (error) {
       console.error('Login failed:', error);
@@ -171,7 +171,10 @@ class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return authStorage.isTokenValid();
+    const token = this.getToken();
+    if (!token) return false;
+
+    return authStorage.isTokenValid(TIME.TOKEN_REFRESH_AHEAD);
   }
 
   async register(params: RegisterParams): Promise<void> {
