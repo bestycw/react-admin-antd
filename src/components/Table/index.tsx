@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import type { TablePaginationConfig } from 'antd/es/table';
 import type { FilterValue } from 'antd/es/table/interface';
 import SearchForm, { TableColumnType } from '../SearchForm';
+import { PAGINATION } from '@/config/constants';
 
 export interface TableParams {
   pagination?: TablePaginationConfig;
@@ -56,9 +57,10 @@ function Table<T extends object = any>(props: EnhancedTableProps<T>) {
   const [tableParams, setTableParams] = useState<TableParams>(() => ({
     pagination: {
       current: 1,
-      pageSize: 10,
+      pageSize: PAGINATION.DEFAULT_PAGE_SIZE,
       showSizeChanger: true,
       showQuickJumper: true,
+      pageSizeOptions: PAGINATION.PAGE_SIZES.map(String),
       showTotal: (total) => `共 ${total} 条`,
     },
     ...defaultParams,

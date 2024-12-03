@@ -13,22 +13,6 @@ export type ThemeMode = 'light' | 'dark' | 'system'
 // 语言类型
 export type Locale = 'zh-CN' | 'en-US';
 
-// 存储键定义
-export const STORAGE_KEYS = {
-    LAYOUT_STATE: 'layoutState',
-    THEME_MODE: 'themeMode',
-    THEME_STYLE: 'themeStyle',
-    SHOW_TABS: 'showTabs',
-    SIDEBAR_COLLAPSED: 'sidebarCollapsed',
-    DRAWER_VISIBLE: 'drawerVisible',
-    SETTING_DRAWER_VISIBLE: 'settingDrawerVisible',
-    ACTIONS_COLLAPSED: 'actionsCollapsed',
-    PRESET_COLOR: 'preset_color'
-} as const
-
-// 存储键类型
-export type StorageKey = keyof typeof STORAGE_KEYS
-
 // 布局标志类型
 export type LayoutFlag = number
 

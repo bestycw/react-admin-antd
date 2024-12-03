@@ -1,5 +1,6 @@
 import { fetchRequest } from '@/utils/request';
 import { authStorage } from '@/utils/storage/authStorage';
+import { TIME } from '@/config/constants';
 
 export interface LoginParams {
   username?: string;
@@ -70,7 +71,7 @@ class AuthService {
 
   private startRefreshTokenTimer(expiresIn: number) {
     this.stopRefreshTokenTimer();
-    const timeout = (expiresIn - 300) * 1000;
+    const timeout = expiresIn - TIME.TOKEN_REFRESH_AHEAD;
     if (timeout > 0) {
       this.refreshTokenTimeout = setTimeout(() => this.refreshToken(), timeout);
     }
@@ -78,28 +79,23 @@ class AuthService {
 
   async refreshToken(): Promise<void> {
     try {
-      const refreshToken = authStorage.getRefreshToken() ||
-                          authStorage.getRefreshToken() ||
-                          '';
-      
+      const refreshToken = authStorage.getRefreshToken();
       if (!refreshToken) return;
 
       const response = await fetchRequest.post<TokenInfo>('/api/auth/refresh-token', { refreshToken });
       
-      if (!response.token || !response.refreshToken) {
+      if (!response?.token || !response?.refreshToken) {
         throw new Error('Invalid token response');
       }
 
-      // 使用与当前存储相同的类型
-      const type = authStorage.getStorageType();
       authStorage.setTokenInfo({
         token: response.token,
         refreshToken: response.refreshToken,
-        expiresIn: response.expiresIn,
+        expiresIn: TIME.TOKEN_EXPIRE,
         remember: authStorage.getStorageType() === 'local'
       });
 
-      this.startRefreshTokenTimer(response.expiresIn);
+      this.startRefreshTokenTimer(TIME.TOKEN_EXPIRE);
     } catch (error) {
       console.error('Token refresh failed:', error);
       this.logout();

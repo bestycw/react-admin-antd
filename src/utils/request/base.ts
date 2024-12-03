@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import NProgress from '../nprogress';
 import { AxiosRequestConfig, AxiosProgressEvent } from 'axios';
+import { REQUEST } from '@/config/constants';
 
 export interface BaseRequestConfig<D = any> extends AxiosRequestConfig<D> {
   headers?: Record<string, string>;
@@ -29,13 +30,17 @@ export interface ResponseData<T = any> {
 
 export abstract class BaseRequest {
   protected baseURL: string;
-  protected defaultConfig: BaseRequestConfig;
+  protected defaultConfig: BaseRequestConfig = {
+    timeout: REQUEST.TIMEOUT,
+    retry: REQUEST.MAX_RETRIES,
+    retryDelay: REQUEST.RETRY_DELAY
+  };
   protected cache = new Map<string, { data: any; timestamp: number }>();
 
   constructor(config: BaseRequestConfig = {}) {
     this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     this.defaultConfig = {
-      timeout: 10000,
+      timeout: REQUEST.TIMEOUT,
       loading: true,
       ...config
     };
