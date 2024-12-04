@@ -1,51 +1,83 @@
 import React from 'react';
-import { Card } from 'antd';
-import BasicCarousel from './components/BasicCarousel';
+import { Tabs, Card } from 'antd';
 import Carousel3D from './components/Carousel3D';
+import CardStackCarousel from './components/CardStackCarousel';
+import CubeCarousel from './components/CubeCarousel';
+import ParallaxCarousel from './components/ParallaxCarousel';
+import BasicCarousel from './components/BasicCarousel';
 import VerticalCarousel from './components/VerticalCarousel';
-import './carousel.scss';
 
-const CarouselDemo: React.FC = () => {
+const CarouselPage: React.FC = () => {
+  // 示例数据
   const items = [
     {
-      title: '第一张',
-      imageUrl: 'https://picsum.photos/800/300?random=1'
+      title: "Mountain View",
+      imageUrl: "https://picsum.photos/800/500?random=1",
     },
     {
-      title: '第二张',
-      imageUrl: 'https://picsum.photos/800/300?random=2'
+      title: "Ocean Sunset",
+      imageUrl: "https://picsum.photos/800/500?random=2",
     },
     {
-      title: '第三张',
-      imageUrl: 'https://picsum.photos/800/300?random=3'
+      title: "Forest Path",
+      imageUrl: "https://picsum.photos/800/500?random=3",
     },
     {
-      title: '第四张',
-      imageUrl: 'https://picsum.photos/800/300?random=4'
+      title: "City Lights",
+      imageUrl: "https://picsum.photos/800/500?random=4",
+    },
+    {
+      title: "Desert Dunes",
+      imageUrl: "https://picsum.photos/800/500?random=5",
     },
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <Card title="基础轮播图">
-        <BasicCarousel items={items} />
-      </Card>
-
-      <Card title="3D 轮播图">
-        <Carousel3D items={items} />
-      </Card>
-
-      <Card title="垂直轮播图">
-        <VerticalCarousel items={items} />
+    <div className="p-6">
+      <Card title="轮播图展示" className="shadow-lg">
+        <Tabs
+          defaultActiveKey="basic"
+          items={[
+            {
+              key: 'basic',
+              label: '基础轮播',
+              children: <BasicCarousel items={items} />,
+            },
+            {
+              key: 'vertical',
+              label: '垂直轮播',
+              children: <VerticalCarousel items={items} />,
+            },
+            {
+              key: '3d',
+              label: '3D 覆盖轮播',
+              children: <Carousel3D items={items} />,
+            },
+            {
+              key: 'cards',
+              label: '卡片堆叠轮播',
+              children: <CardStackCarousel items={items} />,
+            },
+            {
+              key: 'cube',
+              label: '立方体轮播',
+              children: <CubeCarousel items={items} />,
+            },
+            {
+              key: 'parallax',
+              label: '视差轮播',
+              children: <ParallaxCarousel items={items} />,
+            },
+          ]}
+        />
       </Card>
     </div>
   );
 };
 
-export default CarouselDemo; 
+export default CarouselPage;
 
-export const routeConfig={
-  title:'轮播图',
+export const routeConfig = {
+  title: '轮播图',
   layout: true,
-
-}
+}; 

@@ -1,56 +1,42 @@
 import React from 'react';
-import { Carousel, Space } from 'antd';
-import { UpOutlined, DownOutlined } from '@ant-design/icons';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
-interface VerticalCarouselProps {
-  items: Array<{
-    title: string;
-    imageUrl: string;
-  }>;
-}
-
-const VerticalCarousel: React.FC<VerticalCarouselProps> = ({ items }) => {
-  const verticalRef = React.useRef<any>(null);
-
+const VerticalCarousel: React.FC<{ items: any[] }> = ({ items }) => {
   return (
-    <div className="w-full">
-      <div className="flex justify-end items-center mb-4 space-x-4">
-        <Space>
-          <UpOutlined 
-            className="cursor-pointer hover:text-blue-500 transition-colors" 
-            onClick={() => verticalRef.current?.prev()} 
-          />
-          <DownOutlined 
-            className="cursor-pointer hover:text-blue-500 transition-colors" 
-            onClick={() => verticalRef.current?.next()} 
-          />
-        </Space>
-      </div>
-      <div className="h-[400px]">
-        <Carousel
-          ref={verticalRef}
-          dots={false}
-          vertical
-          autoplay
-          className="vertical-carousel h-full"
-        >
-          {items.map((item, index) => (
-            <div key={index} className="h-full">
-              <div className="relative h-full rounded-lg overflow-hidden">
-                <img 
-                  src={item.imageUrl} 
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="vertical-overlay absolute inset-0 flex items-center justify-center bg-black/30">
-                  <h3 className="text-white text-2xl font-bold">{item.title}</h3>
-                </div>
-              </div>
+    <Swiper
+      direction={'vertical'}
+      spaceBetween={30}
+      centeredSlides={true}
+      autoplay={{
+        delay: 2500,
+        disableOnInteraction: false,
+      }}
+      pagination={{
+        clickable: true,
+      }}
+      navigation={true}
+      modules={[Autoplay, Pagination, Navigation]}
+      className="h-[400px] w-full vertical-carousel"
+    >
+      {items.map((item, index) => (
+        <SwiperSlide key={index}>
+          <div className="relative w-full h-full">
+            <img
+              src={item.imageUrl}
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+              <h3 className="text-white text-2xl font-bold vertical-slide-title">{item.title}</h3>
             </div>
-          ))}
-        </Carousel>
-      </div>
-    </div>
+          </div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
   );
 };
 

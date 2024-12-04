@@ -99,4 +99,124 @@
 // 添加渐变遮罩的 z-index
 .from-gray-900 {
   z-index: 10;
+}
+
+// 卡片堆叠轮播样式
+.swiper-cards {
+  .swiper-slide {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+}
+
+// 立方体轮播样式
+.swiper-cube {
+  .swiper-cube-shadow {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+// 视差轮播样式
+.swiper-parallax {
+  .swiper-slide {
+    overflow: hidden;
+  }
+}
+
+// 通用样式优化
+.swiper-button-next,
+.swiper-button-prev {
+  color: white;
+  
+  &:after {
+    font-size: 24px;
+  }
+}
+
+.swiper-pagination-bullet {
+  background: white;
+  opacity: 0.7;
+  
+  &-active {
+    opacity: 1;
+  }
+}
+
+// Tab 内容区域样式
+.ant-tabs-content {
+  min-height: 500px;
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .swiper {
+    height: 300px;
+  }
+}
+
+// 垂直轮播样式
+.vertical-carousel {
+  .swiper-button-next,
+  .swiper-button-prev {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) rotate(90deg);
+    
+    &.swiper-button-prev {
+      top: 10px;
+    }
+    
+    &.swiper-button-next {
+      bottom: 10px;
+      top: auto;
+    }
+  }
+
+  .swiper-pagination {
+    right: 10px;
+    left: auto;
+    
+    .swiper-pagination-bullet {
+      display: block;
+      margin: 8px 0;
+    }
+  }
+}
+
+.vertical-slide-title {
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.swiper-slide-active .vertical-slide-title {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+// 基础轮播样式优化
+.swiper-slide {
+  img {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
+
+// 通用动画效果
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.swiper-slide-active h3 {
+  animation: fadeInUp 0.5s ease forwards;
 } 
