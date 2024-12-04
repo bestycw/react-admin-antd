@@ -37,4 +37,5 @@ export const routeConfig = {
   icon: <ApiOutlined />,
   layout: true,
   auth: true,
+  sort: 2
 }; 

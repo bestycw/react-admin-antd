@@ -280,4 +280,5 @@ export const routeConfig: RouteConfig = {
   icon: <ApiOutlined />,
   layout: true,
   auth: true,
+  sort: 1
 };

@@ -7,5 +7,5 @@ export const routeConfig: RouteConfig = {
     icon: <SettingOutlined />,
     layout: true,
     auth: true,
-    sort: 3
+    sort: 7
 }

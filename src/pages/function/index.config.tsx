@@ -5,4 +5,5 @@ export const routeConfig = {
   icon: <ToolOutlined />,
   layout: true,
   auth: true,
+  sort: 1
 }; 

@@ -5,5 +5,5 @@ export const routeConfig = {
     icon: <EditOutlined />,
     layout: true,
     auth: true,
-    sort: 200  // 设置排序权重
+    sort: 6  // 设置排序权重
 }

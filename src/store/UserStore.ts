@@ -6,28 +6,28 @@ import type { UserInfo as AuthUserInfo } from '@/services/auth'
 import type { NotificationSetting } from '@/types/notification'
 
 interface UserInfo extends AuthUserInfo {
-  accessToken: string;
+    accessToken: string;
 }
 
 interface Device {
-  id: string;
-  browser: string;
-  os: string;
-  ip: string;
-  location: string;
-  lastActive: string;
-  current: boolean;
+    id: string;
+    browser: string;
+    os: string;
+    ip: string;
+    location: string;
+    lastActive: string;
+    current: boolean;
 }
 
 interface ApiToken {
-  id: string;
-  name: string;
-  token: string;
-  permissions: string[];
-  expiresAt: string;
-  lastUsed: string;
-  createdAt: string;
-  status: 'active' | 'expired' | 'revoked';
+    id: string;
+    name: string;
+    token: string;
+    permissions: string[];
+    expiresAt: string;
+    lastUsed: string;
+    createdAt: string;
+    status: 'active' | 'expired' | 'revoked';
 }
 
 // export type ThemeStyle = 'light' | 'dark' | 'dynamic';
@@ -93,7 +93,7 @@ class UserStore {
         runInAction(() => {
             this.userInfo = userInfo;
             // this.isLogin = true;
-            
+
             // 存储用户信息
             const storage = remember ? localStorage : sessionStorage;
             storage.setItem('userInfo', JSON.stringify(userInfo));
@@ -126,9 +126,9 @@ class UserStore {
     }
 
     setAllRoutes(routes: CoRouteObject[]) {
-            this.allRoutes = routes
+        this.allRoutes = routes
     }
-  
+
     get hasAllRoutes() {
         return this.allRoutes.length > 0
     }
@@ -150,27 +150,27 @@ class UserStore {
 
     hasAnyRole(roles: string[]): boolean {
         if (!roles?.length) return true;
-        return this.userInfo?.roles?.some(userRole => 
+        return this.userInfo?.roles?.some(userRole =>
             roles.includes(userRole)
         ) ?? false;
     }
 
     hasAllRoles(roles: string[]): boolean {
-        return this.userInfo?.roles 
-            ? roles.every(role => this.userInfo?.roles.includes(role)) 
+        return this.userInfo?.roles
+            ? roles.every(role => this.userInfo?.roles.includes(role))
             : false
     }
-    // 根据用户角色过滤路由
+    // 根据用户角色过滤路由 TODO 现在判断的逻辑太复杂，可以从路由约定层面配置，然后简化一下
     filterRoutesByRoles(routes: CoRouteObject[]): CoRouteObject[] {
         return routes.map(route => {
-            const newRoute = {...route};
+            const newRoute = { ...route };
             // console.log('newRoute', newRoute)
             // 如果是根路由或者 layout 为 false，则保留
             // console.log('newRoute', newRoute,newRoute.meta?.layout === false,route.root === true)
             if (newRoute.meta?.layout === false) {
                 return newRoute;
             }
-            
+
             // 1. 首先检查用户角色权限
             if (newRoute.meta?.roles?.length) {
                 if (!this.hasAnyRole(newRoute.meta.roles)) {
@@ -179,16 +179,16 @@ class UserStore {
                 }
             }
             // 2. 然后检查动态路由权限
-            if (!newRoute.meta?.hidden && newRoute.path && !newRoute.root) {  
+            if (!newRoute.meta?.hidden && newRoute.path && !newRoute.root) {
                 const dynamicRoutes = this.userInfo?.dynamicRoutesList || [];
                 // console.log('dynamicRoutes', dynamicRoutes)
                 // 如果是 layout=false 的路由，跳过动态路由检查
                 const needCheckDynamicRoute = newRoute.meta?.layout !== false;
-                const hasPermission = !needCheckDynamicRoute || 
-                                    dynamicRoutes.includes('*') || 
-                                    dynamicRoutes.includes(newRoute.path);
+                const hasPermission = !needCheckDynamicRoute ||
+                    dynamicRoutes.includes('*') ||
+                    dynamicRoutes.includes(newRoute.path);
 
-             
+
                 if (!hasPermission) {
                     newRoute.meta = newRoute.meta || {};
                     newRoute.meta.hidden = true;
@@ -198,18 +198,18 @@ class UserStore {
             // 递归处理子路由
             if (newRoute.children) {
                 newRoute.children = this.filterRoutesByRoles(newRoute.children);
-                
+
                 // 修改子路由处理逻辑：
                 // 1. 如果当前路由是根路由，即使所有子路由都被隐藏也不隐藏自己
                 // 2. 如果不是根路由且所有子路由都被隐藏，则隐藏自己
-                if (!route.root && 
-                    newRoute.children.every((child: CoRouteObject) => child.meta?.hidden) && 
+                if (!route.root &&
+                    newRoute.children.every((child: CoRouteObject) => child.meta?.hidden) &&
                     newRoute.meta?.layout !== false) {
                     newRoute.meta = newRoute.meta || {};
                     newRoute.meta.hidden = true;
                 }
             }
-   
+
             return newRoute;
         }).filter(route => {
             // 根路由和 layout=false 的路由始终保留
@@ -236,7 +236,7 @@ class UserStore {
 
     async updateProfile(data: Partial<UserInfo>) {
         const response = await authService.updateProfile(data);
- 
+
         runInAction(() => {
             if (this.userInfo) {
                 // 只更新响应中包含的字段
