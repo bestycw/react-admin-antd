@@ -1,6 +1,7 @@
 export default {
   'POST /api/auth/login': (req: any, res: any) => {
     const { username, password } = req.body;
+    console.log('username', username);
     if (username === 'admin' && password === '123456') {
       res.send({
         code: 200,

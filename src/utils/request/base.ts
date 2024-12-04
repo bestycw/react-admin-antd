@@ -38,7 +38,7 @@ export abstract class BaseRequest {
   protected cache = new Map<string, { data: any; timestamp: number }>();
 
   constructor(config: BaseRequestConfig = {}) {
-    this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    this.baseURL = import.meta.env.VITE_USE_MOCK === 'true' ? '' : import.meta.env.VITE_API_URL;
     this.defaultConfig = {
       timeout: REQUEST.TIMEOUT,
       loading: true,

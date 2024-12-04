@@ -8,7 +8,7 @@ import { Plugin as importToCDN } from 'vite-plugin-cdn-import'
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd())
-  const { VITE_PORT, VITE_API_URL, VITE_API_PREFIX, VITE_PROXY, VITE_USE_CDN } = env
+  const { VITE_PORT, VITE_API_URL, VITE_API_PREFIX, VITE_PROXY, VITE_USE_CDN, VITE_USE_MOCK } = env
 
   return {
     plugins: [
@@ -68,13 +68,13 @@ export default defineConfig(({ command, mode }) => {
       port: Number(VITE_PORT),
       open: true,
       cors: true,
-      proxy: VITE_PROXY === 'true' ? {
-        [VITE_API_PREFIX]: {
-          target: VITE_API_URL,
+      proxy: VITE_USE_MOCK === 'true' ? {} : {
+        '/api': {
+          target: env.VITE_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(new RegExp(`^${VITE_API_PREFIX}`), '')
+          rewrite: (path) => path.replace(/^\/api/, '')
         }
-      } : null
+      }
     },
     build: {
       target: 'es2015',
