@@ -200,5 +200,6 @@ export default DictPage;
 
 export const routeConfig = {
   title: '字典管理',
+  hidden: true,
   layout: true,
 }; 

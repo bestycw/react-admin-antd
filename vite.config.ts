@@ -69,10 +69,10 @@ export default defineConfig(({ command, mode }) => {
       open: true,
       cors: true,
       proxy: VITE_USE_MOCK === 'true' ? {} : {
-        '/api': {
-          target: env.VITE_API_URL,
+        [VITE_API_PREFIX]: {
+          target: VITE_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, '')
+          rewrite: (path) => path.replace(new RegExp(`^${VITE_API_PREFIX}`), '')
         }
       }
     },

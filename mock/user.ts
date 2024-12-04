@@ -1,3 +1,5 @@
+import Mock from 'mockjs'
+
 const users = [
   {
     id: 1,
@@ -17,30 +19,32 @@ const users = [
     createTime: '2024-01-02 00:00:00',
     roles: ['user']
   }
-];
+]
 
-export default {
-  'GET /api/users': (req: any, res: any) => {
-    const { page = 1, pageSize = 10 } = req.query;
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
+Mock.mock(/\/api\/users(\?.*)?$/, 'get', (options: any) => {
+  const url = new URL(options.url, 'http://localhost')
+  const page = Number(url.searchParams.get('page')) || 1
+  const pageSize = Number(url.searchParams.get('pageSize')) || 10
+  const start = (page - 1) * pageSize
+  const end = start + pageSize
 
-    res.send({
-      code: 200,
-      data: {
-        list: users.slice(start, end),
-        total: users.length,
-        page: Number(page),
-        pageSize: Number(pageSize)
-      }
-    });
-  },
-
-  'GET /api/users/:id': (req: any, res: any) => {
-    const user = users.find(u => u.id === Number(req.params.id));
-    res.send({
-      code: 200,
-      data: user
-    });
+  return {
+    code: 200,
+    data: {
+      list: users.slice(start, end),
+      total: users.length,
+      page,
+      pageSize
+    }
   }
-}; 
+})
+
+Mock.mock(/\/api\/users\/\d+/, 'get', (options: any) => {
+  const id = parseInt(options.url.match(/\/api\/users\/(\d+)/)[1])
+  const user = users.find(u => u.id === id)
+  
+  return {
+    code: 200,
+    data: user
+  }
+}) 
