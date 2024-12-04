@@ -5819,6 +5819,11 @@
   "resolved" "https://registry.npmmirror.com/svg-path-parser/-/svg-path-parser-1.1.0.tgz"
   "version" "1.1.0"
 
+"swiper@^11.1.15":
+  "integrity" "sha512-IzWeU34WwC7gbhjKsjkImTuCRf+lRbO6cnxMGs88iVNKDwV+xQpBCJxZ4bNH6gSrIbbyVJ1kuGzo3JTtz//CBw=="
+  "resolved" "https://registry.npmmirror.com/swiper/-/swiper-11.1.15.tgz"
+  "version" "11.1.15"
+
 "tailwindcss@^3.4.14", "tailwindcss@>=3.0.0 || insiders || >=4.0.0-alpha.20":
   "integrity" "sha512-IcSvOcTRcUtQQ7ILQL5quRDg7Xs93PdJEk1ZLbhhvJc7uj/OAhYOnruEiwnGgBvUtaUAJ8/mhSw1o8L2jCiENA=="
   "resolved" "https://registry.npmmirror.com/tailwindcss/-/tailwindcss-3.4.14.tgz"

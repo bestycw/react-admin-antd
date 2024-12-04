@@ -1,0 +1,102 @@
+.perspective-\[2000px\] {
+  perspective: 2000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.rotate-y-55 {
+  transform: rotateY(55deg);
+}
+
+.-rotate-y-55 {
+  transform: rotateY(-55deg);
+}
+
+.rotate-y-35 {
+  transform: rotateY(35deg);
+}
+
+.-rotate-y-35 {
+  transform: rotateY(-35deg);
+}
+
+.rotate-y-0 {
+  transform: rotateY(0deg);
+}
+
+.translate-z-0 {
+  transform: translateZ(0);
+}
+
+.translate-z-\[-150px\] {
+  transform: translateZ(-150px);
+}
+
+.translate-z-\[-300px\] {
+  transform: translateZ(-300px);
+}
+
+.scale-60 {
+  transform: scale(0.6);
+}
+
+[class*="translate-x-"][class*="translate-z-"][class*="rotate-y-"][class*="scale-"] {
+  transform: translateX(var(--tw-translate-x))
+             translateZ(var(--tw-translate-z))
+             rotateY(var(--tw-rotate))
+             scale(var(--tw-scale));
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+}
+
+// Swiper 自定义样式
+.swiper {
+  padding: 50px 0;
+}
+
+.swiper-slide {
+  transition: all 300ms ease;
+  transform-style: preserve-3d;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  &.swiper-slide-active {
+    transform: translateZ(0);
+    z-index: 2;
+  }
+  
+  &:not(.swiper-slide-active) {
+    opacity: 0.7;
+    filter: brightness(0.8);
+  }
+}
+
+// 自定义导航按钮样式
+.swiper-button-prev,
+.swiper-button-next {
+  &::after {
+    display: none;
+  }
+}
+
+// 优化 3D 效果
+.swiper-container {
+  perspective: 1000px;
+}
+
+// 添加渐变遮罩的 z-index
+.from-gray-900 {
+  z-index: 10;
+} 
