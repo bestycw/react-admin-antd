@@ -164,7 +164,13 @@ class UserStore {
     filterRoutesByRoles(routes: CoRouteObject[]): CoRouteObject[] {
         return routes.map(route => {
             const newRoute = {...route};
-
+            // console.log('newRoute', newRoute)
+            // 如果是根路由或者 layout 为 false，则保留
+            // console.log('newRoute', newRoute,newRoute.meta?.layout === false,route.root === true)
+            if (newRoute.meta?.layout === false) {
+                return newRoute;
+            }
+            
             // 1. 首先检查用户角色权限
             if (newRoute.meta?.roles?.length) {
                 if (!this.hasAnyRole(newRoute.meta.roles)) {
@@ -172,11 +178,17 @@ class UserStore {
                     newRoute.meta.hidden = true;
                 }
             }
-
             // 2. 然后检查动态路由权限
-            if (!newRoute.meta?.hidden && newRoute.path) {
+            if (!newRoute.meta?.hidden && newRoute.path && !newRoute.root) {  
                 const dynamicRoutes = this.userInfo?.dynamicRoutesList || [];
-                const hasPermission = dynamicRoutes.includes('*') || dynamicRoutes.includes(newRoute.path);
+                // console.log('dynamicRoutes', dynamicRoutes)
+                // 如果是 layout=false 的路由，跳过动态路由检查
+                const needCheckDynamicRoute = newRoute.meta?.layout !== false;
+                const hasPermission = !needCheckDynamicRoute || 
+                                    dynamicRoutes.includes('*') || 
+                                    dynamicRoutes.includes(newRoute.path);
+
+             
                 if (!hasPermission) {
                     newRoute.meta = newRoute.meta || {};
                     newRoute.meta.hidden = true;
@@ -186,15 +198,27 @@ class UserStore {
             // 递归处理子路由
             if (newRoute.children) {
                 newRoute.children = this.filterRoutesByRoles(newRoute.children);
-                // 如果所有子路由都被隐藏，则也隐藏父路由
-                if (newRoute.children.every((child: CoRouteObject) => child.meta?.hidden)) {
+                
+                // 修改子路由处理逻辑：
+                // 1. 如果当前路由是根路由，即使所有子路由都被隐藏也不隐藏自己
+                // 2. 如果不是根路由且所有子路由都被隐藏，则隐藏自己
+                if (!route.root && 
+                    newRoute.children.every((child: CoRouteObject) => child.meta?.hidden) && 
+                    newRoute.meta?.layout !== false) {
                     newRoute.meta = newRoute.meta || {};
                     newRoute.meta.hidden = true;
                 }
             }
-
+   
             return newRoute;
-        }).filter(route => !route.meta?.hidden);
+        }).filter(route => {
+            // 根路由和 layout=false 的路由始终保留
+            if (!route.root || route.meta?.layout === false) {
+                return true;
+            }
+            // 其他路由根据 hidden 属性过滤
+            return !route.meta?.hidden;
+        });
     }
 
 

@@ -1,6 +1,7 @@
 import { BaseRequest, BaseRequestConfig } from './base';
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, AxiosProgressEvent } from 'axios';
 import { message } from 'antd';
+import { ErrorCode, handleErrorMessage } from '@/utils/request/errorCode';
 
 export class AxiosRequest extends BaseRequest {
   private instance: AxiosInstance;
@@ -36,34 +37,12 @@ export class AxiosRequest extends BaseRequest {
         if (response.config.responseType === 'blob') {
           return response;
         }
-        if (response.data.code !== 200) {
-          return Promise.reject(new Error(response.data.message || '请求失败'));
+        if (response.data.code !== ErrorCode.SUCCESS) {
+          return Promise.reject(new Error(response.data.message || handleErrorMessage(response.data.code)));
         }
         return response.data;
       },
-      (error) => {
-        if (error.response) {
-          switch (error.response.status) {
-            case 401:
-              message.error('未授权，请重新登录');
-              break;
-            case 403:
-              message.error('拒绝访问');
-              break;
-            case 404:
-              message.error('请求错误，未找到该资源');
-              break;
-            case 500:
-              message.error('服务器错误');
-              break;
-            default:
-              message.error(`连接错误 ${error.response.status}`);
-          }
-        } else {
-          message.error('网络错误，请检查网络连接');
-        }
-        return Promise.reject(error);
-      }
+      (error) => this.handleError(error)
     );
   }
 
@@ -205,23 +184,10 @@ export class AxiosRequest extends BaseRequest {
     if (error.name === 'AbortError' || error.name === 'CanceledError' || error.code === 'ECONNABORTED') {
       return Promise.reject(new Error('请求已取消或超时'));
     }
+    
     if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          message.error('未授权，请重新登录');
-          break;
-        case 403:
-          message.error('拒绝访问');
-          break;
-        case 404:
-          message.error('请求错误，未找到该资源');
-          break;
-        case 500:
-          message.error('服务器错误');
-          break;
-        default:
-          message.error(`连接错误 ${error.response.status}`);
-      }
+      const status = error.response.status;
+      message.error(handleErrorMessage(status));
     } else {
       message.error('网络错误，请检查网络连接');
     }

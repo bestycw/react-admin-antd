@@ -2,6 +2,8 @@ import { BaseRequest, BaseRequestConfig, Interceptor } from './base';
 import { authService } from '../../services/auth';
 import { authStorage } from '@/utils/storage/authStorage';
 import { TIME } from '@/config/constants';
+import { ErrorCode, handleErrorMessage } from '@/utils/request/errorCode';
+import { message } from 'antd';
 
 export class FetchRequest extends BaseRequest {
   public interceptors = {
@@ -117,8 +119,10 @@ export class FetchRequest extends BaseRequest {
     for (const handler of handlers) {
       try {
         if (handler.onFulfilled) {
+          if (!response.ok) {
+            throw new Error(handleErrorMessage(response.status));
+          }
           currentResponse = await handler.onFulfilled(currentResponse);
-          console.log('After response interceptor:', currentResponse);
         }
       } catch (error) {
         if (handler.onRejected) {
@@ -365,6 +369,20 @@ export class FetchRequest extends BaseRequest {
         config?.onError?.(error);
       }
     }
+  }
+
+  protected handleError(error: any) {
+    if (error.name === 'AbortError') {
+      return Promise.reject(new Error('请求超时'));
+    }
+    
+    if (error.response) {
+      const status = error.response.status;
+      message.error(handleErrorMessage(status));
+    } else {
+      message.error('网络错误，请检查网络连接');
+    }
+    return Promise.reject(error);
   }
 }
 

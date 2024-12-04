@@ -127,8 +127,10 @@ const RoleManagement: React.FC = () => {
   };
 
   const handleEdit = (record: RoleType) => {
+    console.log('Edit record:', record);
     setCurrentRole(record);
     setCurrentStep(0);
+    setCheckedKeys(record.dynamicRoutesList || []);
     form.setFieldsValue({
       ...record,
       dynamicRoutesList: record.dynamicRoutesList || []
@@ -177,30 +179,23 @@ const RoleManagement: React.FC = () => {
 
   const handleModalOk = async () => {
     try {
-      await form.validateFields([
-        'name',
-        'code',
-        'description',
-        'status',
-        'dynamicRoutesList'
-      ]);
+      await form.validateFields();
+      const values = form.getFieldsValue(true);
+      console.log('Form values before submit:', values);
       
-      const values = form.getFieldsValue(true); 
-      console.log('values', values)
       const roleData = {
         name: values.name,
         code: values.code,
         description: values.description,
         status: values.status || 'active',
-        dynamicRoutesList: checkAll ? ['*'] : values.dynamicRoutesList || [] // 如果全选则设置为 ['*']
+        dynamicRoutesList: checkAll ? ['*'] : values.dynamicRoutesList || []
       };
-      
+      console.log('Role data to submit:', roleData);
+
       if (currentRole) {
         await updateRole(currentRole.id, roleData);
-        message.success('更新成功');
       } else {
         await createRole(roleData);
-        message.success('创建成功');
       }
       setModalVisible(false);
       fetchRoles();
@@ -302,6 +297,7 @@ const RoleManagement: React.FC = () => {
                   }
                 }}
                 onCheck={(keys: any) => {
+                  console.log('Tree onCheck keys:', keys);
                   setCheckedKeys(keys);
                   form.setFieldsValue({ dynamicRoutesList: keys });
                   setCheckAll(keys.length === allKeys.length);

@@ -2,6 +2,7 @@ import { fetchRequest } from '@/utils/request';
 import { authStorage } from '@/utils/storage/authStorage';
 import { TIME } from '@/config/constants';
 import UserStore from '@/store/UserStore';
+import { getRoleRoutes } from './role';
 
 export interface LoginParams {
   username?: string;
@@ -130,13 +131,16 @@ class AuthService {
       if (!response?.token || !response?.refreshToken) {
         throw new Error('登录响应格式错误');
       }
-
+      // console.log('login response:', response);
       authStorage.setTokenInfo({
         token: response.token,
         refreshToken: response.refreshToken,
         expiresIn: TIME.TOKEN_EXPIRE,
         remember: params.remember
       });
+      const dynamicRoutesList = await getRoleRoutes(response.user.roles);
+      console.log('dynamicRoutesList:', dynamicRoutesList);
+      response.user.dynamicRoutesList = dynamicRoutesList;
 
       this.startRefreshTokenTimer(TIME.TOKEN_EXPIRE);
       return response;
