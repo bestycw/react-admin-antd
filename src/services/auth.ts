@@ -1,8 +1,9 @@
-import { fetchRequest } from '@/utils/request';
+import request from '@/utils/request';
 import { authStorage } from '@/utils/storage/authStorage';
 import { TIME } from '@/config/constants';
 import UserStore from '@/store/UserStore';
 import { getRoleRoutes } from './role';
+// import { request } from 'node:https';
 
 export interface LoginParams {
   username?: string;
@@ -101,7 +102,7 @@ class AuthService {
       }
       this.isRefreshing = true;
 
-      const response = await fetchRequest.post<TokenInfo>('/api/auth/refresh-token', { refreshToken });
+      const response = await request.post<TokenInfo>('/api/auth/refresh-token', { refreshToken });
       
       if (!response?.token || !response?.refreshToken) {
         throw new Error('Invalid token response');
@@ -126,7 +127,7 @@ class AuthService {
 
   async login(params: LoginParams): Promise<LoginResponse> {
     try {
-      const response = await fetchRequest.post<LoginResponse>('/api/auth/login', params);
+      const response = await request.post<LoginResponse>('/api/auth/login', params);
 
       if (!response?.token || !response?.refreshToken) {
         throw new Error('登录响应格式错误');
@@ -159,7 +160,7 @@ class AuthService {
 
   async logout(): Promise<void> {
     try {
-      await fetchRequest.post('/api/auth/logout');
+      await request.post('/api/auth/logout');
     } finally {
       // this.stopRefreshTokenTimer();
       // 清除所有认证相关存储
@@ -169,23 +170,23 @@ class AuthService {
   }
 
   async getCurrentUser(): Promise<UserInfo> {
-    return await fetchRequest.get<UserInfo>('/api/auth/me');
+    return await request.get<UserInfo>('/api/auth/me');
   }
 
   async sendVerificationCode(mobile: string, type: 'login' | 'register' | 'reset'): Promise<ApiResponse<VerificationCodeData>> {
-    return await fetchRequest.post('/api/auth/send-code', { mobile, type });
+    return await request.post('/api/auth/send-code', { mobile, type });
   }
 
   async getQRCode(): Promise<QRCodeResponse> {
-    return await fetchRequest.get<QRCodeResponse>('/api/auth/qrcode');
+    return await request.get<QRCodeResponse>('/api/auth/qrcode');
   }
 
   async checkQRCodeStatus(qrToken: string): Promise<LoginResponse | { status: 'pending' | 'expired' }> {
-    return await fetchRequest.get<LoginResponse | { status: 'pending' | 'expired' }>(`/api/auth/qrcode/check/${qrToken}`);
+    return await request.get<LoginResponse | { status: 'pending' | 'expired' }>(`/api/auth/qrcode/check/${qrToken}`);
   }
 
   async changePassword(oldPassword: string, newPassword: string): Promise<void> {
-    await fetchRequest.post('/api/auth/change-password', {
+    await request.post('/api/auth/change-password', {
       oldPassword,
       newPassword
     });
@@ -205,47 +206,47 @@ class AuthService {
   }
 
   async register(params: RegisterParams): Promise<void> {
-    await fetchRequest.post('/api/auth/register', params);
+    await request.post('/api/auth/register', params);
   }
 
   async resetPassword(params: ResetPasswordParams): Promise<void> {
-    await fetchRequest.post('/api/auth/reset-password', params);
+    await request.post('/api/auth/reset-password', params);
   }
 
   async updateProfile(data: Partial<UserInfo>): Promise<UserInfo> {
-    return await fetchRequest.put<UserInfo>('/api/auth/profile', data);
+    return await request.put<UserInfo>('/api/auth/profile', data);
   }
 
   async uploadAvatar(file: File): Promise<any> {
     const formData = new FormData();
     formData.append('avatar', file);
-    const response = await fetchRequest.upload<{ code: number; data: { url: string }; message: string }>('/api/auth/upload-avatar', formData);
+    const response = await request.upload<{ code: number; data: { url: string }; message: string }>('/api/auth/upload-avatar', formData);
     // console.log('Upload response:', response);
     return response;
   }
 
   async getDevices(): Promise<any[]> {
-    return await fetchRequest.get('/api/auth/devices');
+    return await request.get('/api/auth/devices');
   }
 
   async revokeDevice(deviceId: string): Promise<void> {
-    await fetchRequest.delete(`/api/auth/devices/${deviceId}`);
+    await request.delete(`/api/auth/devices/${deviceId}`);
   }
 
   async getApiTokens(): Promise<any[]> {
-    return await fetchRequest.get('/api/auth/tokens');
+    return await request.get('/api/auth/tokens');
   }
 
   async createApiToken(data: any): Promise<any> {
-    return await fetchRequest.post('/api/auth/tokens', data);
+    return await request.post('/api/auth/tokens', data);
   }
 
   async revokeApiToken(tokenId: string): Promise<void> {
-    await fetchRequest.delete(`/api/auth/tokens/${tokenId}`);
+    await request.delete(`/api/auth/tokens/${tokenId}`);
   }
 
   async updateNotificationSettings(settings: any): Promise<void> {
-    await fetchRequest.put('/api/auth/notifications/settings', settings);
+    await request.put('/api/auth/notifications/settings', settings);
   }
 }
 

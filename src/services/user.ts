@@ -1,4 +1,4 @@
-import { fetchRequest } from '@/utils/request';
+import request  from '@/utils/request';
 
 export interface UserType {
   id: any;
@@ -66,7 +66,7 @@ export async function getUsers(params?: {
 //   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 //   console.log('Request token:', token);
   
-  return fetchRequest.get<any>('/api/users', { 
+  return request.get<any>('/api/users', { 
     params,
     // headers: {
     //   'Authorization': `Bearer ${token}`
@@ -86,22 +86,22 @@ export async function getUser(id: number): Promise<{ data: UserType }> {
 
 // 创建用户
 export const createUser = (data: CreateUserParams) => {
-  return fetchRequest.post<UserType>('/api/users', data);
+  return request.post<UserType>('/api/users', data);
 };
 
 // 更新用户
 export const updateUser = (id: string, data: Partial<CreateUserParams>) => {
-  return fetchRequest.put<UserType>(`/api/users/${id}`, data);
+  return request.put<UserType>(`/api/users/${id}`, data);
 };
 
 // 删除用户
 export async function deleteUser(id: number): Promise<{ data: null }> {
   // 修改为实际的 API 调用
-  return fetchRequest.delete<{ data: null }>(`/api/users/${id}`);
+  return request.delete<{ data: null }>(`/api/users/${id}`);
 }
 
 // 重置密码
 export async function resetUserPassword(id: number): Promise<{ data: null }> {
   // 修改为实际的 API 调用
-  return fetchRequest.post<{ data: null }>(`/api/users/${id}/reset-password`);
+  return request.post<{ data: null }>(`/api/users/${id}/reset-password`);
 }

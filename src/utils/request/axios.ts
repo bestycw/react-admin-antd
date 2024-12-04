@@ -2,6 +2,9 @@ import { BaseRequest, BaseRequestConfig } from './base';
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, AxiosProgressEvent } from 'axios';
 import { message } from 'antd';
 import { ErrorCode, handleErrorMessage } from '@/utils/request/errorCode';
+import authStorage from '../storage/authStorage';
+import { TIME } from '@/config/constants';
+import { authService } from '@/services/auth';
 
 export class AxiosRequest extends BaseRequest {
   private instance: AxiosInstance;
@@ -19,15 +22,31 @@ export class AxiosRequest extends BaseRequest {
 
   private setupInterceptors() {
     this.instance.interceptors.request.use(
-      (config: any) => {
-        const { token, ...axiosConfig } = config;
-        if (token !== false) {
-          const tokenValue = localStorage.getItem('token');
-          if (tokenValue) {
-            axiosConfig.headers.Authorization = `Bearer ${tokenValue}`;
+      async (config: any) => {
+        // const {  ...axiosConfig } = config;
+        // if (token !== false) {
+          const token = authStorage.getToken();
+          const headers = { ...(config.headers || {}) };
+          
+          if (token) {
+            // 检查 token 是否即将过期
+            if (!authStorage.isTokenValid(TIME.TOKEN_REFRESH_AHEAD)) {
+              try {
+                await authService.refreshToken();
+                // 获取新的 token
+                const newToken = authStorage.getToken();
+                if (newToken) {
+                  headers['Authorization'] = `Bearer ${newToken}`;
+                }
+              } catch (error) {
+                console.error('Token refresh failed in interceptor:', error);
+              }
+            } else {
+              headers['Authorization'] = `Bearer ${token}`;
+            }
           }
-        }
-        return axiosConfig;
+        // }
+        return {...config,headers};
       },
       (error) => Promise.reject(error)
     );
