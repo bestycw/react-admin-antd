@@ -516,7 +516,7 @@ export default DraggablePage;
 
 export const routeConfig = {
   title: '拖拽排序',
-  icon: <MenuOutlined />,
+  // icon: <MenuOutlined />,
   layout: true,
   auth: true,
 }; 
