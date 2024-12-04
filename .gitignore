@@ -32,7 +32,6 @@ vite.config.js.map
 tsconfig.tsbuildinfo
 
 # 构建产物
-dist
 dist.tar.gz
 stats.html
 

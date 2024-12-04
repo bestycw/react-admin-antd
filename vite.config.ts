@@ -13,55 +13,52 @@ export default defineConfig(({ command, mode }) => {
   return {
     plugins: [
       react(),
-      // 生成 gzip 压缩包
-      viteCompression({
-        verbose: true,
-        disable: false,
-        threshold: 10240,
-        algorithm: 'gzip',
-        ext: '.gz',
-      }),
-      // HTML 插件
-      createHtmlPlugin({
-        inject: {
-          data: {
-            title: env.VITE_APP_TITLE,
-          },
-        },
-        minify: true,
-      }),
-      // 打包分析
-      visualizer({
-        open: true,
-        gzipSize: true,
-        brotliSize: true,
-      }),
-      // CDN 加速
-      VITE_USE_CDN === 'true' && importToCDN({
-        modules: [
-          {
-            name: 'react',
-            var: 'React',
-            path: 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js',
-          },
-          {
-            name: 'react-dom',
-            var: 'ReactDOM',
-            path: 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js',
-          },
-          {
-            name: 'antd',
-            var: 'antd',
-            path: 'https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.js',
-            css: 'https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.css',
-          },
-        ],
-      }),
+      // viteCompression({
+      //   verbose: true,
+      //   disable: false,
+      //   threshold: 10240,
+      //   algorithm: 'gzip',
+      //   ext: '.gz',
+      // }),
+      // createHtmlPlugin({
+      //   inject: {
+      //     data: {
+      //       title: env.VITE_APP_TITLE,
+      //     },
+      //   },
+      //   minify: true,
+      // }),
+      // visualizer({
+      //   open: true,
+      //   gzipSize: true,
+      //   brotliSize: true,
+      // }),
+      // VITE_USE_CDN === 'true' && importToCDN({
+      //   modules: [
+      //     {
+      //       name: 'react',
+      //       var: 'React',
+      //       path: 'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js',
+      //     },
+      //     {
+      //       name: 'react-dom',
+      //       var: 'ReactDOM',
+      //       path: 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js',
+      //     },
+      //     {
+      //       name: 'antd',
+      //       var: 'antd',
+      //       path: 'https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.js',
+      //       css: 'https://cdn.jsdelivr.net/npm/antd@5.0.0/dist/antd.min.css',
+      //     },
+      //   ],
+      // }),
     ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
       },
+      // mainFields: ['module', 'jsnext:main', 'jsnext', 'main'],
     },
     server: {
       host: true,
@@ -112,29 +109,15 @@ export default defineConfig(({ command, mode }) => {
       // chunk 大小警告的限制（以 kbs 为单位）
       chunkSizeWarningLimit: 2000,
     },
-    css: {
-      preprocessorOptions: {
-        less: {
-          javascriptEnabled: true,
-          modifyVars: {
-            // 在这里添加 less 变量
-          },
-        },
-      },
-      // 生产环境下移除 CSS 的 source map
-      devSourcemap: mode !== 'production',
-    },
-    // 预加载项目必需的组件
-    optimizeDeps: {
-      include: [
-        'react',
-        'react-dom',
-        'react-router-dom',
-        'antd',
-        '@ant-design/icons',
-        '@ant-design/plots',
-        'axios',
-      ],
-    },
+    // css: {
+    //   preprocessorOptions: {
+    //     less: {
+    //       javascriptEnabled: true,
+    //       modifyVars: {},
+    //     },
+    //   },
+    //   devSourcemap: mode !== 'production',
+    // },
+
   }
 })
