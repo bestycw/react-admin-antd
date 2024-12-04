@@ -1,0 +1,222 @@
+.perspective-\[2000px\] {
+  perspective: 2000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.rotate-y-55 {
+  transform: rotateY(55deg);
+}
+
+.-rotate-y-55 {
+  transform: rotateY(-55deg);
+}
+
+.rotate-y-35 {
+  transform: rotateY(35deg);
+}
+
+.-rotate-y-35 {
+  transform: rotateY(-35deg);
+}
+
+.rotate-y-0 {
+  transform: rotateY(0deg);
+}
+
+.translate-z-0 {
+  transform: translateZ(0);
+}
+
+.translate-z-\[-150px\] {
+  transform: translateZ(-150px);
+}
+
+.translate-z-\[-300px\] {
+  transform: translateZ(-300px);
+}
+
+.scale-60 {
+  transform: scale(0.6);
+}
+
+[class*="translate-x-"][class*="translate-z-"][class*="rotate-y-"][class*="scale-"] {
+  transform: translateX(var(--tw-translate-x))
+             translateZ(var(--tw-translate-z))
+             rotateY(var(--tw-rotate))
+             scale(var(--tw-scale));
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+}
+
+// Swiper 自定义样式
+.swiper {
+  padding: 50px 0;
+}
+
+.swiper-slide {
+  transition: all 300ms ease;
+  transform-style: preserve-3d;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  &.swiper-slide-active {
+    transform: translateZ(0);
+    z-index: 2;
+  }
+  
+  &:not(.swiper-slide-active) {
+    opacity: 0.7;
+    filter: brightness(0.8);
+  }
+}
+
+// 自定义导航按钮样式
+.swiper-button-prev,
+.swiper-button-next {
+  &::after {
+    display: none;
+  }
+}
+
+// 优化 3D 效果
+.swiper-container {
+  perspective: 1000px;
+}
+
+// 添加渐变遮罩的 z-index
+.from-gray-900 {
+  z-index: 10;
+}
+
+// 卡片堆叠轮播样式
+.swiper-cards {
+  .swiper-slide {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+}
+
+// 立方体轮播样式
+.swiper-cube {
+  .swiper-cube-shadow {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+// 视差轮播样式
+.swiper-parallax {
+  .swiper-slide {
+    overflow: hidden;
+  }
+}
+
+// 通用样式优化
+.swiper-button-next,
+.swiper-button-prev {
+  color: white;
+  
+  &:after {
+    font-size: 24px;
+  }
+}
+
+.swiper-pagination-bullet {
+  background: white;
+  opacity: 0.7;
+  
+  &-active {
+    opacity: 1;
+  }
+}
+
+// Tab 内容区域样式
+.ant-tabs-content {
+  min-height: 500px;
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .swiper {
+    height: 300px;
+  }
+}
+
+// 垂直轮播样式
+.vertical-carousel {
+  .swiper-button-next,
+  .swiper-button-prev {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) rotate(90deg);
+    
+    &.swiper-button-prev {
+      top: 10px;
+    }
+    
+    &.swiper-button-next {
+      bottom: 10px;
+      top: auto;
+    }
+  }
+
+  .swiper-pagination {
+    right: 10px;
+    left: auto;
+    
+    .swiper-pagination-bullet {
+      display: block;
+      margin: 8px 0;
+    }
+  }
+}
+
+.vertical-slide-title {
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.swiper-slide-active .vertical-slide-title {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+// 基础轮播样式优化
+.swiper-slide {
+  img {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
+
+// 通用动画效果
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.swiper-slide-active h3 {
+  animation: fadeInUp 0.5s ease forwards;
+} 

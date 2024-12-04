@@ -5,9 +5,9 @@ import UserActions from '@/components/UserActions'
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import { Layout } from 'antd'
 import CustomDrawer from '@/components/CustomDrawer'
-import React, { useMemo } from 'react'
+import  { useMemo } from 'react'
 import { useStore } from '@/store'
-
+// import bgImage from '@/assets/bg.png'
 const { Sider } = Layout
 
 const Sidebar = observer(() => {
@@ -16,6 +16,7 @@ const Sidebar = observer(() => {
   const isDrawerMode = ConfigStore.isDrawerMode
   // const collapsed = ConfigStore.sidebarC1ollapsed
   const menuHeight = useMemo(() => {
+    //TODO: 需要优化,高度值不应该写死
     const logoHeight = ConfigStore.showSidebarLogo ? '64px' : '0px'
     const userActionsHeight = ConfigStore.showSidebarUserActions 
       ? (ConfigStore.isActionsCollapsed ? '48px' : '120px')
@@ -30,6 +31,7 @@ const Sidebar = observer(() => {
   // const buttonClass =   // 按钮样式
   const toggleButtonClass = useMemo(() => `
     absolute -right-4 top-1/2 -translate-y-1/2
+    bg-white dark:bg-black
     w-8 h-8 flex items-center justify-center
     rounded-full
     transition-all duration-300 ease-in-out
@@ -58,7 +60,7 @@ const Sidebar = observer(() => {
       {(ConfigStore.showSidebarLogo || isDrawerMode) && (
         <Logo 
           collapsed={collapsed}
-          className="p-4 h-14 shrink-0" 
+          // className="p-4 h-14 shrink-0" 
         />
       )}
 
@@ -116,7 +118,7 @@ const Sidebar = observer(() => {
   // 常规 Sidebar 模式
   return (
     <Sider 
-      width={280} 
+      width={240} 
       collapsedWidth={80} 
       collapsed={ConfigStore.sidebarCollapsed} 
       className="!bg-transparent group relative h-screen"

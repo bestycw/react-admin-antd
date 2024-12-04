@@ -1,4 +1,7 @@
 /* Antd 组件样式覆盖 */
+.ant-menu{
+  background: var(--menu-bg) !important;
+}
 .ant-menu-horizontal {
   border-bottom: none !important;
   background: var(--menu-bg) !important;
@@ -57,11 +60,7 @@
     padding: 4px !important;
     
     /* 灵动风格 */
-    .theme-dynamic & {
-      background: rgba(var(--bg-primary-rgb), var(--bg-opacity)) !important;
-      backdrop-filter: blur(var(--blur-amount));
-      border-color: rgba(255, 255, 255, var(--border-opacity)) !important;
-    }
+
     
     .ant-menu-item {
       min-width: 120px !important;
@@ -120,11 +119,7 @@
   }
 }
 
-/* 按钮样式 */
-.ant-btn {
-  /* border-color: var(--border-primary); */
-  /* color: var(--text-primary); */
-}
+
 
 /* 输入框样式 */
 .ant-input {
@@ -154,12 +149,7 @@
     padding: 4px !important;
     border-radius: var(--radius) !important;
     
-    /* 灵动风格 */
-    .theme-dynamic & {
-      background: rgba(var(--bg-primary-rgb), var(--bg-opacity)) !important;
-      backdrop-filter: blur(var(--blur-amount));
-      border-color: rgba(255, 255, 255, var(--border-opacity)) !important;
-    }
+
     
     .ant-dropdown-menu-item {
       margin: 2px 0 !important;

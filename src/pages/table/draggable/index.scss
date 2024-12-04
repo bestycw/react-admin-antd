@@ -1,0 +1,63 @@
+// @import '@/styles/variables.scss';
+
+.dragging {
+  background: rgba(24, 144, 255, 0.05);
+}
+
+tr.ant-table-row {
+  cursor: move;
+  transition: all 0.2s;
+  
+  &:hover {
+    td {
+      background: #e6f7ff;
+    }
+  }
+  
+  &.dragging {
+    background: #f5f5f5;
+    
+    td {
+      background: #f5f5f5 !important;
+    }
+  }
+
+  &.dragging-over {
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #1890ff;
+      animation: borderBlink 0.5s infinite;
+    }
+  }
+}
+
+tr.drop-over-downward td {
+  border-bottom: 2px dashed #1890ff !important;
+}
+
+tr.drop-over-upward td {
+  border-top: 2px dashed #1890ff !important;
+}
+
+.drag-handle {
+  cursor: move;
+  display: inline-flex;
+  align-items: center;
+  
+  &:hover {
+    color: #1890ff;
+  }
+}
+
+@keyframes borderBlink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

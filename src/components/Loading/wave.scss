@@ -1,0 +1,36 @@
+.wave-container {
+  --wave-color: var(--ant-primary-color, #1890ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  min-width: 80px;
+  min-height: 80px;
+
+  .wave-bar {
+    width: 4px;
+    height: 24px;
+    background: var(--wave-color);
+    border-radius: 2px;
+    animation: wave 1s ease-in-out infinite;
+
+    @for $i from 1 through 5 {
+      &:nth-child(#{$i}) {
+        animation-delay: $i * 0.1s;
+      }
+    }
+  }
+
+  @keyframes wave {
+    0%, 100% {
+      transform: scaleY(1);
+    }
+    50% {
+      transform: scaleY(2);
+    }
+  }
+}
+
+[data-theme='dark'] .wave-container {
+  --wave-color: var(--ant-primary-color, #177ddc);
+} 

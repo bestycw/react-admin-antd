@@ -4,38 +4,33 @@ import { useRoutes, RouteObject } from 'react-router-dom'
 import './App.css'
 import './index.css'
 import { Suspense } from 'react'
-import routes from './router/index'
-
+import routes from './router'
 import { useStore } from './store'
-import React from 'react'
-import PageProgress from '@/components/PageProgress'
 import { CoRouteObject } from './types/route.d'
 import { runInAction } from 'mobx'
-console.log('routes', routes)
+import { authService } from "./services/auth";
+import { deepClone } from './utils/json'
 const App = observer(() => {
-    const { UserStore, MenuStore ,ConfigStore} = useStore()
+    const { UserStore, MenuStore, ConfigStore } = useStore()
     let renderRoutes = routes
 
     console.log(' app init')
 
-    if (UserStore.isLogin) {
-        if (!UserStore.hasAllRoutes) {
-            renderRoutes = UserStore.filterRoutesByRoles(routes)
-            const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
-            runInAction(() => {
-                UserStore.setAllRoutes(renderRoutes)
-                MenuStore.initRoutesAndMenu(rootRoute)
+    if (authService.isAuthenticated()) {
 
-            })
-        } else {
-            renderRoutes = UserStore.allRoutes
-        }
+        renderRoutes = UserStore.filterRoutesByRoles(deepClone(routes))
+        console.log('renderRoutes', renderRoutes)
+        const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
+        runInAction(() => {
+            UserStore.setAllRoutes(renderRoutes)
+            MenuStore.initRoutesAndMenu(rootRoute)
+
+        })
     }
-
 
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>
-            <PageProgress />
+            {/* <PageProgress /> */}
             <Suspense>
                 {useRoutes(renderRoutes as RouteObject[])}
             </Suspense>

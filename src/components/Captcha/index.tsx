@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { generateCaptcha } from '@/utils/captcha'
 
 interface CaptchaProps {
@@ -12,12 +12,15 @@ const Captcha: React.FC<CaptchaProps> = ({
   height = 40,
   onChange 
 }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [, setCaptcha] = useState('')
 
   const refreshCaptcha = () => {
-    const newCaptcha = generateCaptcha()
-    setCaptcha(newCaptcha)
-    onChange?.(newCaptcha)
+    if (canvasRef.current) {
+      const newCaptcha = generateCaptcha(canvasRef.current)
+      setCaptcha(newCaptcha)
+      onChange?.(newCaptcha)
+    }
   }
 
   useEffect(() => {
@@ -31,9 +34,9 @@ const Captcha: React.FC<CaptchaProps> = ({
       title="点击刷新验证码"
     >
       <canvas
+        ref={canvasRef}
         width={width}
         height={height}
-        id="captcha"
         className="h-full w-full"
       />
     </div>

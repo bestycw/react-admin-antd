@@ -34,19 +34,19 @@ const Header = observer(({ className = '', style }: HeaderProps) => {
     >
       {/* Logo */}
       {ConfigStore.showHeaderLogo && (
-        <Logo collapsed={false} className="h-14 py-4" />
+        <Logo collapsed={false}  />
       )}
 
       {/* Menu */}
       {ConfigStore.showHeaderMenu && (
-        <div className="flex-1 ml-4">
+        <div className="flex-1 ml-4 overflow-hidden">
           <Menu mode="horizontal" />
         </div>
       )}
 
       {/* User Actions */}
       {ConfigStore.showHeaderUserActions && (
-        <div className="ml-4 ml-auto">
+        <div className=" ml-auto">
           <UserActions mode="horizontal" />
         </div>
       )}

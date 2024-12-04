@@ -24,6 +24,7 @@ class MenuStore {
     // dynamicRoutes: CoRouteObject[] = []
     
     menuList: MenuItem[] = []
+    routeList: string[] = []
     selectedKeys: string[] = []
     visitedTags: TagItem[] = []
     showTabs: boolean = true
@@ -47,12 +48,8 @@ class MenuStore {
     }
 
     setMenuList(menuList: MenuItem[]) {
-        // console.log(menuList)
         runInAction(() => {
             this.menuList = menuList
-            if (this.selectedKeys.length === 0) {
-                this.ensureSelectedKeys()
-            }
         })
 
     }
@@ -98,8 +95,9 @@ class MenuStore {
     }
 
     setSelectedKeys(selectedKeys: string[]) {
+        console.log(selectedKeys)
         runInAction(() => {
-            if (this.selectedKeys[0] !== selectedKeys[0]) {
+            if (this.selectedKeys[0] !== selectedKeys[0] ) {
                 this.selectedKeys = selectedKeys;
                 const currentMenu = this.findMenuByPath(selectedKeys[0]);
                 if (currentMenu?.label) {
@@ -181,17 +179,21 @@ class MenuStore {
 
     routesToMenuItems(routes: CoRouteObject[]): MenuItem[] {
         const menu =  routes
-            .filter(route => !route.hidden)
-            .map(route => ({
-                key: route.path || '',
-                label: route.meta?.title || '',
-                icon: route.meta?.icon,
-                path: route.path,
-                children: route.children && route.children.length > 0 
-                    ? this.routesToMenuItems(route.children) 
-                    : undefined
-            }))
-            .filter(item => item.label);
+            .filter(route => !route.meta?.hidden)
+            .map(route => {
+                this.routeList.push(route.path || '')
+                return {
+                    key: route.path || '',
+                    label: route.meta?.title || '',
+                    icon: route.meta?.icon,
+                    path: route.path,
+                    hidden: route.meta?.hiddenInMenu,
+                    children: route.children && route.children.length > 0 
+                        ? this.routesToMenuItems(route.children) 
+                        : undefined
+                }
+            })
+            .filter(item => item.label && !item.hidden);
         return menu
     }
 
@@ -216,13 +218,8 @@ class MenuStore {
     }
 
     initRoutesAndMenu(rootRoute: CoRouteObject) {
-        // console.log(rootRoute)
-        // 避免因为menuList的改变导致重新渲染
-        // runInAction(() => {
-            // const rootRoute = routes.find(route => route.root)
             if (rootRoute?.children) {
                 const menu = this.routesToMenuItems(rootRoute.children)
-                console.log(menu)
                 this.setMenuList(menu)
             }
 

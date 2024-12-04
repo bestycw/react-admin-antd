@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import { Tabs, Dropdown } from 'antd'
 import type { TabsProps } from 'antd'
 import { observer } from 'mobx-react-lite'
@@ -37,32 +37,44 @@ const Tab = observer(() => {
 
   // 关闭单个标签页
   const closeTag = (targetPath: string) => {
-    // 如果关闭的是当前激活的标签页，需要跳转到前一个标签
-    if (targetPath === MenuStore.selectedKeys[0]) {
-      const currentIndex = MenuStore.visitedTags.findIndex(tag => tag.path === targetPath)
-      const nextTag = MenuStore.visitedTags[currentIndex - 1] || MenuStore.visitedTags[currentIndex + 1]
+    if (MenuStore.visitedTags.length <= 1) return;
+    
+    const currentIndex = MenuStore.visitedTags.findIndex(tag => tag.path === targetPath);
+    
+    // 如果关闭的是当前激活的标签页，需要先跳转到其他标签
+    if (targetPath === location.pathname) {
+      // 优先选择右侧标签，如果没有则选择左侧标签
+      const nextTag = MenuStore.visitedTags[currentIndex + 1] || MenuStore.visitedTags[currentIndex - 1];
       if (nextTag) {
-        navigate(nextTag.path)
+        navigate(nextTag.path);
       }
     }
-    MenuStore.removeTag(targetPath)
-  }
+
+    // 等待导航完成后再移除标签
+    setTimeout(() => {
+      MenuStore.removeTag(targetPath);
+    }, 0);
+  };
 
   // 关闭右侧标签页
   const closeRight = (currentPath: string) => {
     const currentIndex = MenuStore.visitedTags.findIndex(tag => tag.path === currentPath)
+    if (currentIndex === MenuStore.visitedTags.length - 1) return;
+    
     const rightTags = MenuStore.visitedTags.slice(currentIndex + 1)
     rightTags.forEach(tag => {
       MenuStore.removeTag(tag.path)
     })
     // 如果当前激活的标签在被关闭的标签中，跳转到currentPath
-    if (rightTags.find(tag => tag.path === MenuStore.selectedKeys[0])) {
+    if (rightTags.find(tag => tag.path === location.pathname)) {
       navigate(currentPath)
     }
   }
 
   // 关闭其他标签页
   const closeOthers = (currentPath: string) => {
+    if (MenuStore.visitedTags.length <= 1) return;
+    
     MenuStore.visitedTags.forEach(tag => {
       if (tag.path !== currentPath) {
         MenuStore.removeTag(tag.path)
@@ -74,16 +86,21 @@ const Tab = observer(() => {
 
   // 关闭所有标签页
   const closeAll = () => {
-    const firstTag = MenuStore.visitedTags[0]
-    MenuStore.visitedTags.forEach(tag => {
-      MenuStore.removeTag(tag.path)
-    })
-    // 保留并跳转到第一个标签
-    if (firstTag) {
-      MenuStore.addTag(firstTag)
-      navigate(firstTag.path)
+    if (MenuStore.visitedTags.length <= 1) return;
+    
+    const firstTag = MenuStore.visitedTags[0];
+    const currentTags = [...MenuStore.visitedTags];
+    
+    // 先清除除第一个标签外的所有标签
+    currentTags.slice(1).forEach(tag => {
+      MenuStore.removeTag(tag.path);
+    });
+
+    // 如果当前不在第一个标签页，跳转到第一个标签页
+    if (location.pathname !== firstTag.path) {
+      navigate(firstTag.path);
     }
-  }
+  };
 
   // 重新加载当前页面
   const reloadPage = (path: string) => {
@@ -98,43 +115,48 @@ const Tab = observer(() => {
   }
 
   // 右键菜单项
-  const getDropdownItems = (path: string): MenuProps['items'] => [
-    {
-      key: '0',
-      label: '重新加载',
-      icon: <ReloadOutlined />,
-      onClick: () => reloadPage(path)
-    },
-    { type: 'divider' },
-    {
-      key: '1',
-      label: '关闭当前标签',
-      icon: <CloseOutlined />,
-      disabled: MenuStore.visitedTags.length <= 1,
-      onClick: () => closeTag(path)
-    },
-    {
-      key: '2',
-      label: '关闭右侧标签',
-      icon: <VerticalRightOutlined />,
-      disabled: path === MenuStore.visitedTags[MenuStore.visitedTags.length - 1].path,
-      onClick: () => closeRight(path)
-    },
-    {
-      key: '3',
-      label: '关闭其他标签',
-      icon: <CloseCircleOutlined />,
-      disabled: MenuStore.visitedTags.length <= 1,
-      onClick: () => closeOthers(path)
-    },
-    {
-      key: '4',
-      label: '关闭所有标签',
-      icon: <CloseSquareOutlined />,
-      disabled: MenuStore.visitedTags.length <= 1,
-      onClick: closeAll
-    }
-  ]
+  const getDropdownItems = (path: string): MenuProps['items'] => {
+    const isLast = path === MenuStore.visitedTags[MenuStore.visitedTags.length - 1].path;
+    const isOnly = MenuStore.visitedTags.length <= 1;
+
+    return [
+      {
+        key: '0',
+        label: '重新加载',
+        icon: <ReloadOutlined />,
+        onClick: () => reloadPage(path)
+      },
+      { type: 'divider' },
+      {
+        key: '1',
+        label: '关闭当前标签',
+        icon: <CloseOutlined />,
+        disabled: isOnly,
+        onClick: () => closeTag(path)
+      },
+      {
+        key: '2',
+        label: '关闭右侧标签',
+        icon: <VerticalRightOutlined />,
+        disabled: isLast || isOnly,
+        onClick: () => closeRight(path)
+      },
+      {
+        key: '3',
+        label: '关闭其他标签',
+        icon: <CloseCircleOutlined />,
+        disabled: isOnly,
+        onClick: () => closeOthers(path)
+      },
+      {
+        key: '4',
+        label: '关闭所有标签',
+        icon: <CloseSquareOutlined />,
+        disabled: isOnly,
+        onClick: closeAll
+      }
+    ]
+  }
 
   // 将访问的标签转换为 Tabs 需要的格式
   const items = MenuStore.visitedTags.map(tag => ({
@@ -144,7 +166,7 @@ const Tab = observer(() => {
         menu={{ items: getDropdownItems(tag.path) }}
         trigger={['contextMenu']}
       >
-        <span>{tag.title}</span>
+        <span className="px-1">{tag.title}</span>
       </Dropdown>
     ),
     closable: MenuStore.visitedTags.length > 1
@@ -155,7 +177,7 @@ const Tab = observer(() => {
       <Tabs
         hideAdd
         type="editable-card"
-        activeKey={MenuStore.selectedKeys[0]}
+        activeKey={location.pathname}
         onChange={onChange}
         onEdit={onEdit}
         items={items}

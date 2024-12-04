@@ -7,8 +7,8 @@
 
 /* 基础样式 */
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  /* background-color: var(--bg-primary); */
+  /* color: var(--text-primary); */
   overflow: hidden;
 }
 
@@ -18,21 +18,4 @@ body {
   transition-duration: 200ms;
 }
 
-/* 滚动条样式 */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
 
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-  border-radius: var(--radius);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--bg-overlay);
-}

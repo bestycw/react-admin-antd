@@ -1,0 +1,38 @@
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #f8fafc;
+  gap: 1px;
+}
+
+.mainContent {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 1px;
+  padding: 1px;
+}
+
+.sidePanel {
+  width: 320px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.previewPanel {
+  flex: 1;
+  background-color: #ffffff;
+  margin: 0 1px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.timelinePanel {
+  height: 260px;
+  margin: 1px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+} 

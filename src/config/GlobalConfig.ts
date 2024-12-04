@@ -25,6 +25,7 @@ export interface GlobalConfigType {
     DefaultHeaderPosition: HeaderPosition
     DefaultSidebarCollapsed: boolean
     DefaultShowLogo: boolean
+    RequestType: 'axios' | 'fetch'
 }
 
 const GlobalConfig: GlobalConfigType = {
@@ -47,7 +48,8 @@ const GlobalConfig: GlobalConfigType = {
     DefaultMenuPosition: 'mix',
     DefaultHeaderPosition: 'fixed',
     DefaultShowLogo: true,
-    DefaultSidebarCollapsed: false
+    DefaultSidebarCollapsed: false,
+    RequestType: 'axios'
 }
 
  function getGlobalConfig<T extends keyof GlobalConfigType>(key: T): GlobalConfigType[T] {

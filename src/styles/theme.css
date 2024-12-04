@@ -8,8 +8,9 @@
   --bg-overlay: rgba(0, 0, 0, 0.05);
   --bg-hover: rgba(0, 0, 0, 0.04);
   --bg-active: rgba(0, 0, 0, 0.08);
-  
-  /* 文字颜色系统 */
+  --layout-bg:  white;  --layout-bg:  radial-gradient(circle at top left, #f0f9ff, transparent),
+  radial-gradient(circle at bottom right, #bfdbfe, transparent),
+  linear-gradient(135deg, #e0f2fe, #dbeafe);/* 文字颜色系统 */
   --text-primary: #1f2937;
   --text-secondary: #4b5563;
   --text-tertiary: #6b7280;
@@ -101,9 +102,9 @@
 :root.theme-dynamic {
   
   /* 背景效果 */
-  --bg-opacity: 0.85;
+  --bg-opacity: 0.70;
   --blur-amount: 4px;
-  
+
   /* 边框效果 */
   /* --style-border: 1px solid rgba(255, 255, 255, 0.2); */
   --style-border: unset;
@@ -141,7 +142,7 @@
   /* 背景效果 */
   --bg-opacity: 1;
   --blur-amount: 0;
-  
+  --layout-bg:  white;
   /* 边框效果 */
   /* --style-border: 1px solid var(--border-primary); */
   --style-radius: 2px;
@@ -180,7 +181,9 @@
   --bg-overlay: rgba(255, 255, 255, 0.1);
   --bg-hover: rgba(255, 255, 255, 0.08);
   --bg-active: rgba(255, 255, 255, 0.12);
-  
+  --layout-bg:      radial-gradient(circle at 100% 100%, #334155 0%, transparent 50%),
+  radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%),
+  linear-gradient(135deg, #334155 0%, #1e293b 50%, #0f172a 100%);
   /* 文字颜色系统 - 调整为更柔和的色调 */
   --text-primary: rgba(255, 255, 255, 0.85);    /* 主要文字，不那么刺眼的白色 */
   --text-secondary: rgba(255, 255, 255, 0.65);  /* 次要文字，更柔和 */
@@ -269,4 +272,75 @@
   --border-opacity: 1;
 }
 
+/* 滚动条基础样式 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background: #f0f2f5;
+  border-radius: 6px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  /* background: var(--ant-primary-3); */
+  border-radius: 6px;
+  border: 1px solid #f0f2f5;
+  background-clip: padding-box;
+  min-height: 30px;
+  opacity: 0.8;  /* 添加透明度 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ant-primary-4);
+  border-width: 2px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--ant-primary-5);
+  border-width: 1px;
+}
+
+/* 暗色主题滚动条样式优化 */
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);  /* 更微妙的轨道背景 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--ant-primary-3);  /* 使用较浅的主题色 */
+  border: 3px solid rgba(255, 255, 255, 0.05);  /* 边框颜色配合轨道 */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--ant-primary-2);  /* 悬停时更亮 */
+  border-width: 2px;
+  opacity: 1;
+}
+
+.dark ::-webkit-scrollbar-thumb:active {
+  background: var(--ant-primary-1);  /* 点击时最亮 */
+  border-width: 1px;
+}
+
+/* 暗色主题下特定区域的滚动条 */
+.dark .ant-layout-content::-webkit-scrollbar-thumb,
+.dark .ant-table-body::-webkit-scrollbar-thumb,
+.dark .ant-modal-body::-webkit-scrollbar-thumb,
+.dark .ant-drawer-body::-webkit-scrollbar-thumb {
+  background: var(--ant-primary-3);
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
 /* ... 其他主题相关样式 ... */ 
+.bg-gradient-animated {
+  animation: gradientShift 15s ease infinite;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+} 

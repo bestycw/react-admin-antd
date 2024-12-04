@@ -4,15 +4,19 @@ import { useState } from 'react'
 import {
   UserOutlined,
   SettingOutlined,
-  SunOutlined,
-  MoonOutlined,
+  // SunOutlined,
+  // MoonOutlined,
   LogoutOutlined,
   FullscreenOutlined,
   FullscreenExitOutlined,
   BellOutlined,
   TranslationOutlined,
+  SearchOutlined,
 } from '@ant-design/icons'
 import React from 'react'
+import { authService } from '../../services/auth'
+import { useNavigate } from 'react-router-dom'
+// import { useGlobalSearch } from '@/hooks/useGlobalSearch'
 
 export interface ActionItem {
   key: string
@@ -26,6 +30,8 @@ export const useUserActions = () => {
   const { UserStore, ConfigStore } = useStore()
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [currentLang, setCurrentLang] = useState('zh_CN')
+  const [searchVisible, setSearchVisible] = useState(false)
+  const navigate = useNavigate()
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -69,9 +75,17 @@ export const useUserActions = () => {
   ]
 
   // 用户菜单点击处理
-  const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
+  const handleUserMenuClick: MenuProps['onClick'] = async({ key }) => {
     if (key === 'logout') {
-      UserStore.logout()
+      try {
+        await authService.logout();
+        navigate('/auth/login', { replace: true });
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    } else if (key === 'profile') {
+      console.log('profile')
+      navigate('/profile');
     }
   }
 
@@ -84,12 +98,10 @@ export const useUserActions = () => {
       badge: 5
     },
     {
-      key: 'theme',
-      icon: ConfigStore.isDark ? 
-        <SunOutlined className="text-amber-500" /> : 
-        <MoonOutlined className="text-blue-500" />,
-      label: ConfigStore.isDark ? "亮色模式" : "暗色模式",
-      onClick: () => ConfigStore.setThemeMode(ConfigStore.isDark ? 'light' : 'dark')
+      key: 'search',
+      icon: <SearchOutlined className="text-gray-600 dark:text-gray-300" />,
+      label: '搜索',
+      onClick: () => ConfigStore.toggleSearchVisible(true)
     },
     {
       key: 'fullscreen',
@@ -110,6 +122,7 @@ export const useUserActions = () => {
       label: '系统设置',
       onClick: () => ConfigStore.toggleVisible('setting')
     }
+
   ]
 
   // 用户信息
@@ -125,7 +138,9 @@ export const useUserActions = () => {
     languageItems,
     handleUserMenuClick,
     userInfo,
-    currentLang
+    currentLang,
+    searchVisible,
+    setSearchVisible
   }
 }
 

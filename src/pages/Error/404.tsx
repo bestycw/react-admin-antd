@@ -9,7 +9,7 @@ export const routeConfig: RouteConfig = {
     title: '404',
     icon: <WarningOutlined />,
     layout: false,
-    auth: false,
+    
     // hidden: true // 在菜单中隐藏
 }
 

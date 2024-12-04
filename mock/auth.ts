@@ -1,85 +1,66 @@
 import Mock from 'mockjs'
 
-const { Random } = Mock
+const tokens = {
+  admin: 'mock-token-admin',
+  user: 'mock-token-user',
+}
 
-// 拦截 axios 请求
-Mock.setup({
-    timeout: '200-600'
-})
+Mock.mock('/api/auth/login', 'post', (options: any) => {
+  const { username, password } = JSON.parse(options.body)
+  console.log('Mock login:', username, password)
 
-// 登录接口
-Mock.mock('/api/auth/login', 'post', (options) => {
-    const { username, password } = JSON.parse(options.body)
-    if (username === 'admin' && password === '123456') {
-        return {
-            code: 200,
-            message: 'success',
-            data: {
-                username: 'admin',
-                avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
-                roles: ['admin'],
-                accessToken: Random.string('lower', 32),
-                dynamicRoutesList: []
-            }
-        }
-    }
+  if (username === 'admin' && password === '123456') {
     return {
-        code: 401,
-        message: '用户名或密码错误',
-        data: null
+      code: 200,
+      data: {
+        token: tokens.admin,
+        user:{
+          id: 1,
+          username: 'admin',
+          nickname: '管理员',
+          avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+          email: 'admin@example.com',
+          roles: ['admin'],
+          permissions: ['*']
+        },
+        refreshToken: 'mock-refresh-token-admin',
+        
+        // username: 'admin'
+      },
+      message: '登录成功'
     }
+  }
+  return {
+    code: 400,
+    message: '用户名或密码错误'
+  }
 })
 
-// 获取用户信息
-Mock.mock('/api/auth/userInfo', 'get', () => {
-    return {
-        code: 200,
-        message: 'success',
-        data: {
-            username: 'admin',
-            avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
-            roles: ['admin'],
-            accessToken: Random.string('lower', 32),
-            dynamicRoutesList: []
-        }
-    }
-})
-
-// 获取动态路由
-Mock.mock('/api/auth/routes', 'get', () => {
-    return {
-        code: 200,
-        message: 'success',
-        data: []
-    }
-})
-
-// 登出接口
 Mock.mock('/api/auth/logout', 'post', () => {
-    return {
-        code: 200,
-        message: 'success',
-        data: null
-    }
+  return {
+    code: 200,
+    message: '登出成功'
+  }
 })
 
-// 定义接口类型
-export interface LoginParams {
-    username: string
-    password: string
-    remember?: boolean
-}
-
-export interface LoginResult {
-    username: string
-    avatar?: string
-    roles: string[]
-    accessToken: string
-    dynamicRoutesList: string[]
-}
-
-export interface ResponseData<T> {
-    code: number
-    message: string
-    data: T
-} 
+Mock.mock('/api/auth/info', 'get', (options: any) => {
+  const token = options.headers?.Authorization
+  if (token === `Bearer ${tokens.admin}`) {
+    return {
+      code: 200,
+      data: {
+        id: 1,
+        username: 'admin',
+        nickname: '管理员',
+        avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+        email: 'admin@example.com',
+        roles: ['admin'],
+        permissions: ['*']
+      }
+    }
+  }
+  return {
+    code: 401,
+    message: '未登录或token已过期'
+  }
+}) 

@@ -1,0 +1,265 @@
+.timelineContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+.toolbar {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timelineContent {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  border-top: 1px solid #e2e8f0;
+}
+
+.trackHeaders {
+  width: 200px;
+  background-color: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.timelineArea {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeScale {
+  height: 32px;
+  position: sticky;
+  top: 0;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  z-index: 1;
+}
+
+.scaleContainer {
+  position: relative;
+  height: 100%;
+}
+
+.scaleMark {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+  transform: translateX(-50%);
+
+  &.mainMark {
+    height: 16px;
+    background-color: #94a3b8;
+
+    .scaleLabel {
+      position: absolute;
+      left: 50%;
+      top: 2px;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: #64748b;
+      white-space: nowrap;
+    }
+  }
+
+  &.subMark {
+    height: 10px;
+    background-color: #cbd5e1;
+  }
+
+  &.microMark {
+    height: 6px;
+    background-color: #e2e8f0;
+  }
+}
+
+.currentTimeLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #3b82f6;
+  pointer-events: none;
+  z-index: 3;
+  transform: translateX(-50%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background-color: #3b82f6;
+    border-radius: 50%;
+  }
+}
+
+.tracksContent {
+  flex: 1;
+  position: relative;
+  min-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.trackContent {
+  height: 64px;
+  position: relative;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  transition: background-color 0.2s;
+  width: 100%;
+
+  &:hover {
+    background-color: #f8fafc;
+  }
+
+  &.dragOver {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  &.locked {
+    background-color: #f1f5f9;
+  }
+}
+
+.clip {
+  position: absolute;
+  top: 4px;
+  height: calc(100% - 8px);
+  transform: translateX(-50%);
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: move;
+
+  .clipThumbnail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3;
+  }
+
+  .clipFrames {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+  }
+
+  .framePreview {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background-size: cover;
+    background-position: center;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &:hover .clipThumbnail {
+    opacity: 0.5;
+  }
+
+  .clipDuration {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 2px 4px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 10px;
+    border-top-left-radius: 4px;
+  }
+
+  &.selected {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+}
+
+.timelineSlider {
+  padding: 12px;
+  border-top: 1px solid #e2e8f0;
+
+  :global {
+    .ant-slider {
+      margin: 0;
+
+      .ant-slider-track {
+        background-color: #3b82f6;
+      }
+
+      .ant-slider-handle {
+        border-color: #3b82f6;
+
+        &:hover, &:active {
+          border-color: #2563eb;
+        }
+      }
+    }
+  }
+}
+
+.framePreview {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.8;
+}
+
+.emptyState {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 24px;
+  border: 2px dashed #e2e8f0;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  transition: all 0.2s;
+
+  .dropHint {
+    color: #64748b;
+    font-size: 14px;
+  }
+
+  &:hover {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.05);
+  }
+}
+
+.timelineArea {
+  &.dragOver {
+    .emptyState {
+      border-color: #3b82f6;
+      background-color: rgba(59, 130, 246, 0.05);
+    }
+  }
+} 

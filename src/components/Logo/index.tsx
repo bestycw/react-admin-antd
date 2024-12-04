@@ -1,34 +1,36 @@
-import { observer } from 'mobx-react-lite'
-// import { useStore } from '@/store'
-import logo from '@/assets/logo.svg'
-import getGlobalConfig from '@/config/GlobalConfig'
-import React from 'react'
+import React from 'react';
+import { observer } from 'mobx-react-lite';
+import { useStore } from '@/store';
+import logo from '@/assets/logo.svg';
+import getGlobalConfig from '@/config/GlobalConfig';
 
 interface LogoProps {
-  collapsed?: boolean
-  className?: string
+    collapsed?: boolean;
 }
 
-const Logo = observer(({ collapsed = false, className = '' }: LogoProps) => {
-  // const { ConfigStore } = useStore()
-  // const isDynamic = ConfigStore.themeStyle === 'dynamic'
-  // const {AdminName=''} = GlobalConfig
+const Logo: React.FC<LogoProps> = observer(({ collapsed }) => {
+    const { ConfigStore } = useStore();
 
-  return (
-    <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-4'} ${className}`}>
-      <div className={`
-        w-10 h-10 flex items-center justify-center
-        p-2 rounded-lg transition-all duration-200
-      `}>
-        <img src={logo} alt="Logo" className="w-full h-full object-contain" />
-      </div>
-      {!collapsed && (
-        <span className="text-base font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">
-          {getGlobalConfig('AdminName')}
-        </span>
-      )}
-    </div>
-  )
-})
+    return (
+        <div className="flex items-center gap-2 px-4 py-3">
+            <img 
+                src={logo} 
+                alt="logo" 
+                className="w-8 h-8"
+                style={{ 
+                    filter: `drop-shadow(0 0 2px ${ConfigStore.currentPresetColor})`
+                }} 
+            />
+            {!collapsed && (
+                <span 
+                    className="text-lg font-semibold truncate transition-colors"
+                    style={{ color: ConfigStore.currentPresetColor }}
+                >
+                   {getGlobalConfig('AdminName')}
+                </span>
+            )}
+        </div>
+    );
+});
 
-export default Logo 
+export default Logo; 

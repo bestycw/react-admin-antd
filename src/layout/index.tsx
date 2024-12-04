@@ -5,26 +5,27 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Content from './components/Content'
 import Tab from './components/Tab'
-import React, { Suspense } from 'react'
+import  { Suspense } from 'react'
 import SettingDrawer from '@/components/SettingDrawer'
 import PageTransition from '@/components/PageTransition'
-import { Spin } from 'antd'
-// import { useStore } from '../store'
+// import { Spin } from 'antd'
+import GlobalSearch from '../components/GlobalSearch'
+import Loading from '@/components/Loading'
 
 const Layout = observer(() => {
   console.log('layout init')
   // const { MenuStore } = useStore()
 
   return (
-    <AntLayout className="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <AntLayout className="min-h-screen bg-gradient bg-gradient-animated" style={{ background:'var(--layout-bg)'}}>
       <Sidebar />     
-      <AntLayout className="bg-gray-100 dark:bg-gray-900 h-screen">
+      <AntLayout className="h-screen bg-transparent">
         <Header style={{ marginBottom: 0 }} />        
         <Tab />
         <Content>
           <Suspense fallback={
             <div className="flex items-center justify-center h-full">
-              <Spin size="large" />
+              <Loading></Loading>
             </div>
           }>
             <PageTransition>
@@ -34,6 +35,7 @@ const Layout = observer(() => {
         </Content>
       </AntLayout>
       <SettingDrawer />
+      <GlobalSearch />
     </AntLayout>
   )
 })

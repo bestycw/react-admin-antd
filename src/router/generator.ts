@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { lazy } from 'react'
 import type { CoRouteObject, RouteConfig } from '../types/route'
 import * as Icons from '@ant-design/icons'
@@ -15,7 +16,7 @@ const pages = import.meta.glob([
 ], { eager: true })
 
 // 获取配置文件
-const configs = import.meta.glob([
+const configs: Record<string, { routeConfig?: RouteConfig }> = import.meta.glob([
     '@/pages/**/index.config.tsx'
 ], { eager: true })
 
@@ -41,41 +42,83 @@ interface RouteNode extends CoRouteObject {
 
 // 路由工具函数
 const routeUtils = {
+    // 路径处理工具
+    paths: {
+        // 标准化路径
+        normalize(path: string): string {
+            return path.replace(/^(@\/pages\/|\/src\/pages\/)/, '')
+                      .replace(/^\/+/, '/')
+                      .replace(/\/$/, '');
+        },
+
+        // 获取路径的最后一部分
+        getLastPart(path: string): string {
+            return path.split('/').pop() || '';
+        },
+
+        // 获取父路径
+        getParentPath(path: string): string {
+            const parts = this.normalize(path).split('/').filter(Boolean);
+            return parts.length > 1 ? `/${parts.slice(0, -1).join('/')}` : '/';
+        },
+
+        // 连接路径
+        join(...parts: string[]): string {
+            return '/' + parts.filter(Boolean).join('/');
+        }
+    },
+
     // 获取组件名称
     getComponentName(path: string): string {
-        const parts = path.split('/')
-        return parts[parts.length - 1] === 'index.tsx'
-            ? parts[parts.length - 2]
-            : parts[parts.length - 1].replace('.tsx', '')
+        const fileName = this.paths.getLastPart(path);
+        return fileName === 'index.tsx' 
+            ? this.paths.getLastPart(this.paths.getParentPath(path))
+            : fileName.replace('.tsx', '');
+    },
+
+    // 判断是否是单文件路由
+    isSingleFileRoute(allPaths: string[], currentPath: string): boolean {
+        const normalizedPath = this.paths.normalize(currentPath);
+        const dirFiles = allPaths.filter(path => 
+            !path.includes('/components/') && 
+            !path.endsWith('.config.ts') && 
+            !path.endsWith('.config.tsx') &&
+            this.paths.normalize(path).startsWith(normalizedPath + '/'));
+
+        return dirFiles.length === 1 && (
+            dirFiles[0].endsWith('/index.tsx') || 
+            dirFiles[0].endsWith(`/${this.paths.getLastPart(normalizedPath)}.tsx`)
+        );
     },
 
     // 生成图标
     generateIcon(iconName: string) {
-        const Icon = iconMap.get(iconName.toLowerCase())
-        return Icon ? React.createElement(Icon) : null
+        const Icon = iconMap.get(iconName.toLowerCase());
+        return Icon ? React.createElement(Icon as React.ComponentType) : null;
     },
 
-    // 格式化路径
-    formatRoutePath(parts: string[]): string {
-        return '/' + parts
-            .filter(part => part !== 'index.tsx')
-            .map(part => part.replace('.tsx', ''))
-            .join('/')
+    // 格式化路由路径
+    formatRoutePath(parts: string[] | string): string {
+        if (Array.isArray(parts)) {
+            return this.paths.join(...parts.filter(part => part !== 'index.tsx')
+                .map(part => part.replace('.tsx', '')));
+        }
+        return this.paths.normalize(parts).replace(/\.tsx$/, '');
     },
 
     // 获取相对路径
-    getRelativePath(fullPath: string): string[] {
-        return fullPath
-            .replace(/^@\/pages\//, '')
-            .replace(/^\/src\/pages\//, '')
-            .split('/')
+    getRelativePath(path: string): string[] {
+        return this.paths.normalize(path)
+                        .replace(/\.tsx$/, '')
+                        .split('/')
+                        .filter(Boolean);
     },
 
-    // 判断是否是同级路由
-    isSameLevel(fileName: string, parentName: string): boolean {
-        return fileName === 'index.tsx' || fileName.replace('.tsx', '') === parentName
+    // 判断是否同级
+    isSameLevel(fileName: string, dirName: string): boolean {
+        return fileName === 'index.tsx' || fileName === `${dirName}.tsx`;
     }
-}
+};
 
 // 路由配置处理函数
 const routeConfigHandler = {
@@ -113,26 +156,28 @@ const routeConfigHandler = {
             title: name.charAt(0).toUpperCase() + name.slice(1),
             icon: routeUtils.generateIcon(name),
             layout: true,
-            auth: true
         }
     },
 
     // 创建路由节点
     createRouteNode(path: string, config: RouteConfig): RouteNode {
-        const component = lazy(() => PagesList[path]())
+        const element = config.element || React.createElement(
+            lazy(() => PagesList[path]() as Promise<{ default: React.ComponentType<any> }>)
+        );
+
         return {
             path: routeUtils.formatRoutePath(routeUtils.getRelativePath(path)),
-
-            element: React.createElement(component),
+            element,
             meta: {
                 title: config.title,
                 icon: config.icon,
                 roles: config.roles,
                 sort: config.sort,
                 layout: config.layout,
-                auth: config.auth
+                hidden: config.hidden,
+                hiddenInMenu: config.hiddenInMenu,
             },
-            hidden: config.hidden,
+            // hidden: config.hidden,
             isFile: true
         }
     }
@@ -140,6 +185,28 @@ const routeConfigHandler = {
 
 // 路由树处理函数
 const routeTreeHandler = {
+    // 创建父级路由节点
+    createParentRoute(parentPath: string, parts: string[]): RouteNode {
+        const configPath = `/src/pages/${parentPath}/${CONFIG_FILE_REGEX}`;
+        const parentConfig = configs[configPath]?.routeConfig || {
+            title: parts[parts.length - 1].charAt(0).toUpperCase() + parts[parts.length - 1].slice(1),
+            icon: routeUtils.generateIcon(parts[parts.length - 1])
+        };
+
+        return {
+            path: `/${parentPath}`,
+            meta: {
+                title: parentConfig.title,
+                icon: parentConfig.icon,
+                roles: parentConfig.roles,
+                sort: parentConfig.sort,
+                layout: parentConfig.layout,
+            },
+            // hidden: parentConfig.hidden,
+            children: []
+        };
+    },
+
     // 创建路由树
     createRouteTree(paths: string[]): RouteNode[] {
         const tree: RouteNode[] = []
@@ -152,84 +219,116 @@ const routeTreeHandler = {
             const parts = routeUtils.getRelativePath(path)
             const config = routeConfigHandler.getRouteConfig(pages[path], path)
             const route = routeConfigHandler.createRouteNode(path, config)
-
+            // console.log(paths)
             // 处理路由层级
-            this.handleRouteLevels(route, parts, tree, moduleMap)
+            this.handleRouteLevels(route, parts, tree, moduleMap, paths)
         })
 
         return this.sortRoutes(tree)
     },
 
     // 处理路由层级
-    handleRouteLevels(route: RouteNode, parts: string[], tree: RouteNode[], moduleMap: Map<string, RouteNode>) {
-        const fileName = parts[parts.length - 1]
+    handleRouteLevels(route: RouteNode, parts: string[], tree: RouteNode[], moduleMap: Map<string, RouteNode>, allPaths: string[]) {
+        const fileName = routeUtils.paths.getLastPart(parts[parts.length - 1]);
+        const currentPath = parts.slice(0, -1).join('/');
+        
+        // 判断是否是一级路由
         const isFirstLevel = parts.length === 1 || 
-            (parts.length === 2 && routeUtils.isSameLevel(fileName, parts[0]))
+            (parts.length === 2 && routeUtils.isSameLevel(fileName, parts[0]));
 
-        if (isFirstLevel) {
-            tree.push(route)
-            return
+        // 判断当前路径是否是单文件路由
+        const isSingleFile = routeUtils.isSingleFileRoute(allPaths, currentPath);
+
+        if (isFirstLevel || isSingleFile) {
+            // 如果是单文件路由，修改路由路径为父级路径
+            if (isSingleFile) {
+                const parentParts = parts.slice(0, -1);
+                const lastPart = parentParts[parentParts.length - 1];
+                route.path = `/${parentParts.slice(0, -1).join('/')}/${lastPart}`.replace(/^\/+/, '/');
+            } else if (route.path) {
+                // 确保一级路由路径格式正确
+                route.path = route.path.replace(/^\/+/, '/');
+            }
+            
+            // 找到或创建父级路由
+            const parentPath = parts.slice(0, -2).join('/');
+            let parentRoute = parentPath ? moduleMap.get(parentPath) : undefined;
+
+            // 如果父级路由不存在且不是一级路由，创建父级路由
+            if (!parentRoute && parts.length > 2) {
+                parentRoute = this.createParentRoute(parentPath, parts.slice(0, -2));
+                moduleMap.set(parentPath, parentRoute);
+                // 递归处理父级路由
+                this.handleRouteLevels(
+                    parentRoute,
+                    parts.slice(0, -2),
+                    tree,
+                    moduleMap,
+                    allPaths
+                );
+            }
+
+            if (parentRoute?.children) {
+                parentRoute.children.push(route);
+            } else {
+                tree.push(route);
+            }
+            return;
         }
 
-        // 处理多级路由
-        let currentPath = ''
-        let currentParent: RouteNode | undefined
+        // 处理常规嵌套路由
+        let currentParent: RouteNode | undefined;
         
         // 逐级创建或获取父级路由
         for (let i = 0; i < parts.length - 1; i++) {
-            const parentPath = parts.slice(0, i + 1).join('/')
-            currentPath = parentPath
+            const parentPath = parts.slice(0, i + 1).join('/');
 
             if (!moduleMap.has(parentPath)) {
-                // 尝试获取父级配置
-                const configPath = `/src/pages/${parentPath}/${CONFIG_FILE_REGEX}`
-                const parentConfig = configs[configPath]?.routeConfig || {
-                    title: parts[i].charAt(0).toUpperCase() + parts[i].slice(1),
-                    icon: routeUtils.generateIcon(parts[i])
-                }
-
-                const parentRoute: RouteNode = {
-                    path: `/${parentPath}`,
-                    meta: {
-                        title: parentConfig.title,
-                        icon: parentConfig.icon,
-                        roles: parentConfig.roles,
-                        sort: parentConfig.sort,
-                        layout: parentConfig.layout,
-                        auth: parentConfig.auth
-                    },
-                    hidden: parentConfig.hidden,
-                    children: []
-                }
-
-                moduleMap.set(parentPath, parentRoute)
+                const parentRoute = this.createParentRoute(parentPath, parts.slice(0, i + 1));
+                moduleMap.set(parentPath, parentRoute);
 
                 if (i === 0) {
-                    // 一级路由直接添加到树中
-                    tree.push(parentRoute)
+                    tree.push(parentRoute);
                 } else if (currentParent?.children) {
-                    // 将当前路由添加到父路由的子路由中
-                    currentParent.children.push(parentRoute)
+                    currentParent.children.push(parentRoute);
                 }
             }
 
-            currentParent = moduleMap.get(parentPath)
+            currentParent = moduleMap.get(parentPath);
         }
 
-        // 将当前路由添加到最后一级父路由的子路由中
         if (currentParent?.children) {
-            currentParent.children.push(route)
+            currentParent.children.push(route);
+        } else {
+            tree.push(route);
         }
     },
 
     // 路由排序
     sortRoutes(routes: RouteNode[]): RouteNode[] {
-        return routes
+        const sortedRoutes = routes
             .sort((a, b) => (a.meta?.sort || 0) - (b.meta?.sort || 0))
             .map(route => ({
                 ...route,
                 children: route.children ? this.sortRoutes(route.children) : undefined
-            }))
+            }));
+
+        // 在排序后处理重定向
+        return this.handleRedirects(sortedRoutes);
+    },
+
+    // 处理重定向
+    handleRedirects(routes: RouteNode[]): RouteNode[] {
+        return routes.map(route => {
+            // 如果有子路由但没有 element
+            if (route.children?.length && !route.element && !route.isFile) {
+                const firstVisibleChild = route.children.find(child => !child.meta?.hidden);
+                if (firstVisibleChild) {
+                    route.redirect = firstVisibleChild.path;
+                }
+            }
+            return route;
+        });
     }
 }
 
