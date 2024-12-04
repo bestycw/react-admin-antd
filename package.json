@@ -11,7 +11,8 @@
     "build:prod": "vite build --mode production",
     "preview": "vite preview",
     "preview:test": "vite preview --mode test",
-    "preview:prod": "vite preview --mode production"
+    "preview:prod": "vite preview --mode production",
+    "build": "vite build"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
