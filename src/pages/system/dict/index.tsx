@@ -25,7 +25,7 @@ const DictPage: React.FC = () => {
       const res = await request.get('/api/dict');
       setDictList(res as DictType[]);
     } catch (error) {
-      message.error('获取字典列表失败');
+    //   message.error('获取字典列表失败');
     }
     setLoading(false);
   };
