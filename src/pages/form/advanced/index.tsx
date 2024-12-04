@@ -8,7 +8,7 @@ export const routeConfig: RouteConfig = {
     title: '高级表单',
     // icon: <FormOutlined />,
     layout: true,
-    auth: true,
+    
     sort: 3
 };
 

@@ -6,6 +6,6 @@ export const routeConfig: RouteConfig = {
     title: '表格管理',
     icon: <TableOutlined />,
     layout: true,
-    auth: true,
+    
     sort: 2
 }

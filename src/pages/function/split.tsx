@@ -133,5 +133,5 @@ export const routeConfig = {
   title: 'Split 面板',
   // icon: <BorderHorizontalOutlined />,
   layout: true,
-  auth: true,
+  
 }; 

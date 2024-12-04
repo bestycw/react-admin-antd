@@ -36,6 +36,6 @@ export const routeConfig = {
   title: '高级网络',
   icon: <ApiOutlined />,
   layout: true,
-  auth: true,
+  
   sort: 2
 }; 

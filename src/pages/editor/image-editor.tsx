@@ -448,5 +448,5 @@ export const routeConfig = {
   title: '图片编辑器',
   icon: <PictureOutlined />,
   layout: true,
-  auth: true,
+  
 }; 

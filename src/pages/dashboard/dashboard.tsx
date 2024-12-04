@@ -14,7 +14,7 @@ export const routeConfig: RouteConfig = {
     title: '首页',
     icon: <HomeOutlined />,
     layout: true,
-    auth: true,
+    
     sort: 0,
     // roles: ['admin'] // 可以添加权限控制
 }

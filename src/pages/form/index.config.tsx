@@ -5,6 +5,6 @@ export const routeConfig: RouteConfig = {
     title: '表单页面',
     icon: <FormOutlined />,
     layout: true,
-    auth: true,
+    
     sort: 3
 };

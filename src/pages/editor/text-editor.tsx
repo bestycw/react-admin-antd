@@ -48,5 +48,5 @@ export const routeConfig = {
   title: '富文本编辑器',
   icon: <FileTextOutlined />,
   layout: true,
-  auth: true,
+  
 } 

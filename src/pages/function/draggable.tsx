@@ -518,5 +518,5 @@ export const routeConfig = {
   title: '拖拽排序',
   // icon: <MenuOutlined />,
   layout: true,
-  auth: true,
+  
 }; 

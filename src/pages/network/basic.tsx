@@ -279,6 +279,6 @@ export const routeConfig: RouteConfig = {
   title: '基础网络',
   icon: <ApiOutlined />,
   layout: true,
-  auth: true,
+  
   sort: 1
 };

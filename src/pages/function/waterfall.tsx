@@ -88,5 +88,5 @@ export const routeConfig = {
   title: '瀑布布局',
   // icon: 'WaterOutlined',
   layout: true,
-  auth: true,
+  
 }; 

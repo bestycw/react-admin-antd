@@ -6,6 +6,6 @@ export const routeConfig: RouteConfig = {
     title: '系统设置',
     icon: <SettingOutlined />,
     layout: true,
-    auth: true,
+    
     sort: 7
 }

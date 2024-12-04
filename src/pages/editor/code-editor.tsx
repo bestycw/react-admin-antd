@@ -176,6 +176,6 @@ export const routeConfig = {
   title: '代码编辑器',
   icon: <CodeOutlined />,
   layout: true,
-  auth: true,
+  
   sort: 100
 } 

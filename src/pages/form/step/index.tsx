@@ -7,7 +7,7 @@ export const routeConfig: RouteConfig = {
     title: '分步表单',
     // icon: <FormOutlined />,
     layout: true,
-    auth: true,
+    
     sort: 2
 };
 

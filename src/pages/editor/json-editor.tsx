@@ -398,5 +398,5 @@ export const routeConfig = {
   title: 'JSON 编辑器',
   icon: <CodeOutlined />,
   layout: true,
-  auth: true,
+  
 }; 
