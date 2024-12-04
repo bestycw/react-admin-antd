@@ -216,11 +216,11 @@ const DraggablePage: React.FC = () => {
 };
 
 // 垂直列表组件
-const VerticalList = ({ items, setItems }: { items: any[]; setItems: (items: any[]) => void }) => {
+const VerticalList = ({ items, setItems }: { items: any[]; setItems: any }) => {
   return (
     <DndContext onDragEnd={({ active, over }) => {
       if (over && active.id !== over.id) {
-        setItems((items: any[]) => {
+        setItems((items:any) => {
           const oldIndex = items.findIndex((item: any) => item.id === active.id);
           const newIndex = items.findIndex((item: any) => item.id === over.id);
           return arrayMove(items, oldIndex, newIndex);
@@ -254,11 +254,11 @@ const VerticalList = ({ items, setItems }: { items: any[]; setItems: (items: any
 };
 
 // 水平列表组件
-const HorizontalList = ({ items, setItems }: { items: any[]; setItems: (items: any[]) => void }) => {
+const HorizontalList = ({ items, setItems }: { items: any[]; setItems: any}) => {
   return (
     <DndContext onDragEnd={({ active, over }) => {
       if (over && active.id !== over.id) {
-        setItems((items) => {
+        setItems((items:any) => {
           const oldIndex = items.findIndex((item: any) => item.id === active.id);
           const newIndex = items.findIndex((item: any) => item.id === over.id);
           return arrayMove(items, oldIndex, newIndex);
@@ -288,7 +288,7 @@ const HorizontalList = ({ items, setItems }: { items: any[]; setItems: (items: a
 };
 
 // 网格布局组件
-const GridLayout = ({ items, setItems }: { items: any[]; setItems: (items: any[]) => void }) => {
+const GridLayout = ({ items, setItems }: { items: any[]; setItems: any }) => {
   return (
     <DndContext onDragEnd={({ active, over }) => {
       if (over && active.id !== over.id) {
