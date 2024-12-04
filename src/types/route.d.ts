@@ -8,7 +8,6 @@ export interface RouteConfig {
   icon?: ReactNode
   layout?: boolean
   element?: ReactNode 
-  auth?: boolean
   roles?: string[]
   sort?: number
   hidden?: boolean
@@ -26,7 +25,6 @@ export interface CoRouteObject extends Omit<RouteObject, 'path'> {
     roles?: string[]
     sort?: number
     layout?: boolean
-    auth?: boolean
     hidden?: boolean
     hiddenInMenu?: boolean
   }

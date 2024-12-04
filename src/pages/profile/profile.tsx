@@ -366,5 +366,5 @@ export const routeConfig: RouteConfig = {
     icon: <UserOutlined />,
     layout: true,
     hiddenInMenu: true,
-    auth: false,
+    
 }

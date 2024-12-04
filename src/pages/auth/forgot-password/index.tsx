@@ -20,7 +20,7 @@ import PasswordInput from '@/components/PasswordInput';
 export const routeConfig: RouteConfig = {
     title: '忘记密码',
     layout: false,
-    auth: false,
+    
 }
 
 const ForgotPasswordPage: React.FC = () => {

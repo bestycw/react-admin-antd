@@ -156,7 +156,6 @@ const routeConfigHandler = {
             title: name.charAt(0).toUpperCase() + name.slice(1),
             icon: routeUtils.generateIcon(name),
             layout: true,
-            auth: true
         }
     },
 
@@ -177,7 +176,6 @@ const routeConfigHandler = {
                 layout: config.layout,
                 hidden: config.hidden,
                 hiddenInMenu: config.hiddenInMenu,
-                auth: config.auth
             },
             // hidden: config.hidden,
             isFile: true
@@ -203,7 +201,6 @@ const routeTreeHandler = {
                 roles: parentConfig.roles,
                 sort: parentConfig.sort,
                 layout: parentConfig.layout,
-                auth: parentConfig.auth
             },
             // hidden: parentConfig.hidden,
             children: []

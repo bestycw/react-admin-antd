@@ -23,7 +23,7 @@ export const routeConfig: RouteConfig = {
     title: '注册',
     // icon: <StopOutlined />,
     layout: false,
-    auth: false,
+    
     // hidden: true // 在菜单中隐藏
 }
 
