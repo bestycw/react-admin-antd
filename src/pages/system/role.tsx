@@ -130,7 +130,14 @@ const RoleManagement: React.FC = () => {
     console.log('Edit record:', record);
     setCurrentRole(record);
     setCurrentStep(0);
-    setCheckedKeys(record.dynamicRoutesList || []);
+    console.log('record.dynamicRoutesList',record.dynamicRoutesList)
+    // if(record.dynamicRoutesList.includes('*')){
+    //   // setCheckedKeys(record.dynamicRoutesList || []);
+    //   setCheckAll(true);
+    //   setCheckedKeys(allKeys);
+    // }else{
+      setCheckedKeys(record.dynamicRoutesList || []);
+    // }
     form.setFieldsValue({
       ...record,
       dynamicRoutesList: record.dynamicRoutesList || []
@@ -251,7 +258,10 @@ const RoleManagement: React.FC = () => {
       case 1:
         const treeData = generatePermissionTree(UserStore.allRoutes);
         const allKeys = getAllKeys(treeData);
-
+        if(checkedKeys.includes('*')){
+          setCheckAll(true);
+          setCheckedKeys(allKeys);
+        }
         return (
           <div className="px-4">
             <div className="mb-4 flex gap-2">
