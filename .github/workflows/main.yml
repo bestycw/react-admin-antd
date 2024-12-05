@@ -28,16 +28,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'yarn'
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
-
+      - name: Install Yarn
+        run: npm install -g yarn
       - name: Install dependencies
-        run: npm install
-
+        run: 
+          yarn install
+          yarn add @rollup/rollup-linux-x64-gnu
       - name: Build project
-        run: npm run build:prod
+        run: yarn build:prod
         env:
           VITE_USE_MOCK: 'true'
           VITE_API_URL: ''
