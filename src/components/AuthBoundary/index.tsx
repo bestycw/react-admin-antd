@@ -5,12 +5,13 @@ import React from "react";
 import { CoRouteObject } from "@/types/route";
 import { authService } from "../../services/auth";
 import { message } from "antd";
+import { toJS } from "mobx";
 
 const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
     const { children } = props;
     const { UserStore } = useStore();
     const location = useLocation();
-    console.log('AuthBoundary')
+
     // 检查用户是否登录和token是否有效
     const isAuthenticated =  authService.isAuthenticated();
     
@@ -39,7 +40,6 @@ const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
     if (currentRoute?.redirect) {
         return <Navigate to={currentRoute.redirect} replace={true} />;
     }
-    console.log('currentRoute', children)
     // 用户已登录且有权限，渲染子组件
     return <>{children}</>;
 });

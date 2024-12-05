@@ -11,9 +11,13 @@ import PageTransition from '@/components/PageTransition'
 // import { Spin } from 'antd'
 import GlobalSearch from '../components/GlobalSearch'
 import Loading from '@/components/Loading'
+import { useStore } from '@/store'
 
 const Layout = observer(() => {
   console.log('layout init')
+  // const { MenuStore } = useStore()
+  // const selectedKeys = MenuStore.selectedKeys
+  // console.log('selectedKeys', selectedKeys)
   const fallback = (
     <div className="flex items-center justify-center h-full">
       <Loading></Loading>
@@ -26,11 +30,11 @@ const Layout = observer(() => {
         <Header style={{ marginBottom: 0 }} />        
         <Tab />
         <Content>
-          {/* <Suspense fallback={null}> */}
+          <Suspense fallback={fallback}>
             <PageTransition>
               <Outlet />
             </PageTransition>
-          {/* </Suspense> */}
+          </Suspense>
         </Content>
       </AntLayout>
       <SettingDrawer />
