@@ -11,6 +11,7 @@ export default defineConfig(({ command, mode }) => {
   const { VITE_PORT, VITE_API_URL, VITE_API_PREFIX, VITE_PROXY, VITE_USE_CDN, VITE_USE_MOCK } = env
 
   return {
+    base: mode === 'production' ? '/react-admin-antd/' : '/',
     plugins: [
       react(),
       // viteCompression({
