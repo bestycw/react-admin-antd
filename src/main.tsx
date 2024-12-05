@@ -1,7 +1,7 @@
 import './locales/i18n'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
-import { BrowserRouter } from 'react-router-dom'
+import { HashRouter } from 'react-router-dom'
 import './index.css'
 
 // 根据环境变量判断是否使用 mock 数据
@@ -14,7 +14,7 @@ if (import.meta.env.VITE_USE_MOCK === 'true') {
 }
 
 createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
+  <HashRouter>
     <App />
-  </BrowserRouter>,
+  </HashRouter>,
 )
