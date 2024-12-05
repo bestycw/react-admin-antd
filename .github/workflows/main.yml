@@ -3,15 +3,14 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master  # 或者你的默认分支名
-  workflow_dispatch: # 允许手动触发
+      - master  # 确认你的默认分支名
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 允许一个并发部署
 concurrency:
   group: 'pages'
   cancel-in-progress: true
@@ -28,22 +27,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
-      - name: Install Yarn
-        run: npm install -g yarn
+
       - name: Install dependencies
-        run: 
-          yarn
-          yarn add @rollup/rollup-linux-x64-gnu
+        run: |
+          npm install
+          npm install --platform=linux --arch=x64 --no-optional
+
       - name: Build project
-        run: yarn build:prod
+        run: npm run build:prod
         env:
           VITE_USE_MOCK: 'true'
           VITE_API_URL: ''
           NODE_ENV: 'production'
+          BASE_URL: '/react-admin-antd/'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -59,4 +59,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 
+        uses: actions/deploy-pages@v4
