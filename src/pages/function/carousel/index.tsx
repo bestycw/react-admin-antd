@@ -33,7 +33,7 @@ const CarouselPage: React.FC = () => {
   ];
 
   return (
-    <div className="p-6">
+    <div>
       <Card title="轮播图展示" className="shadow-lg">
         <Tabs
           defaultActiveKey="basic"

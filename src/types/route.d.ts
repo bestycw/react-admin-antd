@@ -7,7 +7,7 @@ export interface RouteConfig {
   title?: string
   icon?: ReactNode
   layout?: boolean
-  element?: ReactNode 
+  element?: ReactNode | LazyExoticComponent
   roles?: string[]
   sort?: number
   hidden?: boolean

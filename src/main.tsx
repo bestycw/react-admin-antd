@@ -1,7 +1,7 @@
 import './locales/i18n'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
-import { HashRouter } from 'react-router-dom'
+import {  HashRouter } from 'react-router-dom'
 import './index.css'
 
 // 根据环境变量判断是否使用 mock 数据

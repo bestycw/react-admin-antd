@@ -8,7 +8,7 @@
   --bg-overlay: rgba(0, 0, 0, 0.05);
   --bg-hover: rgba(0, 0, 0, 0.04);
   --bg-active: rgba(0, 0, 0, 0.08);
-  --layout-bg:  white;  --layout-bg:  radial-gradient(circle at top left, #f0f9ff, transparent),
+ --layout-bg:  radial-gradient(circle at top left, #f0f9ff, transparent),
   radial-gradient(circle at bottom right, #bfdbfe, transparent),
   linear-gradient(135deg, #e0f2fe, #dbeafe);/* 文字颜色系统 */
   --text-primary: #1f2937;
@@ -102,7 +102,7 @@
 :root.theme-dynamic {
   
   /* 背景效果 */
-  --bg-opacity: 0.70;
+  --bg-opacity: 0.6;
   --blur-amount: 4px;
 
   /* 边框效果 */
