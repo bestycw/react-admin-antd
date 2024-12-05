@@ -12,7 +12,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{
-        duration: 0.3,
+        duration: 0.5,
         ease: "easeInOut"
       }}
     >

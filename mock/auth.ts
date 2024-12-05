@@ -4,9 +4,7 @@ const tokens = {
   admin: 'mock-token-admin',
   user: 'mock-token-user',
 }
-Mock.setup({
-  timeout: '100-500'  // 设置随机响应时间，更真实
-}) 
+
 Mock.mock('/api/auth/login', 'post', (options: any) => {
   const { username, password } = JSON.parse(options.body)
   console.log('Mock login:', username, password)

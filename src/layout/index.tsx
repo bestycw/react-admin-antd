@@ -14,8 +14,11 @@ import Loading from '@/components/Loading'
 
 const Layout = observer(() => {
   console.log('layout init')
-  // const { MenuStore } = useStore()
-
+  const fallback = (
+    <div className="flex items-center justify-center h-full">
+      <Loading></Loading>
+    </div>
+  )
   return (
     <AntLayout className="min-h-screen bg-gradient bg-gradient-animated" style={{ background:'var(--layout-bg)'}}>
       <Sidebar />     
@@ -23,21 +26,17 @@ const Layout = observer(() => {
         <Header style={{ marginBottom: 0 }} />        
         <Tab />
         <Content>
-          <Suspense fallback={
-            <div className="flex items-center justify-center h-full">
-              <Loading></Loading>
-            </div>
-          }>
+          {/* <Suspense fallback={null}> */}
             <PageTransition>
               <Outlet />
             </PageTransition>
-          </Suspense>
+          {/* </Suspense> */}
         </Content>
       </AntLayout>
       <SettingDrawer />
       <GlobalSearch />
     </AntLayout>
   )
-})
+  })
 
 export default Layout
