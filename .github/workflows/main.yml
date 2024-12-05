@@ -34,8 +34,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install
-          npm install --platform=linux --arch=x64 --no-optional
+          npm install -g npm@latest
+          npm install --legacy-peer-deps
+          npm install @rollup/rollup-linux-x64-gnu --no-save
 
       - name: Build project
         run: npm run build:prod
@@ -44,6 +45,7 @@ jobs:
           VITE_API_URL: ''
           NODE_ENV: 'production'
           BASE_URL: '/react-admin-antd/'
+          ROLLUP_SKIP_OPTIONAL: 'true'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
