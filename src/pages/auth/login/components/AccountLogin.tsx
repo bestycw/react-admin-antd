@@ -21,7 +21,7 @@ const AccountLogin: React.FC = () => {
       >
         <Input
           prefix={<UserOutlined />}
-          placeholder={t('login.usernamePlaceholder')}
+          placeholder="默认账号: admin"
           className="login-input"
         />
       </Form.Item>
@@ -31,7 +31,7 @@ const AccountLogin: React.FC = () => {
       >
         <Input.Password
           prefix={<LockOutlined />}
-          placeholder={t('login.passwordPlaceholder')}
+          placeholder="默认密码: 123456"
           className="login-input"
         />
       </Form.Item>

@@ -119,6 +119,5 @@ export default defineConfig(({ command, mode }) => {
     //   },
     //   devSourcemap: mode !== 'production',
     // },
-    base: mode === 'production' ? '/react-admin-antd/' : '/',
   }
 })

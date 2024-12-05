@@ -4,19 +4,17 @@ import { useState } from 'react'
 import {
   UserOutlined,
   SettingOutlined,
-  // SunOutlined,
-  // MoonOutlined,
   LogoutOutlined,
   FullscreenOutlined,
   FullscreenExitOutlined,
   BellOutlined,
   TranslationOutlined,
   SearchOutlined,
+  GithubOutlined,
 } from '@ant-design/icons'
 import React from 'react'
 import { authService } from '../../services/auth'
 import { useNavigate } from 'react-router-dom'
-// import { useGlobalSearch } from '@/hooks/useGlobalSearch'
 
 export interface ActionItem {
   key: string
@@ -91,6 +89,12 @@ export const useUserActions = () => {
 
   // 功能按钮列表
   const actionItems: ActionItem[] = [
+    {
+      key: 'github',
+      icon: <GithubOutlined className="text-gray-600 dark:text-gray-300" />,
+      label: 'GitHub',
+      onClick: () => window.open('https://github.com/bestycw/react-admin-antd', '_blank')
+    },
     {
       key: 'notification',
       icon: <BellOutlined className="text-gray-600 dark:text-gray-300" />,
