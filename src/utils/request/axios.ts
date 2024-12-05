@@ -203,7 +203,6 @@ export class AxiosRequest extends BaseRequest {
     if (error.name === 'AbortError' || error.name === 'CanceledError' || error.code === 'ECONNABORTED') {
       return Promise.reject(new Error('请求已取消或超时'));
     }
-    
     if (error.response) {
       const status = error.response.status;
       message.error(handleErrorMessage(status));

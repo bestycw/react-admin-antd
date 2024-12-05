@@ -17,7 +17,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     const { mode } = props;
     const navigate = useNavigate();
     const location = useLocation();
-
+    // console.log('Menu Init')
     // 只在路径真正改变时更新选中状态
     useEffect(() => {
         const currentPath = location.pathname;

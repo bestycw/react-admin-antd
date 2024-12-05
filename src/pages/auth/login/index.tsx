@@ -26,7 +26,7 @@ import { ParticlesOptions } from '@/config/particles';
 import { authService } from '@/services/auth';
 
 import LanguageSwitch from '@/components/LanguageSwitch';
-import logo from '@/assets/logo.svg';
+import logo from '@/assets/logo.png';
 import './index.scss';
 import AccountLogin from './components/AccountLogin';
 import PhoneLogin from './components/PhoneLogin';

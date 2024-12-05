@@ -17,16 +17,20 @@ const App = observer(() => {
     console.log(' app init')
 
     if (authService.isAuthenticated()) {
-
-        renderRoutes = UserStore.filterRoutesByRoles(deepClone(routes))
-        // console.log('renderRoutes', renderRoutes)
-        const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
-        runInAction(() => {
-            UserStore.setAllRoutes(renderRoutes)
-            MenuStore.initRoutesAndMenu(rootRoute)
-        })
+        if(!UserStore.hasAllRoutes){
+            renderRoutes = UserStore.filterRoutesByRoles(deepClone(routes))
+            // console.log('renderRoutes', renderRoutes)
+            const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
+            console.log('rootRoute', renderRoutes)
+            runInAction(() => {
+                UserStore.setAllRoutes(renderRoutes)
+                MenuStore.initRoutesAndMenu(rootRoute)
+            })
+        }else{
+            renderRoutes = UserStore.allRoutes
+        }
     }
-
+    // console.log('renderRoutes', renderRoutes)
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>
             {/* <PageProgress /> */}

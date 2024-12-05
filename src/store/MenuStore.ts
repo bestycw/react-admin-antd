@@ -95,7 +95,7 @@ class MenuStore {
     }
 
     setSelectedKeys(selectedKeys: string[]) {
-        console.log(selectedKeys)
+        // console.log(selectedKeys)
         runInAction(() => {
             if (this.selectedKeys[0] !== selectedKeys[0] ) {
                 this.selectedKeys = selectedKeys;
@@ -150,24 +150,6 @@ class MenuStore {
             }
         }
         return find(this.menuList)
-    }
-
-    filterMenuByRoles(roles: string[]): MenuItem[] {
-        const filter = (items: MenuItem[]): MenuItem[] => {
-            return items.filter(item => {
-                if (!item.roles || item.roles.length === 0) {
-                    return true
-                }
-                const hasPermission = item.roles.some(role => roles.includes(role))
-
-                if (hasPermission && item.children) {
-                    item.children = filter(item.children)
-                }
-
-                return hasPermission
-            })
-        }
-        return filter(this.menuList)
     }
 
     resetMenuState() {
