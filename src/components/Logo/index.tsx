@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/store';
-import logo from '@/assets/logo.svg';
+import logo from '@/assets/logo.png';
 import getGlobalConfig from '@/config/GlobalConfig';
 
 interface LogoProps {
