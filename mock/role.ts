@@ -22,7 +22,9 @@ const roles = [
     sort: 2
   }
 ]
-
+Mock.setup({
+  timeout: '100-500'  // 设置随机响应时间，更真实
+}) 
 Mock.mock(/\/api\/roles(\?.*)?$/, 'get', (options: any) => {
   const url = new URL(options.url, 'http://localhost')
   const page = Number(url.searchParams.get('page')) || 1

@@ -19,12 +19,11 @@ const App = observer(() => {
     if (authService.isAuthenticated()) {
 
         renderRoutes = UserStore.filterRoutesByRoles(deepClone(routes))
-        console.log('renderRoutes', renderRoutes)
+        // console.log('renderRoutes', renderRoutes)
         const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
         runInAction(() => {
             UserStore.setAllRoutes(renderRoutes)
             MenuStore.initRoutesAndMenu(rootRoute)
-
         })
     }
 

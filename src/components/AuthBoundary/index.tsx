@@ -16,7 +16,7 @@ const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
     
     if (!isAuthenticated) {
         // 未登录、无用户信息或token无效，跳转到登录页
-        message.error('登录失效，请先登录');
+        // message.error('登录失效，请先登录');
         return <Navigate to="/auth/login" state={{ from: location }} replace={true} />;
     }
 
