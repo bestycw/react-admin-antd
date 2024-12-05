@@ -231,6 +231,13 @@
         text-gray-500 dark:text-gray-400
         animate-pulse;
     }
+
+    .ant-qrcode {
+      padding: 12px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
   }
 
   /* 其他操作按钮 */
