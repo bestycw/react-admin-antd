@@ -71,39 +71,6 @@ interface TokenInfo {
 class AuthService {
   private isRefreshing: boolean = false;
 
-  async refreshToken(): Promise<void> {
-    try {
-      const refreshToken = authStorage.getRefreshToken();
-      if (!refreshToken) {
-        authStorage.clearAuth();
-        return;
-      }
-      if (this.isRefreshing) {
-        return;
-      }
-      this.isRefreshing = true;
-
-      const response = await request.post<TokenInfo>('/api/auth/refresh-token', { refreshToken });
-      
-      if (!response?.token || !response?.refreshToken) {
-        throw new Error('Invalid token response');
-      }
-
-      authStorage.setTokenInfo({
-        token: response.token,
-        refreshToken: response.refreshToken,
-        expiresIn: TIME.TOKEN_EXPIRE,
-        remember: authStorage.getStorageType() === 'local'
-      });
-
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-      authStorage.clearAuth();
-    } finally {
-      this.isRefreshing = false;
-    }
-  }
-
   async login(params: LoginParams): Promise<LoginResponse> {
     try {
       const response = await request.post<LoginResponse>('/api/auth/login', params);
@@ -118,7 +85,7 @@ class AuthService {
         expiresIn: TIME.TOKEN_EXPIRE,
         remember: params.remember
       });
-
+      
       const dynamicRoutesList = await getRoleRoutes(response.user.roles);
       response.user.dynamicRoutesList = dynamicRoutesList;
 

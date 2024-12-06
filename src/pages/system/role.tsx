@@ -195,7 +195,7 @@ const RoleManagement: React.FC = () => {
         code: values.code,
         description: values.description,
         status: values.status || 'active',
-        dynamicRoutesList: checkAll ? ['*'] : values.dynamicRoutesList || []
+        dynamicRoutesList: checkAll ? ['/'] : values.dynamicRoutesList || []
       };
       console.log('Role data to submit:', roleData);
 

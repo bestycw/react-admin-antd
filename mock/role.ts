@@ -6,7 +6,7 @@ const roles = [
     name: 'admin',
     description: '系统管理员',
     permissions: ['*'],
-    dynamicRoutesList: ['*'],
+    dynamicRoutesList: ['/'],
     createTime: '2024-01-01 00:00:00',
     status: 1,
     sort: 1
