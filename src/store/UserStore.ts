@@ -4,8 +4,11 @@ import { CoRouteObject } from "../types/route.d"
 import { authService } from '@/services/auth'
 import type { UserInfo as AuthUserInfo } from '@/services/auth'
 import type { NotificationSetting } from '@/types/notification'
+import { authStorage } from '@/utils/storage/authStorage'
+import { AUTH_STORAGE_KEYS } from '@/utils/storage/authStorage'
+import StorageManager from '@/utils/storage/storageManager'
 
-interface UserInfo extends AuthUserInfo {
+interface   UserInfo extends AuthUserInfo {
     accessToken: string;
 }
 
@@ -53,35 +56,13 @@ class UserStore {
     apiTokens: ApiToken[] = [];
 
     private initUserInfo() {
-        const storedUserInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
-        if (storedUserInfo) {
-            try {
-                const parsedUserInfo = JSON.parse(storedUserInfo);
-                runInAction(() => {
-                    this.setUserInfo(parsedUserInfo);
-                    this.permissions = parsedUserInfo?.permissions || [];
-                });
-            } catch (error) {
-                console.error('Failed to parse stored user info:', error);
-                this.clearUserInfo();
-            }
+        const userInfo = StorageManager.get<UserInfo | null>(AUTH_STORAGE_KEYS.USER_INFO, null, { 
+            type: authStorage.getStorageType() 
+        });
+        if (userInfo) {
+            this.setUserInfo(userInfo);
         }
     }
-
-    // async getDynamicRoutes() {
-    //     try {
-    //         const backRoutes = await fetchBackendRoutes()
-    //         if (backRoutes) {
-    //             // 缓存动态路由
-    //             localStorage.setItem('dynamicRoutes', JSON.stringify(backRoutes))
-    //         }
-    //         return backRoutes
-    //     } catch (error) {
-    //         console.error('Failed to get dynamic routes:', error)
-    //         throw error
-    //     }
-    // }
-
     setDynamicRoutes(routes: CoRouteObject[]) {
         runInAction(() => {
             this.dynamicRoutes = routes
@@ -89,40 +70,19 @@ class UserStore {
         })
     }
 
-    setUserInfo(userInfo: UserInfo, remember?: boolean) {
-        runInAction(() => {
-            this.userInfo = userInfo;
-            // this.isLogin = true;
-
-            // 存储用户信息
-            const storage = remember ? localStorage : sessionStorage;
-            storage.setItem('userInfo', JSON.stringify(userInfo));
-        });
+    setUserInfo(userInfo: UserInfo | null) {
+        this.userInfo = userInfo;
+        if (userInfo) {
+            StorageManager.set(AUTH_STORAGE_KEYS.USER_INFO, userInfo, {
+                type: authStorage.getStorageType()
+            });
+        }
     }
 
     clearUserInfo() {
-        runInAction(() => {
-            this.userInfo = {
-                id: '',
-                username: '',
-                email: '',
-                avatar: '',
-                roles: [],
-                permissions: [],
-                status: '',
-                lastLogin: '',
-                accessToken: '',
-                dynamicRoutesList: []
-            };
-            this.dynamicRoutes = [];
-            // this.allRoutes = [];
-            // this.isLogin = false;
-            // this.isInitDynamicRoutes = false;
-            localStorage.removeItem('token');
-            sessionStorage.removeItem('token');
-            localStorage.removeItem('userInfo');
-            sessionStorage.removeItem('userInfo');
-        });
+        this.userInfo = null;
+        // 清除用户信息时使用 authStorage 的清理方法
+        authStorage.clearAuth();
     }
 
     setAllRoutes(routes: CoRouteObject[]) {
@@ -164,9 +124,7 @@ class UserStore {
     filterRoutesByRoles(routes: CoRouteObject[]): CoRouteObject[] {
         return routes.map(route => {
             const newRoute = { ...route };
-            // console.log('newRoute', newRoute)
             // 如果是根路由或者 layout 为 false，则保留
-            // console.log('newRoute', newRoute,newRoute.meta?.layout === false,route.root === true)
             if (newRoute.meta?.layout === false) {
                 return newRoute;
             }
@@ -181,14 +139,11 @@ class UserStore {
             // 2. 然后检查动态路由权限
             if (!newRoute.meta?.hidden && newRoute.path && !newRoute.root) {
                 const dynamicRoutes = this.userInfo?.dynamicRoutesList || [];
-                // console.log('dynamicRoutes', dynamicRoutes)
                 // 如果是 layout=false 的路由，跳过动态路由检查
                 const needCheckDynamicRoute = newRoute.meta?.layout !== false;
                 const hasPermission = !needCheckDynamicRoute ||
-                    dynamicRoutes.includes('*') ||
+                    dynamicRoutes.includes('/') ||
                     dynamicRoutes.includes(newRoute.path);
-
-
                 if (!hasPermission) {
                     newRoute.meta = newRoute.meta || {};
                     newRoute.meta.hidden = true;
