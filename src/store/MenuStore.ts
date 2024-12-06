@@ -198,13 +198,18 @@ class MenuStore {
             }
         }
     }
-
+    
     initRoutesAndMenu(rootRoute: CoRouteObject) {
             if (rootRoute?.children) {
                 const menu = this.routesToMenuItems(rootRoute.children)
                 this.setMenuList(menu)
             }
 
+    }
+
+    // 添加清空所有标签的方法
+    resetTags() {
+        this.visitedTags = [];
     }
 }
 
