@@ -17,20 +17,15 @@ const App = observer(() => {
     console.log(' app init')
 
     if (authService.isAuthenticated()) {
-        if(!UserStore.hasAllRoutes){
-            renderRoutes = UserStore.filterRoutesByRoles(deepClone(routes))
-            // console.log('renderRoutes', renderRoutes)
-            const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
-            console.log('rootRoute', renderRoutes)
-            runInAction(() => {
+        //TODO 需要优化，不能每次都重新过滤路由, 应该在用户信息更新时过滤
+        renderRoutes = UserStore.filterRoutesByRoles(deepClone(routes))
+        const rootRoute = renderRoutes.find(route => route.root) as CoRouteObject
+        runInAction(() => {
                 UserStore.setAllRoutes(renderRoutes)
                 MenuStore.initRoutesAndMenu(rootRoute)
             })
-        }else{
-            renderRoutes = UserStore.allRoutes
-        }
+
     }
-    // console.log('renderRoutes', renderRoutes)
     return (
         <ConfigProvider theme={ConfigStore.themeConfig}>
             {/* <PageProgress /> */}
