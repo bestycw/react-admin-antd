@@ -4,7 +4,6 @@ import { message } from 'antd';
 import { ErrorCode, handleErrorMessage } from '@/utils/request/errorCode';
 import authStorage from '../storage/authStorage';
 import { TIME } from '@/config/constants';
-import { authService } from '@/services/auth';
 
 export class AxiosRequest extends BaseRequest {
   private instance: AxiosInstance;
@@ -21,50 +20,55 @@ export class AxiosRequest extends BaseRequest {
   }
 
   private setupInterceptors() {
+    // 请求拦截器
     this.instance.interceptors.request.use(
       async (config: any) => {
-        // const {  ...axiosConfig } = config;
-        // if (token !== false) {
-          const token = authStorage.getToken();
-          const headers = { ...(config.headers || {}) };
-          
-          if (token) {
-            // 检查 token 是否即将过期
-            if (!authStorage.isTokenValid(TIME.TOKEN_REFRESH_AHEAD)) {
-              try {
-                await authService.refreshToken();
-                // 获取新的 token
-                const newToken = authStorage.getToken();
-                if (newToken) {
-                  headers['Authorization'] = `Bearer ${newToken}`;
-                }
-              } catch (error) {
-                console.error('Token refresh failed in interceptor:', error);
-              }
-            } else {
-              headers['Authorization'] = `Bearer ${token}`;
-            }
+        const headers = { ...(config.headers || {}) };
+        
+        const token = authStorage.getToken();
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+          // 添加 refresh token
+          const refreshToken = authStorage.getRefreshToken();
+          if (refreshToken) {
+            headers['X-Refresh-Token'] = refreshToken;
           }
-        // }
-        return {...config,headers};
+        }
+        
+        return {...config, headers};
       },
       (error) => Promise.reject(error)
     );
 
+    // 响应拦截器
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => {
+        // 处理自动刷新的token
+        const newToken = response.headers['x-access-token'];
+        const newRefreshToken = response.headers['x-refresh-token'];
+        
+        if (newToken && newRefreshToken) {
+          authStorage.setTokenInfo({
+            token: newToken,
+            refreshToken: newRefreshToken,
+            expiresIn: TIME.TOKEN_EXPIRE,
+            remember: authStorage.getStorageType() === 'local'
+          });
+        }
+
         if (response.config.responseType === 'blob') {
           return response;
         }
+        
         if (response.data.code !== ErrorCode.SUCCESS) {
           return Promise.reject(new Error(response.data.message || handleErrorMessage(response.data.code)));
         }
+        
         return response.data;
       },
-      (error) => this.handleError(error)
+      (error) => Promise.reject(error)
     );
   }
-
   private toAxiosConfig(config?: BaseRequestConfig): AxiosRequestConfig {
     if (!config) return {};
     const { onUploadProgress, onDownloadProgress, ...rest } = config;
@@ -80,7 +84,6 @@ export class AxiosRequest extends BaseRequest {
       })
     };
   }
-
   // 发送请求
   private async request<T>(config: AxiosRequestConfig & { retry?: number, retryDelay?: number, loading?: boolean }): Promise<T> {
     const { retry, retryDelay, loading, ...axiosConfig } = config;

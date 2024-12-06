@@ -5,6 +5,7 @@ import StreamChat from './components/StreamChat';
 import BigFileUpload from './components/BigFileUpload';
 // import P2PVideoChat from './components/P2PVideoChat';
 import { ApiOutlined } from '@ant-design/icons';
+import ConcurrentRequests from './components/ConcurrentRequest';
 
 const NetworkAdvance: React.FC = () => {
   return (
@@ -21,7 +22,12 @@ const NetworkAdvance: React.FC = () => {
         {/* <Card title="大文件分片上传" className="w-full"> */}
           <BigFileUpload />
         {/* </Card> */}
-{/* 
+        <ConcurrentRequests 
+        title="并发请求示例" 
+        defaultLimit={3}
+          maxRequests={10}
+        />
+{/*    
         <Card title="P2P 视频聊天 (WebRTC)" className="w-full">
           <P2PVideoChat />
         </Card> */}
