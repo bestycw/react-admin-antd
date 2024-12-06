@@ -3,7 +3,6 @@ import { authStorage } from '@/utils/storage/authStorage';
 import { TIME } from '@/config/constants';
 import UserStore from '@/store/UserStore';
 import { getRoleRoutes } from './role';
-// import { request } from 'node:https';
 
 export interface LoginParams {
   username?: string;
@@ -70,30 +69,12 @@ interface TokenInfo {
 }
 
 class AuthService {
-  private refreshTokenTimeout?: NodeJS.Timeout;
   private isRefreshing: boolean = false;
-
-  private startRefreshTokenTimer(expiresIn: number) {
-    this.stopRefreshTokenTimer();
-    const timeout = expiresIn - TIME.TOKEN_REFRESH_AHEAD;
-    console.log('Next token refresh in:', timeout / 1000, 'seconds');
-    if (timeout <= 0 || timeout >= TIME.TOKEN_EXPIRE) {
-
-      console.warn('Invalid refresh timeout:', timeout);
-      // this.logout()
-      return;
-    }
-    this.refreshTokenTimeout = setTimeout(() => {
-   
-      this.refreshToken();
-    }, Math.max(timeout, 100));
-  }
 
   async refreshToken(): Promise<void> {
     try {
       const refreshToken = authStorage.getRefreshToken();
       if (!refreshToken) {
-        this.stopRefreshTokenTimer();
         authStorage.clearAuth();
         return;
       }
@@ -115,10 +96,8 @@ class AuthService {
         remember: authStorage.getStorageType() === 'local'
       });
 
-      this.startRefreshTokenTimer(TIME.TOKEN_EXPIRE);
     } catch (error) {
       console.error('Token refresh failed:', error);
-      this.stopRefreshTokenTimer();
       authStorage.clearAuth();
     } finally {
       this.isRefreshing = false;
@@ -132,18 +111,17 @@ class AuthService {
       if (!response?.token || !response?.refreshToken) {
         throw new Error('登录响应格式错误');
       }
-      // console.log('login response:', response);
+
       authStorage.setTokenInfo({
         token: response.token,
         refreshToken: response.refreshToken,
         expiresIn: TIME.TOKEN_EXPIRE,
         remember: params.remember
       });
+
       const dynamicRoutesList = await getRoleRoutes(response.user.roles);
-      console.log('dynamicRoutesList:', dynamicRoutesList);
       response.user.dynamicRoutesList = dynamicRoutesList;
 
-      this.startRefreshTokenTimer(TIME.TOKEN_EXPIRE);
       return response;
     } catch (error) {
       console.error('Login failed:', error);
@@ -151,21 +129,11 @@ class AuthService {
     }
   }
 
-  private stopRefreshTokenTimer() {
-    if (this.refreshTokenTimeout) {
-      clearTimeout(this.refreshTokenTimeout);
-      // this.refreshTokenTimeout = undefined;
-    }
-  }
-
   async logout(): Promise<void> {
     try {
       await request.post('/api/auth/logout');
     } finally {
-      // this.stopRefreshTokenTimer();
-      // 清除所有认证相关存储
-      authStorage.clearAuth();  
-      // UserStore.clearUserInfo();
+      authStorage.clearAuth();
     }
   }
 
@@ -221,7 +189,6 @@ class AuthService {
     const formData = new FormData();
     formData.append('avatar', file);
     const response = await request.upload<{ code: number; data: { url: string }; message: string }>('/api/auth/upload-avatar', formData);
-    // console.log('Upload response:', response);
     return response;
   }
 
