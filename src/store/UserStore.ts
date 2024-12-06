@@ -124,9 +124,7 @@ class UserStore {
     filterRoutesByRoles(routes: CoRouteObject[]): CoRouteObject[] {
         return routes.map(route => {
             const newRoute = { ...route };
-            // console.log('newRoute', newRoute)
             // 如果是根路由或者 layout 为 false，则保留
-            // console.log('newRoute', newRoute,newRoute.meta?.layout === false,route.root === true)
             if (newRoute.meta?.layout === false) {
                 return newRoute;
             }
@@ -141,14 +139,11 @@ class UserStore {
             // 2. 然后检查动态路由权限
             if (!newRoute.meta?.hidden && newRoute.path && !newRoute.root) {
                 const dynamicRoutes = this.userInfo?.dynamicRoutesList || [];
-                // console.log('dynamicRoutes', dynamicRoutes)
                 // 如果是 layout=false 的路由，跳过动态路由检查
                 const needCheckDynamicRoute = newRoute.meta?.layout !== false;
                 const hasPermission = !needCheckDynamicRoute ||
-                    dynamicRoutes.includes('*') ||
+                    dynamicRoutes.includes('/') ||
                     dynamicRoutes.includes(newRoute.path);
-
-
                 if (!hasPermission) {
                     newRoute.meta = newRoute.meta || {};
                     newRoute.meta.hidden = true;

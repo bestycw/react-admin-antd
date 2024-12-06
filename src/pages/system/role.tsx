@@ -3,7 +3,7 @@ import { Button, Tag, Modal, Form, Input, Select, message, Space, Steps, Tree } 
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
 import type { TableColumnType } from '@/components/Table/types';
-import PermissionTree from '@/components/PermissionTree';
+// import PermissionTree from '@/components/PermissionTree';
 import {
   getRoles,
   createRole,
@@ -184,11 +184,95 @@ const RoleManagement: React.FC = () => {
     setCurrentStep(currentStep - 1);
   };
 
+  // 添加一理权限树选择的函数
+  const processSelectedRoutes = (selectedKeys: (string | number)[], treeData: any[]): string[] => {
+    // 如果全选了，直接返回 ['/']
+    if (checkAll) {
+      return ['/'];
+    }
+
+    const result = new Set<string>();
+    const keyMap = new Map<string, any>();
+    const childrenMap = new Map<string, Set<string>>();
+    
+    // 构建节点映射和父子关系
+    const buildMaps = (nodes: any[], parentKey?: string) => {
+      nodes.forEach(node => {
+        keyMap.set(node.key, node);
+        
+        if (parentKey) {
+          if (!childrenMap.has(parentKey)) {
+            childrenMap.set(parentKey, new Set());
+          }
+          childrenMap.get(parentKey)?.add(node.key);
+        }
+        
+        if (node.children) {
+          buildMaps(node.children, node.key);
+        }
+      });
+    };
+    buildMaps(treeData);
+
+    // 检查节点的所有子节点是否都被选中
+    const areAllChildrenSelected = (nodeKey: string, selected: Set<string>): boolean => {
+      const children = childrenMap.get(nodeKey);
+      if (!children || children.size === 0) return true;
+      
+      return Array.from(children).every(childKey => 
+        selected.has(childKey) && areAllChildrenSelected(childKey, selected)
+      );
+    };
+
+    // 获取节点的所有子节点
+    const getAllChildren = (nodeKey: string): string[] => {
+      const children = childrenMap.get(nodeKey);
+      if (!children) return [];
+      
+      const allChildren: string[] = [];
+      children.forEach(childKey => {
+        allChildren.push(childKey);
+        allChildren.push(...getAllChildren(childKey));
+      });
+      return allChildren;
+    };
+
+    const selectedSet = new Set(selectedKeys.map(String));
+
+    // 处理选中的节点
+    Array.from(selectedSet).forEach(key => {
+      const node = keyMap.get(key);
+      if (!node) return;
+
+      // 如果该节点的所有子节点都被选中
+      if (childrenMap.has(key) && areAllChildrenSelected(key, selectedSet)) {
+        // 只添加父节点
+        result.add(key);
+        
+        // 从结果中移除所有子节点
+        const children = getAllChildren(key);
+        children.forEach(childKey => {
+          selectedSet.delete(childKey);
+        });
+      } else if (!Array.from(result).some(parentKey => 
+        childrenMap.get(parentKey)?.has(key)
+      )) {
+        // 如果不是某个已选父节点的子节点，则添加该节点
+        result.add(key);
+      }
+    });
+
+    return Array.from(result);
+  };
+
   const handleModalOk = async () => {
     try {
       await form.validateFields();
       const values = form.getFieldsValue(true);
-      console.log('Form values before submit:', values);
+      
+      // 处理选中的路由 这个方法待定吧，这里处理没问题但是处理路由的时候就麻烦太多了
+      // const treeData = generatePermissionTree(UserStore.allRoutes);
+      // const processedRoutes = processSelectedRoutes(checkedKeys as string[], treeData);
       
       const roleData = {
         name: values.name,
@@ -197,7 +281,6 @@ const RoleManagement: React.FC = () => {
         status: values.status || 'active',
         dynamicRoutesList: checkAll ? ['/'] : values.dynamicRoutesList || []
       };
-      console.log('Role data to submit:', roleData);
 
       if (currentRole) {
         await updateRole(currentRole.id, roleData);
