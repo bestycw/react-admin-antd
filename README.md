@@ -41,7 +41,7 @@
     </tr>	 
     <tr>
         <td><img src="https://bestycw.github.io/img-resource.github.io/img/%E5%B0%8F%E5%B1%8F%E5%B9%95.png"/></td>
-        <td><img src="https://bestycw.github.io/img-resource.github.io/img/%E5%8A%9F%E8%83%BD%E5%88%86%E7%B1%BB.png"/></td>
+        <td><img src="https://bestycw.github.io/img-resource.github.io/img/%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE.png"/></td>
     </tr>
 
 </table>
