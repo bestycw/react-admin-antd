@@ -93,6 +93,58 @@ export abstract class BaseRequest {
     return Date.now() - timestamp < cacheTime;
   }
 
+  async all<T>(requests: Promise<T>[]): Promise<T[]> {
+    return Promise.all(requests);
+  }
+
+  async allLimit<T>(requests: Promise<T>[], limit: number): Promise<T[]> {
+    const results: T[] = [];
+    const total = requests.length;
+    let completed = 0;
+
+    const executeRequest = async (request: Promise<T>, index: number) => {
+      try {
+        const result = await request;
+        results[index] = result;
+        completed++;
+        return result;
+      } catch (error) {
+        results[index] = error as T;
+        completed++;
+        throw error;
+      }
+    };
+
+    const queue = new Set();
+
+    return new Promise((resolve, reject) => {
+      let currentIndex = 0;
+
+      const next = () => {
+        if (completed === total) {
+          resolve(results);
+          return;
+        }
+
+        while (queue.size < limit && currentIndex < total) {
+          const promise = executeRequest(requests[currentIndex], currentIndex)
+            .catch(error => {
+              console.error(`Request ${currentIndex} failed:`, error);
+            })
+            .finally(() => {
+              queue.delete(promise);
+              next();
+            });
+
+          queue.add(promise);
+          currentIndex++;
+        }
+      };
+
+      next();
+    });
+  }
+
   abstract get<T>(url: string, config?: BaseRequestConfig): Promise<T>;
   abstract post<T>(url: string, data?: any, config?: BaseRequestConfig): Promise<T>;
   abstract upload<T>(url: string, file: File | Blob | FormData, config?: BaseRequestConfig): Promise<T>;
