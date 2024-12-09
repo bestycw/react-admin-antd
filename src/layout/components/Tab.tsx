@@ -74,12 +74,17 @@ const Tab = observer(() => {
   // 关闭其他标签页
   const closeOthers = (currentPath: string) => {
     if (MenuStore.visitedTags.length <= 1) return;
-    
-    MenuStore.visitedTags.forEach(tag => {
-      if (tag.path !== currentPath) {
-        MenuStore.removeTag(tag.path)
-      }
+    MenuStore.resetTags();
+    const menuItem = MenuStore.findMenuByPath(currentPath);
+    MenuStore.addTag({
+      path: currentPath,
+      title: menuItem?.label || ''
     })
+    // MenuStore.visitedTags.forEach(tag => {
+    //   if (tag.path !== currentPath) {
+    //     MenuStore.removeTag(tag.path)
+    //   }
+    // })
     // 跳转到保留的标签页
     navigate(currentPath)
   }

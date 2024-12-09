@@ -30,6 +30,28 @@ Mock.mock('/api/auth/login', 'post', (options: any) => {
       message: '登录成功'
     }
   }
+  if (username === 'user' && password === '123456') {
+    return {
+      code: 200,
+      data: {
+        token: tokens.admin,
+        user:{
+          id: 2,
+          username: 'user',
+          nickname: '普通用户',
+          avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+          email: 'user@example.com',
+          roles: ['user'],
+          permissions: ['*'],
+          dynamicRoutesList: ['/dashboard']
+        },
+        refreshToken: 'mock-refresh-token-admin',
+        
+        // username: 'admin'
+      },
+      message: '登录成功'
+    }
+  }
   return {
     code: 400,
     message: '用户名或密码错误'

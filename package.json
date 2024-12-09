@@ -19,6 +19,7 @@
     "@dnd-kit/sortable": "^9.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@monaco-editor/react": "^4.6.0",
+    "@reactflow/core": "^11.11.4",
     "@types/mockjs": "^1.0.10",
     "@types/nprogress": "^0.2.3",
     "@types/quill": "^2.0.14",
@@ -51,6 +52,7 @@
     "react-split": "^2.0.14",
     "react-syntax-highlighter": "^15.6.1",
     "react-transition-group": "^4.4.5",
+    "reactflow": "^11.11.4",
     "swiper": "^11.1.15",
     "tsparticles": "^3.5.0",
     "tsparticles-slim": "^2.12.0"

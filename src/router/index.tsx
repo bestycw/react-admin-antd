@@ -10,6 +10,7 @@ export function createRoutes(): CoRouteObject[] {
     const rootRoute: CoRouteObject = {
         path: '/',
         root: true,
+        //TODO这里重定向还写死了 需要调整
         redirect: '/dashboard',
         element: (
             <AuthBoundary>
