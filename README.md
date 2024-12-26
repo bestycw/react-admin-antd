@@ -20,6 +20,9 @@
 ## 在线预览
   admin/123456
   [在线预览](https://bestycw.github.io/react-admin-antd/)
+## 📝 文档
+  [在线文档](https://bestycw.github.io/coffee-react-admin-docs/) 
+  还比较简陋，逐步完善。
 ## 🚀 主要功能
 
 <table>
@@ -74,8 +77,7 @@
 4. 推送您的分支: `git push origin feat/xxxx`
 5. 提交`pull request`
 
-## 📝 文档
-  正在完善中....
+
 
 
 ## 浏览器支持
