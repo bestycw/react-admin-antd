@@ -75,7 +75,7 @@ export default defineConfig(({ command, mode }) => {
       }
     },
     build: {
-      target: 'es2015',
+      target: 'esnext',
       outDir: 'dist',
       assetsDir: 'assets',
       assetsInlineLimit: 4096, // 4kb
