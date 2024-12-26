@@ -17,24 +17,15 @@ export class FetchRequest extends BaseRequest {
     // 添加默认的请求拦截器
     this.interceptors.request.use(
       async (config: BaseRequestConfig) => {
-        const token = authStorage.getToken();
         const headers = { ...(config.headers || {}) };
         
+        const token = authStorage.getToken();
         if (token) {
-          // 检查 token 是否即将过期
-          if (!authStorage.isTokenValid(TIME.TOKEN_REFRESH_AHEAD)) {
-            try {
-              await authService.refreshToken();
-              // 获取新的 token
-              const newToken = authStorage.getToken();
-              if (newToken) {
-                headers['Authorization'] = `Bearer ${newToken}`;
-              }
-            } catch (error) {
-              console.error('Token refresh failed in interceptor:', error);
-            }
-          } else {
-            headers['Authorization'] = `Bearer ${token}`;
+          headers['Authorization'] = `Bearer ${token}`;
+          // 添加 refresh token
+          const refreshToken = authStorage.getRefreshToken();
+          if (refreshToken) {
+            headers['X-Refresh-Token'] = refreshToken;
           }
         }
 
@@ -43,15 +34,25 @@ export class FetchRequest extends BaseRequest {
           headers
         };
       },
-      (error) => {
-        // console.error('Request interceptor error:', error);
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
     // 添加默认的响应拦截器
     this.interceptors.response.use(
       async (response: Response) => {
+        // 处理自动刷新的token
+        const newToken = response.headers.get('x-access-token');
+        const newRefreshToken = response.headers.get('x-refresh-token');
+        
+        if (newToken && newRefreshToken) {
+          authStorage.setTokenInfo({
+            token: newToken,
+            refreshToken: newRefreshToken,
+            expiresIn: TIME.TOKEN_EXPIRE,
+            remember: authStorage.getStorageType() === 'local'
+          });
+        }
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -69,18 +70,14 @@ export class FetchRequest extends BaseRequest {
 
         // 处理 JSON 响应
         const data = await response.json();
-        console.log('Response data:', data);
 
-        if (data.code !== 200) {
-          throw new Error(data.message || '请求失败');
+        if (data.code !== ErrorCode.SUCCESS) {
+          throw new Error(data.message || handleErrorMessage(data.code));
         }
 
         return data.data;
       },
-      (error) => {
-        console.error('Response interceptor error:', error);
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
   }
 

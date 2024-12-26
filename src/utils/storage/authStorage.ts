@@ -5,10 +5,10 @@ import { TIME } from '@/config/constants';
  * Auth 存储相关的常量
  */
 export const AUTH_STORAGE_KEYS = {
-  TOKEN: 'auth:token',
-  REFRESH_TOKEN: 'auth:refreshToken',
-  TOKEN_EXPIRES: 'auth:tokenExpires',
-  USER_INFO: 'auth:userInfo'
+  TOKEN: 'auth:token',  // 访问令牌
+  REFRESH_TOKEN: 'auth:refreshToken', // 刷新令牌
+  TOKEN_EXPIRES: 'auth:tokenExpires', // 令牌过期时间，这个不是7天过期时间，而是无感知的刷新时间
+  USER_INFO: 'auth:userInfo' // 用户信息
 } as const;
 
 /**
@@ -27,7 +27,7 @@ class AuthStorage {
     const { token, refreshToken, expiresIn, remember = false } = data;
     const type = remember ? 'local' : 'session';
     const expires = Date.now() + expiresIn;
-
+    // console.log('expires:', type);
     StorageManager.set(AUTH_STORAGE_KEYS.TOKEN, token, { type });
     StorageManager.set(AUTH_STORAGE_KEYS.REFRESH_TOKEN, refreshToken, { type });
     StorageManager.set(AUTH_STORAGE_KEYS.TOKEN_EXPIRES, expires, { type });
