@@ -83,7 +83,7 @@ const LoginPage: React.FC = observer(() => {
             navigate('/', { replace: true });
         } catch (error) {
             console.error('Login failed:', error);
-            message.error(t('login.loginFailed'));
+            // message.error(t('login.loginFailed'));
         } finally {
             setLoading(false);
         }

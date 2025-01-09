@@ -88,7 +88,7 @@ const NetworkBasic: React.FC = () => {
         icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />
       });
     } catch (error) {
-      message.error(`GET 请求失败: ${error}`);
+      console.log('error:', error);
     }
   };
 
@@ -106,7 +106,7 @@ const NetworkBasic: React.FC = () => {
         icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />
       });
     } catch (error) {
-      message.error(`POST 请求失败: ${error}`);
+      console.log('error:', error);
     }
   };
 
@@ -125,7 +125,7 @@ const NetworkBasic: React.FC = () => {
         icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />
       });
     } catch (error) {
-      message.error(`PUT 请求失败: ${error}`);
+      console.log('error:', error);
     }
   };
 
@@ -139,7 +139,7 @@ const NetworkBasic: React.FC = () => {
         icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />
       });
     } catch (error) {
-      message.error(`DELETE 请求失败: ${error}`);
+      console.log('error:', error);
     }
   };
 
@@ -156,7 +156,7 @@ const NetworkBasic: React.FC = () => {
         icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />
       });
     } catch (error) {
-      message.error(`重试请求失败: ${error}`);
+      console.log('error:', error);
     }
   };
 

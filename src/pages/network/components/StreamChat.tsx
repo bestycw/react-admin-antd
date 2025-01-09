@@ -24,17 +24,42 @@ const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' })
   const abortControllerRef = useRef<AbortController | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
 
+  // 停止流式响应
+  const handleStopStream = () => {
+    try {
+      // 停止 Fetch 请求
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+      
+      // 关闭 EventSource 连接
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+      
+      setIsStreaming(false);
+      message.info('已停止流式响应');
+    } catch (error) {
+      console.error('Stop stream error:', error);
+      message.error('停止流式响应失败');
+    }
+  };
+
   // 使用 Fetch 方式的流式响应
   const handleFetchStream = async () => {
-    const abortController = new AbortController();
-    abortControllerRef.current = abortController;
-
     try {
+      // 创建新的 AbortController
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+
       await fetchRequest.stream('/api/stream/chat', {
         signal: abortController.signal,
         onMessage: (data: { text: string; done: boolean }) => {
           if (data.done) {
             setIsStreaming(false);
+            abortControllerRef.current = null;
           } else {
             setStreamContent(prev => prev + data.text);
           }
@@ -46,6 +71,7 @@ const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' })
         },
         onComplete: () => {
           setIsStreaming(false);
+          abortControllerRef.current = null;
           message.success('流式响应完成');
         }
       });
@@ -57,12 +83,18 @@ const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' })
         message.error('创建流式连接失败');
       }
       setIsStreaming(false);
+      abortControllerRef.current = null;
     }
   };
 
   // 使用 EventSource 方式的流式响应
   const handleEventSourceStream = () => {
     try {
+      // 关闭之前的连接
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+
       const eventSource = new EventSource('http://localhost:3000/api/stream/chat');
       eventSourceRef.current = eventSource;
 
@@ -71,6 +103,7 @@ const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' })
           const data = JSON.parse(event.data);
           if (data.done) {
             eventSource.close();
+            eventSourceRef.current = null;
             setIsStreaming(false);
             message.success('流式响应完成');
           } else {
@@ -88,20 +121,27 @@ const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' })
         message.error('流式响应连接失败');
         handleStopStream();
       };
+
+      // 添加关闭事件监听
+      eventSource.addEventListener('close', () => {
+        eventSourceRef.current = null;
+        setIsStreaming(false);
+      });
     } catch (error) {
       console.error('Connection error:', error);
       message.error('创建流式连接失败');
       setIsStreaming(false);
+      eventSourceRef.current = null;
     }
   };
 
   // 开始流式响应
   const handleStartStream = async () => {
+    // 先停止之前的连接
+    handleStopStream();
+    
     setIsStreaming(true);
     setStreamContent('');
-
-    // 清理之前的连接
-    handleStopStream();
 
     // 根据选择的方法启动流式响应
     if (method === 'fetch') {
@@ -111,20 +151,7 @@ const StreamChat: React.FC<StreamChatProps> = ({ title = '流式响应测试' })
     }
   };
 
-  // 停止流式响应
-  const handleStopStream = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = null;
-    }
-    setIsStreaming(false);
-  };
-
-  // 清理
+  // 组件卸载时清理
   useEffect(() => {
     return () => {
       handleStopStream();
