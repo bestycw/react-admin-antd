@@ -4,33 +4,35 @@
   background: rgba(24, 144, 255, 0.05);
 }
 
-tr.ant-table-row {
-  cursor: move;
-  transition: all 0.2s;
-  
-  &:hover {
-    td {
-      background: #e6f7ff;
-    }
-  }
-  
-  &.dragging {
-    background: #f5f5f5;
+.draggable-table {
+  tr.ant-table-row {
+    cursor: move;
+    transition: all 0.2s;
     
-    td {
-      background: #f5f5f5 !important;
+    &:hover {
+      td {
+        background: #e6f7ff;
+      }
     }
-  }
+    
+    &.dragging {
+      background: #f5f5f5;
+      
+      td {
+        background: #f5f5f5 !important;
+      }
+    }
 
-  &.dragging-over {
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: #1890ff;
-      animation: borderBlink 0.5s infinite;
+    &.dragging-over {
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #1890ff;
+        animation: borderBlink 0.5s infinite;
+      }
     }
   }
 }
