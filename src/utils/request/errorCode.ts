@@ -13,7 +13,7 @@ export interface ErrorMessage {
 
 export const DefaultErrorMessages: ErrorMessage = {
   [ErrorCode.BAD_REQUEST]: '请求参数错误',
-  [ErrorCode.UNAUTHORIZED]: '未授权，请重新登录',
+  [ErrorCode.UNAUTHORIZED]: '账号密码错误，请重新登录',
   [ErrorCode.FORBIDDEN]: '拒绝访问',
   [ErrorCode.NOT_FOUND]: '请求错误，未找到该资源',
   [ErrorCode.INTERNAL_ERROR]: '服务器错误',

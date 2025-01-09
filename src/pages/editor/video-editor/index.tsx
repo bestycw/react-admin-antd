@@ -82,4 +82,5 @@ export default VideoEditor;
 export const routeConfig = {
   title: '视频编辑器',
   sort: 1,
+  hiddenInMenu: true,
 }; 
