@@ -26,12 +26,46 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
         }
     }, [location.pathname]);
 
+    // 递归查找当前路径所在的根菜单项
+    const findRootMenuItem = (items: any[], path: string): any => {
+        for (const item of items) {
+            // 如果当前项就是目标路径
+            if (item.key === path) {
+                return item;
+            }
+            // 检查一级子菜单
+            if (item.children?.length) {
+                const found = item.children.find((child: any) => {
+                    if (typeof child === 'string') return child === path;
+                    // 检查子项是否匹配
+                    if (child.key === path) return true;
+                    // 递归检查子项的子菜单
+                    if (child.children?.length) {
+                        return child.children.some((grandChild: any) => {
+                            if (typeof grandChild === 'string') return grandChild === path;
+                            return grandChild.key === path;
+                        });
+                    }
+                    return false;
+                });
+                if (found) return item;
+            }
+        }
+        return null;
+    };
+
     // 获取父级菜单的 key
     const getParentKey = (path: string) => {
         const menuItems = MenuStore.menuList || [];
         const parent = menuItems.find(item => 
             item.children?.some(child => {
                 if (typeof child === 'string') return child === path;
+                if (child.children?.length) {
+                    return child.children.some(grandChild => {
+                        if (typeof grandChild === 'string') return grandChild === path;
+                        return grandChild.key === path;
+                    });
+                }
                 return child.key === path;
             })
         );
@@ -73,14 +107,12 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
                 }));
             }
             if (mode === 'inline') {
-                const currentRoot = menuItems.find(item => {
-                    if (item.key === currentPath) return true;
-                    return item.children?.some(child => {
-                        if (typeof child === 'string') return child === currentPath;
-                        return child.key === currentPath;
-                    });
-                });
-                return (currentRoot?.children || [currentRoot]).filter(Boolean);
+                // 找到当前路径所在的根菜单项
+                const currentRoot = findRootMenuItem(menuItems, currentPath);
+                if (!currentRoot) return []; // 如果没找到，返回空数组
+
+                // 返回根菜单项的所有子菜单
+                return currentRoot.children || [currentRoot];
             }
         }
 
@@ -100,8 +132,6 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
         openKeys: MenuStore.openKeys,
         onOpenChange: (keys: string[]) => MenuStore.setOpenKeys(keys)
     }:{}
-    // console.log(mode,collapsed)
-    // console.log(MenuStore.selectedKeys)
     return (
         <div className="h-full">
             <AntMenu
