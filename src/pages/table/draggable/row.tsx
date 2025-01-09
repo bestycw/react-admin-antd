@@ -163,6 +163,7 @@ const DraggableTable: React.FC = () => {
           title: '拖拽排序表格',
         }}
         pagination={false}
+        className="draggable-table"
       />
     </DragDropContext>
   );
