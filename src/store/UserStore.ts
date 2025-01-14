@@ -45,7 +45,6 @@ class UserStore {
     // isLogin = false;
     dynamicRoutes: CoRouteObject[] = [];
     allRoutes: CoRouteObject[] = [];
-    permissions: { [key: string]: string[] } = {};
     devices: Device[] = [];
     notificationSettings: NotificationSetting[] = [
         { type: 'system', email: true, browser: true, mobile: false },
