@@ -45,7 +45,7 @@ class UserStore {
     // isLogin = false;
     dynamicRoutes: CoRouteObject[] = [];
     allRoutes: CoRouteObject[] = [];
-    permissions: string[] = [];
+    permissions: { [key: string]: string[] } = {};
     devices: Device[] = [];
     notificationSettings: NotificationSetting[] = [
         { type: 'system', email: true, browser: true, mobile: false },
@@ -179,14 +179,14 @@ class UserStore {
 
 
     // 检查是否有指定权限
-    hasPermission(permission: string): boolean {
-        return this.userInfo?.permissions?.includes(permission) ?? false;
+    hasPermission(path: string, permission: string): boolean {
+        return this.userInfo?.permissions[path]?.includes(permission) ?? false;
     }
 
     // 检查是否有任一权限
-    hasAnyPermission(permissions: string[]): boolean {
+    hasAnyPermission(path: string, permissions: string[]): boolean {
         if (!permissions?.length) return true;
-        return permissions.some(permission => this.hasPermission(permission));
+        return permissions.some(permission => this.hasPermission(path, permission));
     }
 
     async updateProfile(data: Partial<UserInfo>) {

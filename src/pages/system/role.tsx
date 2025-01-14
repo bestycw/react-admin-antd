@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Tag, Modal, Form, Input, Select, message, Space, Steps, Tree } from 'antd';
+import { Button, Tag, Modal, Form, Input, Select, message, Space, Steps, Tree, Checkbox } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
 import type { TableColumnType } from '@/components/Table/types';
@@ -14,6 +14,7 @@ import {
 import { useStore } from '@/store';
 import { CoRouteObject } from '@/types/route';
 import type { Key } from 'antd/es/table/interface';
+import './role.scss'; // 引入自定义样式
 
 const steps = [
   {
@@ -39,6 +40,8 @@ const RoleManagement: React.FC = () => {
   const treeRef = React.useRef<any>(null);
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<(string | number)[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
+  const [nodePermissions, setNodePermissions] = useState<Record<string, string[]>>({});
 
   // 获取角色列表
   const fetchRoles = async () => {
@@ -127,20 +130,28 @@ const RoleManagement: React.FC = () => {
   };
 
   const handleEdit = (record: RoleType) => {
-    console.log('Edit record:', record);
     setCurrentRole(record);
     setCurrentStep(0);
-    console.log('record.dynamicRoutesList',record.dynamicRoutesList)
-    // if(record.dynamicRoutesList.includes('*')){
-    //   // setCheckedKeys(record.dynamicRoutesList || []);
-    //   setCheckAll(true);
-    //   setCheckedKeys(allKeys);
-    // }else{
+    
+    // 检查是否是全选状态（dynamicRoutesList 为 ['/']）
+    const isAllSelected = record.dynamicRoutesList?.length === 1 && record.dynamicRoutesList[0] === '/';
+    
+    if (isAllSelected) {
+      // 如果是全选状态，设置所有路由为选中
+      const treeData = generatePermissionTree(UserStore.allRoutes);
+      const allKeys = getAllKeys(treeData);
+      setCheckedKeys(allKeys);
+      setCheckAll(true);
+    } else {
+      // 否则使用原有的路由列表
       setCheckedKeys(record.dynamicRoutesList || []);
-    // }
+      setCheckAll(false);
+    }
+    
+    setNodePermissions(record.permissions || {});
     form.setFieldsValue({
       ...record,
-      dynamicRoutesList: record.dynamicRoutesList || []
+      dynamicRoutesList: isAllSelected ? getAllKeys(generatePermissionTree(UserStore.allRoutes)) : (record.dynamicRoutesList || [])
     });
     setModalVisible(true);
   };
@@ -270,16 +281,32 @@ const RoleManagement: React.FC = () => {
       await form.validateFields();
       const values = form.getFieldsValue(true);
       
-      // 处理选中的路由 这个方法待定吧，这里处理没问题但是处理路由的时候就麻烦太多了
-      // const treeData = generatePermissionTree(UserStore.allRoutes);
-      // const processedRoutes = processSelectedRoutes(checkedKeys as string[], treeData);
-      
+      // 只保存有特殊权限控制的路由
+      const permissions = Object.entries(nodePermissions)
+        .reduce((acc, [routePath, codes]) => {
+          // 跳过无效的路由路径
+          if (!routePath || routePath === '0') return acc;
+          
+          // 确保codes是数组
+          const codeArray = Array.isArray(codes) ? codes : [];
+          
+          const customCodes = codeArray.filter(code => 
+            !['read', 'create', 'update', 'delete'].includes(code)
+          );
+          const hasAllBasicOps = ['read', 'create', 'update', 'delete']
+            .every(op => codeArray.includes(op));
+          
+          // 只有当有自定义codes或基础操作权限不完整时，才保存该路由的权限
+          if (customCodes.length > 0 || !hasAllBasicOps) {
+            acc[routePath] = codeArray;
+          }
+          return acc;
+        }, {} as Record<string, string[]>);
+
       const roleData = {
-        name: values.name,
-        code: values.code,
-        description: values.description,
-        status: values.status || 'active',
-        dynamicRoutesList: checkAll ? ['/'] : values.dynamicRoutesList || []
+        ...values,
+        dynamicRoutesList: checkAll ? ['/'] : values.dynamicRoutesList || [],
+        permissions: Object.keys(permissions).length > 0 ? permissions : undefined
       };
 
       if (currentRole) {
@@ -287,6 +314,8 @@ const RoleManagement: React.FC = () => {
       } else {
         await createRole(roleData);
       }
+      
+      message.success(currentRole ? '更新成功' : '创建成功');
       setModalVisible(false);
       fetchRoles();
     } catch (error: any) {
@@ -341,7 +370,7 @@ const RoleManagement: React.FC = () => {
       case 1:
         const treeData = generatePermissionTree(UserStore.allRoutes);
         const allKeys = getAllKeys(treeData);
-        if(checkedKeys.includes('*')){
+        if (checkedKeys.includes('*')) {
           setCheckAll(true);
           setCheckedKeys(allKeys);
         }
@@ -367,36 +396,82 @@ const RoleManagement: React.FC = () => {
                 {checkAll ? '取消全选' : '全部选中'}
               </Button>
             </div>
-            <Form.Item
-              name="dynamicRoutesList"
-              label="权限"
-              rules={[{ required: true, message: '请选择权限' }]}
-            >
-              <Tree
-                ref={treeRef}
-                checkable
-                checkedKeys={checkedKeys}
-                expandedKeys={expandAll ? allKeys : expandedKeys}
-                autoExpandParent={true}
-                treeData={treeData}
-                fieldNames={{
-                  title: 'title',
-                  key: 'key',
-                  children: 'children'
-                }}
-                onExpand={(keys: Key[], info) => {
-                  if (!expandAll) {
-                    setExpandedKeys(keys.map(String));
-                  }
-                }}
-                onCheck={(keys: any) => {
-                  console.log('Tree onCheck keys:', keys);
-                  setCheckedKeys(keys);
-                  form.setFieldsValue({ dynamicRoutesList: keys });
-                  setCheckAll(keys.length === allKeys.length);
-                }}
-              />
-            </Form.Item>
+            <div className="permission-tree-container">
+              <Form.Item
+                name="dynamicRoutesList"
+                label="权限"
+                rules={[{ required: true, message: '请选择权限' }]}
+              >
+                <Tree
+                  ref={treeRef}
+                  checkable
+                  checkedKeys={checkedKeys}
+                  expandedKeys={expandAll ? allKeys : expandedKeys}
+                  autoExpandParent={true}
+                  treeData={treeData}
+                  fieldNames={{
+                    title: 'title',
+                    key: 'key',
+                    children: 'children'
+                  }}
+                  onExpand={(keys: Key[], info) => {
+                    if (!expandAll) {
+                      setExpandedKeys(keys.map(String));
+                    }
+                  }}
+                  onCheck={(keys: any) => {
+                    console.log('Tree onCheck keys:', keys);
+                    const newCheckedKeys = Array.isArray(keys) ? keys : keys.checked;
+                    
+                    // 如果之前是全选状态，现在取消某个节点
+                    if (checkAll && newCheckedKeys.length < allKeys.length) {
+                      // 获取所有未选中的键
+                      const uncheckedKeys = allKeys.filter(key => !newCheckedKeys.includes(key));
+                      console.log('Unchecked keys:', uncheckedKeys);
+                      
+                      // 设置为非全选状态，但保持其他节点的选中状态
+                      setCheckAll(false);
+                      setCheckedKeys(newCheckedKeys);
+                      form.setFieldsValue({ dynamicRoutesList: newCheckedKeys });
+                      
+                      // 移除未选中节点的权限
+                      setNodePermissions(prevState => {
+                        const newState = { ...prevState };
+                        uncheckedKeys.forEach(path => {
+                          delete newState[path];
+                        });
+                        return newState;
+                      });
+                    } else {
+                      // 正常的选中/取消选中处理
+                      setCheckedKeys(newCheckedKeys);
+                      form.setFieldsValue({ dynamicRoutesList: newCheckedKeys });
+                      setCheckAll(newCheckedKeys.length === allKeys.length);
+
+                      // 找出新增的选中项
+                      const addedKeys = newCheckedKeys.filter((key: string) => !checkedKeys.includes(key));
+                      
+                      // 为新选中的路由添加所有基础操作权限
+                      if (addedKeys.length > 0) {
+                        setNodePermissions(prevState => {
+                          const newState = { ...prevState };
+                          addedKeys.forEach((path: string) => {
+                            if (!newState[path]) {
+                              newState[path] = ['read', 'create', 'update', 'delete'];
+                            }
+                          });
+                          return newState;
+                        });
+                      }
+                    }
+                  }}
+                  // selectedKeys={selectedKeys}
+                  // onSelect={(keys: Key[]) => {
+                  //   setSelectedKeys(keys);
+                  // }}
+                />
+              </Form.Item>
+            </div>
           </div>
         );
       default:
@@ -405,35 +480,127 @@ const RoleManagement: React.FC = () => {
   };
 
   // 将路由转换为权限树数据
-  interface TreeNode {
-    title: string;
+  type TreeNodeType = {
+    title: JSX.Element;
     key: string;
-    children: TreeNode[] | undefined;
+    children: TreeNodeType[] | undefined;
     disabled: boolean;
     selectable: boolean;
   }
 
-  const generatePermissionTree = (routes: CoRouteObject[]): TreeNode[] => {
-    // 第一层调用时查找根路由
+  const generatePermissionTree = (routes: CoRouteObject[]): TreeNodeType[] => {
     if (routes === UserStore.allRoutes) {
       const rootRoute = routes.find(route => route.root);
       if (!rootRoute || !rootRoute.children) return [];
       routes = rootRoute.children;
     }
 
-    // 递归处理所有子路由，只返回有 path 的路由作为权限节点
-    return routes.map(route => ({
-      title: route.meta?.title || route.path || '未命名',
-      key: route.path || '',
-      children: route.children ? generatePermissionTree(route.children) : undefined,
-      disabled: !route.path, // 没有 path 的节点不可选
-      selectable: !!route.path
-    })).filter((node): node is TreeNode => !!node.key);
+    return routes.map(route => {
+      const path = route.path || '';
+      if (!path) return null;
+
+      const isLeaf = !route.children || route.children.length === 0;
+      const isSelected = checkedKeys.includes(path);
+      
+      return {
+        title: (
+          <div className="permission-node-container">
+            <span className="node-title">{route.meta?.title || path || '未命名'}</span>
+            {isLeaf && isSelected && (
+              <div className="permission-buttons">
+                <Input 
+                  size="small" 
+                  style={{ width: 120 }} 
+                  placeholder="输入Code，逗号分割"
+                  defaultValue={nodePermissions[path]?.filter(code => 
+                    !['read', 'create', 'update', 'delete'].includes(code)
+                  ).join(',')}
+                  onBlur={(e) => {
+                    const customCodes = e.target.value
+                      .split(/[,，]/)
+                      .map(code => code.trim())
+                      .filter(Boolean);
+                    
+                    // 如果没有自定义codes且没有基础操作权限，则不需要在permissions中保存
+                    if (customCodes.length === 0 && 
+                        (!nodePermissions[path] || 
+                         nodePermissions[path].every(code => 
+                           ['read', 'create', 'update', 'delete'].includes(code)
+                         ))
+                    ) {
+                      const newPermissions = { ...nodePermissions };
+                      delete newPermissions[path];
+                      setNodePermissions(newPermissions);
+                    } else {
+                      const basicOps = nodePermissions[path]?.filter(code => 
+                        ['read', 'create', 'update', 'delete'].includes(code)
+                      ) || [];
+
+                      setNodePermissions(prevState => ({
+                        ...prevState,
+                        [path]: [...basicOps, ...customCodes]
+                      }));
+                    }
+                  }}
+                />
+                <div className="button-group">
+                  {[
+                    { key: 'read', label: '查' },
+                    { key: 'create', label: '增' },
+                    { key: 'update', label: '改' },
+                    { key: 'delete', label: '删' }
+                  ].map(({ key, label }) => (
+                    <Checkbox 
+                      key={key}
+                      checked={!nodePermissions[path] || nodePermissions[path]?.includes(key)}
+                      onChange={(e) => {
+                        const currentCodes = nodePermissions[path] || [];
+                        let newCodes;
+                        
+                        if (e.target.checked) {
+                          newCodes = [...currentCodes, key];
+                        } else {
+                          newCodes = currentCodes.filter(code => code !== key);
+                        }
+
+                        // 如果所有基础操作都选中且没有自定义codes，则从permissions中移除该路由
+                        const hasAllBasicOps = ['read', 'create', 'update', 'delete']
+                          .every(op => newCodes.includes(op));
+                        const hasCustomCodes = newCodes.some(code => 
+                          !['read', 'create', 'update', 'delete'].includes(code)
+                        );
+
+                        if (hasAllBasicOps && !hasCustomCodes) {
+                          const newPermissions = { ...nodePermissions };
+                          delete newPermissions[path];
+                          setNodePermissions(newPermissions);
+                        } else {
+                          setNodePermissions(prevState => ({
+                            ...prevState,
+                            [path]: newCodes
+                          }));
+                        }
+                      }}
+                    >
+                      {label}
+                    </Checkbox>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ),
+        key: path,
+        children: route.children ? generatePermissionTree(route.children) : undefined,
+        disabled: !path,
+        selectable: !!path
+      };
+    }).filter((node): node is TreeNodeType => !!node?.key);
   };
 
-  const getAllKeys = (treeData: TreeNode[]): string[] => {
+  const getAllKeys = (treeData: TreeNodeType[]): string[] => {
     const keys: string[] = [];
-    const traverse = (nodes: TreeNode[]) => {
+    const traverse = (nodes: TreeNodeType[]) => {
       nodes.forEach(node => {
         if (!node.disabled) {
           keys.push(node.key);
