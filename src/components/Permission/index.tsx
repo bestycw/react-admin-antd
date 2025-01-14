@@ -43,8 +43,6 @@ const Permission: React.FC<PermissionProps> = observer(({
             ? UserStore.hasAnyPermission(location.pathname, permissionList)
             : permissionList.every(p => UserStore.hasPermission(location.pathname, p))
     }
-    console.log('hasRole', hasRole)
-    console.log('hasOperationPermission', hasOperationPermission)
     return (hasRole && hasOperationPermission) ? <>{children}</> : <>{fallback}</>
 })
 
