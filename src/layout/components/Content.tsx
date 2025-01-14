@@ -15,7 +15,7 @@ const Content = observer(({ className, style, children }: ContentProps) => {
   return (
     <AntContent className={`flex flex-1  ${className || ''}` }>
       <div 
-        className="mx-auto w-full max-w-screen-2xl " 
+        className="mx-auto w-full" 
        
       >
         <div className="h-full overflow-auto  bg-transparent p-[10px]"  style={style}>

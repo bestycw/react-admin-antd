@@ -95,7 +95,7 @@ class MenuStore {
     }
 
     setSelectedKeys(selectedKeys: string[]) {
-        // console.log(selectedKeys)
+        console.log(selectedKeys)
         runInAction(() => {
             if (this.selectedKeys[0] !== selectedKeys[0] ) {
                 this.selectedKeys = selectedKeys;

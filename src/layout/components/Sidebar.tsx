@@ -14,7 +14,6 @@ const Sidebar = observer(() => {
   const { ConfigStore } = useStore()
   const isCollapsed = ConfigStore.sidebarCollapsed
   const isDrawerMode = ConfigStore.isDrawerMode
-  console.log('Sidebar init')
   // const collapsed = ConfigStore.sidebarC1ollapsed
   const menuHeight = useMemo(() => {
     //TODO: 需要优化,高度值不应该写死

@@ -5,9 +5,12 @@ export interface RoleType {
   name: string;
   code: string;
   description?: string;
-  status: 'active' | 'inactive';
+  status: string;
   dynamicRoutesList: string[];
-  createdAt: string;
+  permissions?: {
+    [routePath: string]: string[];
+  };
+  createdAt?: string;
 }
 
 export interface CreateRoleParams {

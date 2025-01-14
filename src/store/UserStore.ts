@@ -45,7 +45,6 @@ class UserStore {
     // isLogin = false;
     dynamicRoutes: CoRouteObject[] = [];
     allRoutes: CoRouteObject[] = [];
-    permissions: string[] = [];
     devices: Device[] = [];
     notificationSettings: NotificationSetting[] = [
         { type: 'system', email: true, browser: true, mobile: false },
@@ -179,14 +178,14 @@ class UserStore {
 
 
     // 检查是否有指定权限
-    hasPermission(permission: string): boolean {
-        return this.userInfo?.permissions?.includes(permission) ?? false;
+    hasPermission(path: string, permission: string): boolean {
+        return this.userInfo?.permissions[path]?.includes(permission) ?? false;
     }
 
     // 检查是否有任一权限
-    hasAnyPermission(permissions: string[]): boolean {
+    hasAnyPermission(path: string, permissions: string[]): boolean {
         if (!permissions?.length) return true;
-        return permissions.some(permission => this.hasPermission(permission));
+        return permissions.some(permission => this.hasPermission(path, permission));
     }
 
     async updateProfile(data: Partial<UserInfo>) {
@@ -313,6 +312,43 @@ class UserStore {
             return token;
         });
     };
+
+    // 仅用于演示的权限修改方法
+    setDemoPermissions(role: string) {
+        // 根据不同角色设置不同的权限
+        const permissionMap = {
+            admin: {
+                '/function/btn-permission': []  // 空数组代表拥有所有权限
+            },
+            user: {
+                '/function/btn-permission': ['create', 'edit']  // 指定权限
+            },
+            guest: {
+                '/function/btn-permission': ['read']  // 最小权限
+            }
+        };
+
+        runInAction(() => {
+            const newUserInfo: UserInfo = {
+                ...this.userInfo!,
+                roles: [role],
+                permissions: permissionMap[role as keyof typeof permissionMap] || {},
+            };
+            this.setUserInfo(newUserInfo);
+        });
+    }
+
+    // 添加一个恢复用户信息的方法
+    restoreUserInfo() {
+        const userInfo = StorageManager.get<UserInfo | null>(AUTH_STORAGE_KEYS.USER_INFO, null, { 
+            type: authStorage.getStorageType() 
+        });
+        if (userInfo) {
+            runInAction(() => {
+                this.userInfo = userInfo;
+            });
+        }
+    }
 }
 
 export default new UserStore()

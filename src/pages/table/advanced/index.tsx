@@ -228,7 +228,7 @@ const AdvancedTable: React.FC = () => {
     {
       key: 'delete',
       icon: <DeleteOutlined />,
-      label: '���量删除',
+      label: '批量删除',
       danger: true,
       onClick: handleBatchDelete,
     },

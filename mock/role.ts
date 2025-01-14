@@ -5,7 +5,9 @@ const roles = [
     id: 1,
     name: 'admin',
     description: '系统管理员',
-    permissions: ['*'],
+    permissions: {
+      '/function/btn-permission': []  // 空数组代表拥有所有权限
+    },
     dynamicRoutesList: ['/'],
     createTime: '2024-01-01 00:00:00',
     status: 1,
@@ -15,11 +17,25 @@ const roles = [
     id: 2,
     name: 'user',
     description: '普通用户',
-    permissions: ['view'],
+    permissions: {
+      '/function/btn-permission': ['create', 'edit']  // 指定权限
+    },
     dynamicRoutesList: ['dashboard', 'profile'],
     createTime: '2024-01-01 00:00:00',
     status: 1,
     sort: 2
+  },
+  {
+    id: 3,
+    name: 'guest',
+    description: '访客用户',
+    permissions: {
+      '/function/btn-permission': ['read']  // 最小权限
+    },
+    dynamicRoutesList: ['/dashboard'],
+    createTime: '2024-01-01 00:00:00',
+    status: 1,
+    sort: 3
   }
 ]
 Mock.setup({
@@ -175,7 +191,7 @@ const roleRoutesMap = {
 // Add type for valid role names
 type RoleType = keyof typeof roleRoutesMap;
 
-// 修改为 GET 请求，从查询���数获取角色信息
+// 修改为 GET 请求，从查询参数获取角色信息
 Mock.mock(/\/api\/roles\/routes\?.*/, 'get', (options: any) => {
   const url = new URL(options.url, 'http://localhost');
   const roles = url.searchParams.get('roles')?.split(',') || [];

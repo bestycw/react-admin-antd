@@ -20,7 +20,7 @@ export interface UserInfo {
   username: string;
   email: string;
   roles: string[];
-  permissions: string[];
+  permissions: { [key: string]: string[] };
   dynamicRoutesList: string[];
   avatar: string;
   status: string;
