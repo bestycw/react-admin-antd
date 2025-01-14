@@ -1,0 +1,57 @@
+.permission-tree-container {
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #f0f0f0;
+    padding: 8px;
+    background-color: #fff;
+  }
+  
+  /* 节点容器样式 */
+  .permission-node-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-right: 8px;
+  }
+  
+  .node-title {
+    flex-shrink: 0;
+  }
+  
+  /* 权限按钮组样式 */
+  .permission-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    .ant-input {
+      &::placeholder {
+        font-size: 12px;
+      }
+    }
+  }
+  
+  /* 复选框样式调整 */
+  .permission-buttons .ant-checkbox-wrapper {
+    margin-right: 0; /* 移除 Ant Design 默认的右边距 */
+    font-size: 12px; /* 可选：调整字体大小 */
+  }
+  
+  /* 确保树节点有足够的空间显示按钮 */
+  .ant-tree-node-content-wrapper {
+    width: calc(100% - 24px); /* 24px 是树节点前面图标的宽度 */
+  } 
+  .ant-tree-treenode{
+      width: 100%;
+  }
+  .button-group {
+    display: flex;
+    gap: 4px; /* 减小按钮间距 */
+  }
+  
+  .button-group .ant-checkbox-wrapper {
+    margin-right: 0;
+    font-size: 12px;
+  }

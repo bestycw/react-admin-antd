@@ -175,7 +175,7 @@ const roleRoutesMap = {
 // Add type for valid role names
 type RoleType = keyof typeof roleRoutesMap;
 
-// 修改为 GET 请求，从查询���数获取角色信息
+// 修改为 GET 请求，从查询参数获取角色信息
 Mock.mock(/\/api\/roles\/routes\?.*/, 'get', (options: any) => {
   const url = new URL(options.url, 'http://localhost');
   const roles = url.searchParams.get('roles')?.split(',') || [];

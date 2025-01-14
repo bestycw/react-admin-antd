@@ -70,7 +70,7 @@ const Flow = () => {
   // 处理节点变化
   const handleNodesChange = useCallback((changes: NodeChange[]) => {
     onNodesChange(changes);
-    // 仅���节点位置改变或删除时添加历史记录
+    // 节点位置改变或删除时添加历史记录
     const hasPositionChange = changes.some(
       change => change.type === 'position' && change.dragging === false
     );
