@@ -39,7 +39,7 @@ const VirtualTable: React.FC = () => {
   ];
 
   return (
-    <div className="virtual-table-container bg-white p-4">
+    <div className=" bg-white p-4">
       <Tabs
         defaultActiveKey="antd"
         items={items}

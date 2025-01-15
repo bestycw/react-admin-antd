@@ -45,7 +45,7 @@ export default observer(function BtnPermission() {
 
     const currentRoleInfo = roleOptions.find(role => role.value === currentRole)
     return (
-        <div className="p-6">
+        <div >
             <Card title="按钮权限演示">
                 <Alert
                     message="权限演示说明"
