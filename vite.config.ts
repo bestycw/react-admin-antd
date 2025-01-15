@@ -5,6 +5,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import viteCompression from 'vite-plugin-compression'
 import { Plugin as importToCDN } from 'vite-plugin-cdn-import'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd())
@@ -54,6 +55,52 @@ export default defineConfig(({ command, mode }) => {
       //     },
       //   ],
       // }),
+      VitePWA({
+        registerType: 'autoUpdate',
+        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+        manifest: {
+          name: 'React Admin',
+          short_name: 'React Admin',
+          description: 'React Admin Template',
+          theme_color: '#ffffff',
+          icons: [
+            {
+              src: 'pwa-192x192.png',
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable'
+            }
+          ]
+        },
+        workbox: {
+          cleanupOutdatedCaches: true,
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/api\./i,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'api-cache',
+                networkTimeoutSeconds: 10,
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            {
+              urlPattern: /\.(js|css|png|jpg|jpeg|svg|gif)$/,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'assets-cache'
+              }
+            }
+          ]
+        }
+      })
     ],
     resolve: {
       alias: {

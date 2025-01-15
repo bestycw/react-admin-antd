@@ -26,6 +26,7 @@
     "@types/quill": "^2.0.14",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "@types/react-window": "^1.8.8",
     "@vitejs/plugin-react": "^4.3.3",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-react": "^1.0.6",
@@ -54,6 +55,7 @@
     "react-split": "^2.0.14",
     "react-syntax-highlighter": "^15.6.1",
     "react-transition-group": "^4.4.5",
+    "react-window": "^1.8.11",
     "reactflow": "^11.11.4",
     "swiper": "^11.1.15",
     "tsparticles": "^3.5.0",
@@ -84,6 +86,7 @@
     "vite-plugin-cdn-import": "^0.3.5",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-html": "^3.2.0",
-    "vite-plugin-mock": "^3.0.2"
+    "vite-plugin-mock": "^3.0.2",
+    "vite-plugin-pwa": "^0.21.1"
   }
 }
