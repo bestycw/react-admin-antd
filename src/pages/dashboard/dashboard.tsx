@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { Card, Row, Col, Statistic, Progress, List, Button, Timeline, Tag, Tooltip, Alert, Badge } from 'antd';
-import i18next from 'i18next';
 import { 
   ArrowUpOutlined, ArrowDownOutlined, UserOutlined, ShoppingCartOutlined, 
   FileTextOutlined, TeamOutlined, ReloadOutlined,
@@ -14,9 +13,8 @@ export const routeConfig: RouteConfig = {
     title: 'route.dashboard',
     icon: <HomeOutlined />,
     layout: true,
-    
     sort: 0,
-    // roles: ['admin'] // 可以添加权限控制
+
 }
 const Dashboard: React.FC = () => {
   // 统计数据
@@ -291,10 +289,5 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
-// Dashboard.displayName = 'Dashboard'
-// Dashboard.meta = {
-//     title: 'Dashboard',
-//     icon: 'icon-dashboard',
-//     order: 1
-// }
+
 export default Dashboard; 
