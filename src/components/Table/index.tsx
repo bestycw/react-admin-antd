@@ -157,7 +157,7 @@ function Table<T extends object = any>(props: EnhancedTableProps<T>) {
     <Card
       {...cardProps}
       className={classNames('w-full', props.className)}
-      bodyStyle={{ padding: '16px 24px' }}
+      styles={{ body: { padding: '16px 24px' } }}
     >
       {!hideSearch && (
         <SearchForm

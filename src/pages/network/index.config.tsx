@@ -5,5 +5,5 @@ export const routeConfig = {
     icon: <GlobalOutlined />,
     layout: true,
     
-    sort: 2
+    sort: 6
 };

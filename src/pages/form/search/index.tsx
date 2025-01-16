@@ -213,7 +213,7 @@ const SearchForm: React.FC = () => {
     const showToggle = searchFields.length > DEFAULT_SHOW_ROWS * ITEMS_PER_ROW;
 
     return (
-        <Card bodyStyle={{ padding: '12px 24px' }}>
+        <Card  styles={{ body: { padding: '12px 24px' } }}>
             <Form
                 form={form}
                 name="search-form"

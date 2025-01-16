@@ -181,7 +181,7 @@ const MQTTChat: React.FC = () => {
         )}
 
         {/* 消息列表 */}
-        <Card className="w-full" size="small" title="消息记录" bodyStyle={{ padding: 0 }}>
+        <Card className="w-full" size="small" title="消息记录" styles={{ body: { padding: 0 } }}>
           <List
             className="h-80 overflow-auto"
             dataSource={messages}
