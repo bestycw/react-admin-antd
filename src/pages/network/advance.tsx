@@ -28,7 +28,7 @@ const NetworkAdvance: React.FC = () => {
 export default NetworkAdvance;
 
 export const routeConfig = {
-  title: '高级网络',
+  title: 'route.network.advanced',
   icon: <ApiOutlined />,
   layout: true,
   sort: 2

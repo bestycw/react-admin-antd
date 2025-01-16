@@ -2,8 +2,9 @@ import { Avatar, Dropdown, Badge, Tooltip } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { UserOutlined, DownOutlined } from '@ant-design/icons'
 import useUserActions from './BaseUserActions'
-import React, {  useRef } from 'react'
+import React, { useRef } from 'react'
 import { useStore } from '../../store'
+import { useLocale } from '@/hooks/useLocale'
 
 interface VerticalUserActionsProps {
   collapsed?: boolean
@@ -11,52 +12,22 @@ interface VerticalUserActionsProps {
 
 const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActionsProps) => {
   const { actionItems, userMenuItems, languageItems, handleUserMenuClick, userInfo } = useUserActions()
-  // const [isActionsCollapsed, setIsActionsCollapsed] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const { ConfigStore } = useStore()
   const isActionsCollapsed = ConfigStore.isActionsCollapsed
-  // 监听 Sidebar 高度变化
-  // useEffect(() => {
-  //   const container = containerRef.current?.closest('.ant-layout-sider-children')
-  //   if (!container) return
+  const { currentLang, changeLang, t } = useLocale()
 
-  //   const checkHeight = () => {
-  //     const containerHeight = container.clientHeight
-  //     // 当高度小于 500px 时自动折叠
-  //     ConfigStore.toggleActionsCollapsed(containerHeight < 500)
-  //   }
+  // 处理语言切换
+  const handleLanguageChange = ({ key }: { key: string }) => {
+    changeLang(key)
+  }
 
-  //   const resizeObserver = new ResizeObserver(() => {
-  //     checkHeight()
-  //   })
-
-  //   resizeObserver.observe(container)
-    
-  //   // 初始检查
-  //   checkHeight()
-
-  //   return () => resizeObserver.disconnect()
-  // }, [])
-
-  // // 监听窗口大小变化
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     const container = containerRef.current?.closest('.ant-layout-sider-children')
-  //     if (container) {
-  //       const containerHeight = container.clientHeight
-  //       ConfigStore.toggleActionsCollapsed(containerHeight < 500)
-  //     }
-  //   }
-
-  //   window.addEventListener('resize', handleResize)
-  //   return () => window.removeEventListener('resize', handleResize)
-  // }, [])
-
-  const ActionButton = ({ icon, label, badge, onClick }: {
-    icon: React.ReactNode
+  const ActionButton = ({ icon, label, badge, onClick, component }: {
+    icon?: React.ReactNode
     label: string
     badge?: number
     onClick?: () => void
+    component?: React.ReactNode
   }) => {
     const button = (
       <button 
@@ -74,11 +45,11 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
           flex items-center justify-center
           ${collapsed ? 'w-16' : 'w-5'}
         `}>
-          {badge ? (
+          {component || (badge ? (
             <Badge count={badge} size="small">
               {icon}
             </Badge>
-          ) : icon}
+          ) : icon)}
         </div>
         {!collapsed && (
           <span className="text-sm text-gray-600 dark:text-gray-300">{label}</span>
@@ -135,17 +106,19 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
       `}
     >
       {/* Collapse Toggle Button */}
-      <button
-        onClick={() => ConfigStore.toggleActionsCollapsed(!ConfigStore.isActionsCollapsed)}
-        className="flex items-center justify-center h-8 hover:bg-black/5 dark:hover:bg-white/5 w-full"
-      >
-        <span className={`
-          transition-transform duration-300
-          ${isActionsCollapsed ? 'rotate-0' : 'rotate-180'}
-        `}>
-          <DownOutlined />
-        </span>
-      </button>
+      <Tooltip title={isActionsCollapsed ? t('common.actions.expand') : t('common.actions.collapse')}>
+        <button
+          onClick={() => ConfigStore.toggleActionsCollapsed(!ConfigStore.isActionsCollapsed)}
+          className="flex items-center justify-center h-8 hover:bg-black/5 dark:hover:bg-white/5 w-full"
+        >
+          <span className={`
+            transition-transform duration-300
+            ${isActionsCollapsed ? 'rotate-0' : 'rotate-180'}
+          `}>
+            <DownOutlined />
+          </span>
+        </button>
+      </Tooltip>
 
       {/* Action Buttons */}
       <div className={`
@@ -160,18 +133,19 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
         {actionItems.map(item => (
           item.key === 'language' ? (
             <Dropdown 
-              key={item.key} 
-              menu={{ 
+              key={item.key}
+              menu={{
                 items: languageItems,
-                style: { minWidth: '120px' }
-              }} 
-              trigger={['click']} 
-              placement="topRight"
+                onClick: handleLanguageChange,
+                selectedKeys: [currentLang]
+              }}
+              trigger={['click']}
+              placement={collapsed ? 'topRight' : 'bottom'}
               arrow={{ pointAtCenter: true }}
             >
               <div className="w-full">
                 {collapsed ? (
-                  <Tooltip title={'切换语言'} placement="right">
+                  <Tooltip title={t('common.languageSwitch')} placement="right">
                     <button 
                       className="flex items-center h-9 rounded-lg transition-all duration-200
                         hover:bg-black/5 dark:hover:bg-white/5 w-full justify-center px-2"
@@ -189,7 +163,9 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
                     <div className="flex items-center justify-center w-5">
                       {item.icon}
                     </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-300">{item.label}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      {t('common.languageSwitch')}
+                    </span>
                   </button>
                 )}
               </div>
@@ -198,7 +174,7 @@ const VerticalUserActions = observer(({ collapsed = false }: VerticalUserActions
             <ActionButton
               key={item.key}
               icon={item.icon}
-              label={item.label}
+              label={t(`common.${item.key}`)}
               badge={item.badge}
               onClick={item.onClick}
             />

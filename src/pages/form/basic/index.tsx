@@ -4,7 +4,7 @@ import { Card, Form, Input, Button, Select, DatePicker, Radio, Checkbox, Space, 
 import type { RouteConfig } from '@/types/route';
 
 export const routeConfig: RouteConfig = {
-    title: '基础表单',
+    title: 'route.form.basic',
     // icon: <FormOutlined />,
     layout: true,
     

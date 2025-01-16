@@ -8,13 +8,14 @@ import {
   FullscreenOutlined,
   FullscreenExitOutlined,
   BellOutlined,
-  TranslationOutlined,
   SearchOutlined,
   GithubOutlined,
+  GlobalOutlined,
 } from '@ant-design/icons'
 import React from 'react'
 import { authService } from '../../services/auth'
 import { useNavigate } from 'react-router-dom'
+import { useLocale } from '@/hooks/useLocale'
 
 export interface ActionItem {
   key: string
@@ -27,9 +28,8 @@ export interface ActionItem {
 export const useUserActions = () => {
   const { UserStore, ConfigStore } = useStore()
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [currentLang, setCurrentLang] = useState('zh_CN')
-  const [searchVisible, setSearchVisible] = useState(false)
   const navigate = useNavigate()
+  const { t } = useLocale()
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -46,7 +46,7 @@ export const useUserActions = () => {
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: '个人信息'
+      label: t('user.profile')
     },
     {
       type: 'divider'
@@ -54,21 +54,19 @@ export const useUserActions = () => {
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: '退出登录'
+      label: t('user.logout')
     }
   ]
 
   // 语言选项
   const languageItems: MenuProps['items'] = [
     {
-      key: 'zh_CN',
-      label: '简体中文',
-      onClick: () => setCurrentLang('zh_CN')
+      key: 'zh-CN',
+      label: t('common.language.zh')
     },
     {
-      key: 'en_US',
-      label: 'English',
-      onClick: () => setCurrentLang('en_US')
+      key: 'en-US',
+      label: t('common.language.en')
     }
   ]
 
@@ -82,7 +80,6 @@ export const useUserActions = () => {
         console.error('Logout failed:', error);
       }
     } else if (key === 'profile') {
-      console.log('profile')
       navigate('/profile');
     }
   }
@@ -98,13 +95,13 @@ export const useUserActions = () => {
     {
       key: 'notification',
       icon: <BellOutlined className="text-gray-600 dark:text-gray-300" />,
-      label: '通知',
+      label: t('common.notification'),
       badge: 5
     },
     {
       key: 'search',
       icon: <SearchOutlined className="text-gray-600 dark:text-gray-300" />,
-      label: '搜索',
+      label: t('common.search'),
       onClick: () => ConfigStore.toggleSearchVisible(true)
     },
     {
@@ -112,26 +109,25 @@ export const useUserActions = () => {
       icon: isFullscreen ? 
         <FullscreenExitOutlined className="text-gray-600 dark:text-gray-300" /> : 
         <FullscreenOutlined className="text-gray-600 dark:text-gray-300" />,
-      label: isFullscreen ? "退出全屏" : "全屏显示",
+      label: isFullscreen ? t('common.exitFullscreen') : t('common.fullscreen'),
       onClick: toggleFullscreen
     },
     {
       key: 'language',
-      icon: <TranslationOutlined className="text-gray-600 dark:text-gray-300" />,
-      label: '切换语言'
+      icon: <GlobalOutlined className="text-gray-600 dark:text-gray-300" />,
+      label: t('common.languageSwitch')
     },
     {
       key: 'settings',
-      icon: <SettingOutlined className="text-lg text-gray-600 dark:text-gray-300" />,
-      label: '系统设置',
+      icon: <SettingOutlined className="text-gray-600 dark:text-gray-300" />,
+      label: t('common.settings'),
       onClick: () => ConfigStore.toggleVisible('setting')
     }
-
   ]
 
   // 用户信息
   const userInfo = {
-    username: UserStore.userInfo?.username || '用户',
+    username: UserStore.userInfo?.username || t('user.defaultName'),
     email: UserStore.userInfo?.email || 'user@example.com',
     avatar: UserStore.userInfo?.avatar
   }
@@ -141,10 +137,7 @@ export const useUserActions = () => {
     userMenuItems,
     languageItems,
     handleUserMenuClick,
-    userInfo,
-    currentLang,
-    searchVisible,
-    setSearchVisible
+    userInfo
   }
 }
 

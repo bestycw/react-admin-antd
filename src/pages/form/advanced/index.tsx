@@ -5,7 +5,7 @@ import type { RouteConfig } from '@/types/route';
 import type { UploadFile } from 'antd/es/upload/interface';
 
 export const routeConfig: RouteConfig = {
-    title: '高级表单',
+    title: 'route.form.advanced',
     // icon: <FormOutlined />,
     layout: true,
     

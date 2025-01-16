@@ -2,16 +2,30 @@ import { Avatar, Dropdown, Badge } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { UserOutlined } from '@ant-design/icons'
 import useUserActions from './BaseUserActions'
-// import React from 'react'
+import { useLocale } from '@/hooks/useLocale'
 
 const HorizontalUserActions = observer(() => {
   const { actionItems, userMenuItems, languageItems, handleUserMenuClick, userInfo } = useUserActions()
+  const { currentLang, changeLang } = useLocale()
+
+  // 处理语言切换
+  const handleLanguageChange = ({ key }: { key: string }) => {
+    changeLang(key)
+  }
 
   return (
     <div className="flex items-center gap-2">
       {actionItems.map(item => (
         item.key === 'language' ? (
-          <Dropdown key={item.key} menu={{ items: languageItems }} trigger={['click']}>
+          <Dropdown 
+            key={item.key} 
+            menu={{ 
+              items: languageItems,
+              onClick: handleLanguageChange,
+              selectedKeys: [currentLang]
+            }} 
+            trigger={['click']}
+          >
             <button className="w-8 h-8 flex items-center justify-center rounded-full
               transition-all duration-200 hover:bg-black/5 dark:hover:bg-white/10">
               {item.icon}

@@ -12,12 +12,12 @@ import {
   CloseSquareOutlined,
   ReloadOutlined
 } from '@ant-design/icons'
-
+import { useTranslation } from 'react-i18next'
 const Tab = observer(() => {
   const { MenuStore, ConfigStore } = useStore()
   const navigate = useNavigate()
   const location = useLocation()
-
+  const { t } = useTranslation()
   // 如果 showTabs 为 false 或没有访问标签，不渲染任何内容
   if (!ConfigStore.showTabs || MenuStore.visitedTags.length === 0) {
     return null
@@ -171,7 +171,7 @@ const Tab = observer(() => {
         menu={{ items: getDropdownItems(tag.path) }}
         trigger={['contextMenu']}
       >
-        <span className="px-1">{tag.title}</span>
+        <span className="px-1">{t(`${tag.title}`)}</span>
       </Dropdown>
     ),
     closable: MenuStore.visitedTags.length > 1

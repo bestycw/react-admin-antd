@@ -445,7 +445,7 @@ const ImageEditor: React.FC = () => {
 export default ImageEditor;
 
 export const routeConfig = {
-  title: '图片编辑器',
+  title: 'route.editor.image',
   icon: <PictureOutlined />,
   layout: true,
   

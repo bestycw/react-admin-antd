@@ -1,10 +1,10 @@
 import { GlobalOutlined } from '@ant-design/icons'
 import { Dropdown } from 'antd'
 import type { MenuProps } from 'antd'
-import { useTranslation } from 'react-i18next'
+import { useLocale } from '@/hooks/useLocale'
 
 const LanguageSwitch = () => {
-  const { i18n, t } = useTranslation()
+  const { currentLang, changeLang, t } = useLocale()
 
   const items: MenuProps['items'] = [
     {
@@ -18,8 +18,7 @@ const LanguageSwitch = () => {
   ]
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
-    i18n.changeLanguage(key)
-    localStorage.setItem('language', key)
+    changeLang(key)
   }
 
   return (
@@ -27,7 +26,7 @@ const LanguageSwitch = () => {
       menu={{
         items,
         onClick: handleMenuClick,
-        selectedKeys: [i18n.language]
+        selectedKeys: [currentLang]
       }}
       trigger={['click']}
     >

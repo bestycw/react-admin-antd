@@ -281,6 +281,6 @@ const SearchForm: React.FC = () => {
 
 export default SearchForm; 
 export const routeConfig: RouteConfig = {
-    title: '搜索表单',
+    title: 'route.form.search',
     sort: 5,
 };

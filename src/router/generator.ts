@@ -335,7 +335,6 @@ const routeTreeHandler = {
 // 生成路由配置
 export function generateRoutes(): { layoutRoutes: CoRouteObject[], independentRoutes: CoRouteObject[] } {
     const allRoutes = routeTreeHandler.createRouteTree(Object.keys(pages))
-    console.log(allRoutes)
     // 分离布局路由和独立路由
     return allRoutes.reduce((acc, route) => {
         if (route.meta?.layout === false || route.meta?.layout === undefined) {

@@ -180,6 +180,6 @@ export default observer(function BtnPermission() {
 })
 
 export const routeConfig = {
-    title: '按钮权限',
+    title: 'route.function.btn-permission',
     sort: 1,
 }

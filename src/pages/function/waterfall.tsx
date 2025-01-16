@@ -85,7 +85,7 @@ const WaterfallPage: React.FC = () => {
 export default WaterfallPage; 
 
 export const routeConfig = {
-  title: '瀑布布局',
+  title: 'route.function.waterfall',
   // icon: 'WaterOutlined',
   layout: true,
   
