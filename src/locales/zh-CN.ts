@@ -311,10 +311,18 @@ export default {
     'error.403': '403',
     'error.404': '404',
     'error.500': '500',
-    
     // 认证页面
     auth: '认证页',
     'auth.login': '登录',
     'auth.register': '注册'
+  },
+  network:{
+    'network-error': '网络错误，请检查网络连接',
+    'bad-request': '400 请求参数错误',
+    'unauthorized': '401 账号密码错误，请重新登录',
+    'forbidden': '403 拒绝访问',
+    'not-found': '404 请求错误，未找到该资源',
+    'internal-error': '500 服务器错误',
+    'request-canceled-or-timeout': '请求已取消或超时'
   }
 } 
