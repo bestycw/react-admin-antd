@@ -4,8 +4,6 @@ import { UploadOutlined } from '@ant-design/icons';
 // import type { UploadFile } from 'antd/es/upload/interface';
 import { AxiosRequest, FetchRequest } from '@/utils/request';
 
-const { TabPane } = Tabs;
-
 interface FileUploadProps {
   axiosRequest: AxiosRequest;
   fetchRequest: FetchRequest;
@@ -21,7 +19,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ axiosRequest, fetchRequest }) =
       setLoading(true);
       const formData = new FormData();
       formData.append('file', file);
-    //   console.log('formData', file);
+
       if (type === 'axios') {
         setAxiosProgress(0);
         await axiosRequest.upload('/api/upload', formData, {
@@ -70,63 +68,73 @@ const FileUpload: React.FC<FileUploadProps> = ({ axiosRequest, fetchRequest }) =
     }
   };
 
+  const tabItems = [
+    {
+      key: 'axios',
+      label: 'Axios上传',
+      children: (
+        <Space direction="vertical" className="w-full">
+          <Upload
+            customRequest={({ file }) => handleUpload(file as File, 'axios')}
+            showUploadList={false}
+          >
+            <Button 
+              icon={<UploadOutlined />}
+              loading={loading && axiosProgress > 0 && axiosProgress < 100}
+              disabled={loading && fetchProgress > 0}
+            >
+              选择文件
+            </Button>
+          </Upload>
+          {axiosProgress > 0 && (
+            <Progress
+              percent={axiosProgress}
+              status={axiosProgress === 100 ? 'success' : 'active'}
+              strokeColor={{
+                from: '#108ee9',
+                to: '#87d068',
+              }}
+            />
+          )}
+        </Space>
+      )
+    },
+    {
+      key: 'fetch',
+      label: 'Fetch上传',
+      children: (
+        <Space direction="vertical" className="w-full">
+          <Upload
+            customRequest={({ file }) => handleUpload(file as File, 'fetch')}
+            showUploadList={false}
+          >
+            <Button 
+              icon={<UploadOutlined />}
+              loading={loading && fetchProgress > 0 && fetchProgress < 100}
+              disabled={loading && axiosProgress > 0}
+            >
+              选择文件
+            </Button>
+          </Upload>
+          {fetchProgress > 0 && (
+            <Progress
+              percent={fetchProgress}
+              status={fetchProgress === 100 ? 'success' : 'active'}
+              strokeColor={{
+                from: '#108ee9',
+                to: '#87d068',
+              }}
+            />
+          )}
+        </Space>
+      )
+    }
+  ];
+
   return (
     <Card title="文件上传测试" className="shadow-md">
       <Space direction="vertical" className="w-full">
-        <Tabs defaultActiveKey="axios">
-          <TabPane tab="Axios上传" key="axios">
-            <Space direction="vertical" className="w-full">
-              <Upload
-                customRequest={({ file }) => handleUpload(file as File, 'axios')}
-                showUploadList={false}
-              >
-                <Button 
-                  icon={<UploadOutlined />}
-                  loading={loading && axiosProgress > 0 && axiosProgress < 100}
-                  disabled={loading && fetchProgress > 0}
-                >
-                  选择文件
-                </Button>
-              </Upload>
-              {axiosProgress > 0 && (
-                <Progress
-                  percent={axiosProgress}
-                  status={axiosProgress === 100 ? 'success' : 'active'}
-                  strokeColor={{
-                    from: '#108ee9',
-                    to: '#87d068',
-                  }}
-                />
-              )}
-            </Space>
-          </TabPane>
-          <TabPane tab="Fetch上传" key="fetch">
-            <Space direction="vertical" className="w-full">
-              <Upload
-                customRequest={({ file }) => handleUpload(file as File, 'fetch')}
-                showUploadList={false}
-              >
-                <Button 
-                  icon={<UploadOutlined />}
-                  loading={loading && fetchProgress > 0 && fetchProgress < 100}
-                  disabled={loading && axiosProgress > 0}
-                >
-                  选择文件
-                </Button>
-              </Upload>
-              {fetchProgress > 0 && (
-                <Progress
-                  percent={fetchProgress}
-                  status={fetchProgress === 100 ? 'success' : 'active'}
-                  strokeColor={{
-                    from: '#108ee9',
-                    to: '#87d068',
-                  }}
-                />
-              )}
-            </Space>
-          </TabPane>
-        </Tabs>
+        <Tabs defaultActiveKey="axios" items={tabItems} />
         <Alert
           message="上传方式对比"
           description={

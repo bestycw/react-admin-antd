@@ -138,7 +138,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
   return (
     <Card 
       className={className}
-      bodyStyle={{ padding: 0 }}
+      styles={{ body: { padding: 0 } }}
       bordered={false}
     >
       <div className="p-4 border-b bg-gray-50">

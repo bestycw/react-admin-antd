@@ -15,7 +15,7 @@ import {
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
-const { TabPane } = Tabs;
+// const { TabPane } = Tabs;
 
 // 预设裁剪比例
 const CROP_ASPECTS = [
@@ -201,6 +201,114 @@ const ImageEditor: React.FC = () => {
     return style;
   };
 
+  // Define tabs items configuration
+  const tabItems = [
+    {
+      key: 'crop',
+      label: <Tooltip title="裁剪"><ScissorOutlined /></Tooltip>,
+      children: (
+        <div className="flex flex-col gap-3">
+          <Select
+            placeholder="裁剪比例"
+            options={CROP_ASPECTS}
+            value={aspect}
+            onChange={setAspect}
+          />
+          {aspect === 1 && (
+            <Radio.Group 
+              value={isCircular} 
+              onChange={e => setIsCircular(e.target.value)}
+            >
+              <Radio value={false}>矩形</Radio>
+              <Radio value={true}>圆形</Radio>
+            </Radio.Group>
+          )}
+        </div>
+      )
+    },
+    {
+      key: 'adjust',
+      label: <Tooltip title="调整"><HighlightOutlined /></Tooltip>,
+      children: (
+        <div className="flex flex-col gap-3">
+          <div>
+            <div className="mb-1 text-sm">亮度</div>
+            <Slider
+              min={0}
+              max={200}
+              value={brightness}
+              onChange={setBrightness}
+            />
+          </div>
+          <div>
+            <div className="mb-1 text-sm">对比度</div>
+            <Slider
+              min={0}
+              max={200}
+              value={contrast}
+              onChange={setContrast}
+            />
+          </div>
+          <div>
+            <div className="mb-1 text-sm">饱和度</div>
+            <Slider
+              min={0}
+              max={200}
+              value={saturation}
+              onChange={setSaturation}
+            />
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'filter',
+      label: <Tooltip title="滤镜"><BorderOuterOutlined /></Tooltip>,
+      children: (
+        <Radio.Group 
+          value={filter} 
+          onChange={e => setFilter(e.target.value)}
+          className="flex flex-col gap-2"
+        >
+          {FILTERS.map(f => (
+            <Radio key={f.value} value={f.value}>
+              {f.label}
+            </Radio>
+          ))}
+        </Radio.Group>
+      )
+    },
+    {
+      key: 'export',
+      label: <Tooltip title="导出"><CompressOutlined /></Tooltip>,
+      children: (
+        <div className="flex flex-col gap-3">
+          <div>
+            <div className="mb-1 text-sm">质量</div>
+            <Slider
+              min={10}
+              max={100}
+              value={quality}
+              onChange={setQuality}
+              marks={{
+                10: '低',
+                50: '中',
+                100: '高'
+              }}
+            />
+          </div>
+          <Button 
+            type="primary" 
+            icon={<DownloadOutlined />}
+            onClick={handleDownload}
+          >
+            下载
+          </Button>
+        </div>
+      )
+    }
+  ];
+
   return (
     <div >
       <Card title="图片编辑器" className="shadow-md">
@@ -218,111 +326,7 @@ const ImageEditor: React.FC = () => {
             </Upload>
 
             {imageUrl && (
-              <Tabs defaultActiveKey="crop">
-                <TabPane 
-                  tab={<Tooltip title="裁剪"><ScissorOutlined /></Tooltip>}
-                  key="crop"
-                >
-                  <div className="flex flex-col gap-3">
-                    <Select
-                      placeholder="裁剪比例"
-                      options={CROP_ASPECTS}
-                      value={aspect}
-                      onChange={setAspect}
-                    />
-                    {aspect === 1 && (
-                      <Radio.Group 
-                        value={isCircular} 
-                        onChange={e => setIsCircular(e.target.value)}
-                      >
-                        <Radio value={false}>矩形</Radio>
-                        <Radio value={true}>圆形</Radio>
-                      </Radio.Group>
-                    )}
-                  </div>
-                </TabPane>
-
-                <TabPane 
-                  tab={<Tooltip title="调整"><HighlightOutlined /></Tooltip>}
-                  key="adjust"
-                >
-                  <div className="flex flex-col gap-3">
-                    <div>
-                      <div className="mb-1 text-sm">亮度</div>
-                      <Slider
-                        min={0}
-                        max={200}
-                        value={brightness}
-                        onChange={setBrightness}
-                      />
-                    </div>
-                    <div>
-                      <div className="mb-1 text-sm">对比度</div>
-                      <Slider
-                        min={0}
-                        max={200}
-                        value={contrast}
-                        onChange={setContrast}
-                      />
-                    </div>
-                    <div>
-                      <div className="mb-1 text-sm">饱和度</div>
-                      <Slider
-                        min={0}
-                        max={200}
-                        value={saturation}
-                        onChange={setSaturation}
-                      />
-                    </div>
-                  </div>
-                </TabPane>
-
-                <TabPane 
-                  tab={<Tooltip title="滤镜"><BorderOuterOutlined /></Tooltip>}
-                  key="filter"
-                >
-                  <Radio.Group 
-                    value={filter} 
-                    onChange={e => setFilter(e.target.value)}
-                    className="flex flex-col gap-2"
-                  >
-                    {FILTERS.map(f => (
-                      <Radio key={f.value} value={f.value}>
-                        {f.label}
-                      </Radio>
-                    ))}
-                  </Radio.Group>
-                </TabPane>
-
-                <TabPane 
-                  tab={<Tooltip title="导出"><CompressOutlined /></Tooltip>}
-                  key="export"
-                >
-                  <div className="flex flex-col gap-3">
-                    <div>
-                      <div className="mb-1 text-sm">质量</div>
-                      <Slider
-                        min={10}
-                        max={100}
-                        value={quality}
-                        onChange={setQuality}
-                        marks={{
-                          10: '低',
-                          50: '中',
-                          100: '高'
-                        }}
-                      />
-                    </div>
-                    <Button 
-                      type="primary" 
-                      icon={<DownloadOutlined />}
-                      onClick={handleDownload}
-                    >
-                      下载
-                    </Button>
-                  </div>
-                </TabPane>
-              </Tabs>
+              <Tabs defaultActiveKey="crop" items={tabItems} />
             )}
           </div>
 

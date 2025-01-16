@@ -10,8 +10,6 @@ import {
 } from '@ant-design/icons';
 import { AxiosRequest, FetchRequest } from '@/utils/request';
 
-const { TabPane } = Tabs;
-
 // 文件类型配置
 const fileTypes = [
   { label: '文本文件', value: 'txt', icon: 'FileTextOutlined' },
@@ -97,69 +95,79 @@ const FileDownload: React.FC<FileDownloadProps> = ({ axiosRequest, fetchRequest 
     }
   };
 
+  const tabItems = [
+    {
+      key: 'axios',
+      label: 'Axios下载',
+      children: (
+        <Space direction="vertical" className="w-full">
+          <Space wrap>
+            {fileTypes.map(fileType => (
+              <Button
+                key={fileType.value}
+                icon={React.createElement(Icons[fileType.icon])}
+                onClick={() => handleDownload('axios', fileType.value)}
+                loading={loading && axiosProgress > 0 && axiosProgress < 100}
+                disabled={loading && fetchProgress > 0}
+              >
+                下载{fileType.label}
+              </Button>
+            ))}
+          </Space>
+          {axiosProgress > 0 && (
+            <div style={{ width: '100%' }}>
+              <Progress
+                percent={axiosProgress}
+                status={axiosProgress === 100 ? 'success' : 'active'}
+                strokeColor={{
+                  from: '#108ee9',
+                  to: '#87d068',
+                }}
+              />
+            </div>
+          )}
+        </Space>
+      )
+    },
+    {
+      key: 'fetch',
+      label: 'Fetch下载',
+      children: (
+        <Space direction="vertical" className="w-full">
+          <Space wrap>
+            {fileTypes.map(fileType => (
+              <Button
+                key={fileType.value}
+                icon={React.createElement(Icons[fileType.icon])}
+                onClick={() => handleDownload('fetch', fileType.value)}
+                loading={loading && fetchProgress > 0 && fetchProgress < 100}
+                disabled={loading && axiosProgress > 0}
+              >
+                下载{fileType.label}
+              </Button>
+            ))}
+          </Space>
+          {fetchProgress > 0 && (
+            <div style={{ width: '100%' }}>
+              <Progress
+                percent={fetchProgress}
+                status={fetchProgress === 100 ? 'success' : 'active'}
+                strokeColor={{
+                  from: '#108ee9',
+                  to: '#87d068',
+                }}
+              />
+            </div>
+          )}
+        </Space>
+      )
+    }
+  ];
+
   return (
     <Card title="文件下载测试" className="shadow-md">
       <Space direction="vertical" className="w-full">
-        <Tabs defaultActiveKey="axios">
-          <TabPane tab="Axios下载" key="axios">
-            <Space direction="vertical" className="w-full">
-              <Space wrap>
-                {fileTypes.map(fileType => (
-                  <Button
-                    key={fileType.value}
-                    icon={React.createElement(Icons[fileType.icon])}
-                    onClick={() => handleDownload('axios', fileType.value)}
-                    loading={loading && axiosProgress > 0 && axiosProgress < 100}
-                    disabled={loading && fetchProgress > 0}
-                  >
-                    下载{fileType.label}
-                  </Button>
-                ))}
-              </Space>
-              {axiosProgress > 0 && (
-                <div style={{ width: '100%' }}>
-                  <Progress
-                    percent={axiosProgress}
-                    status={axiosProgress === 100 ? 'success' : 'active'}
-                    strokeColor={{
-                      from: '#108ee9',
-                      to: '#87d068',
-                    }}
-                  />
-                </div>
-              )}
-            </Space>
-          </TabPane>
-          <TabPane tab="Fetch下载" key="fetch">
-            <Space direction="vertical" className="w-full">
-              <Space wrap>
-                {fileTypes.map(fileType => (
-                  <Button
-                    key={fileType.value}
-                    icon={React.createElement(Icons[fileType.icon])}
-                    onClick={() => handleDownload('fetch', fileType.value)}
-                    loading={loading && fetchProgress > 0 && fetchProgress < 100}
-                    disabled={loading && axiosProgress > 0}
-                  >
-                    下载{fileType.label}
-                  </Button>
-                ))}
-              </Space>
-              {fetchProgress > 0 && (
-                <div style={{ width: '100%' }}>
-                  <Progress
-                    percent={fetchProgress}
-                    status={fetchProgress === 100 ? 'success' : 'active'}
-                    strokeColor={{
-                      from: '#108ee9',
-                      to: '#87d068',
-                    }}
-                  />
-                </div>
-              )}
-            </Space>
-          </TabPane>
-        </Tabs>
+        <Tabs defaultActiveKey="axios" items={tabItems} />
         <Alert
           message="下载方式对比"
           description={
