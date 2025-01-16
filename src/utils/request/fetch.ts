@@ -4,6 +4,7 @@ import { authStorage } from '@/utils/storage/authStorage';
 import { TIME } from '@/config/constants';
 import { ErrorCode, handleErrorMessage } from '@/utils/request/errorCode';
 import { message } from 'antd';
+import { t } from 'i18next';
 
 export class FetchRequest extends BaseRequest {
   public interceptors = {
@@ -377,7 +378,7 @@ export class FetchRequest extends BaseRequest {
       const status = error.response.status;
       message.error(handleErrorMessage(status));
     } else {
-      message.error('网络错误，请检查网络连接');
+      message.error(t('network.network-error'));
     }
     return Promise.reject(error);
   }

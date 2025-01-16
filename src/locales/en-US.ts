@@ -254,9 +254,18 @@ export default {
     'error.403': '403',
     'error.404': '404',
     'error.500': '500',
-    
+    'error.network-error': 'Network error, please check network connection',
     auth: 'Auth',
     'auth.login': 'Login',
     'auth.register': 'Register'
+  },
+  network:{
+    'network-error': 'Network error, please check network connection',
+    'bad-request': '400 Bad Request',
+    'unauthorized': '401 Unauthorized',
+    'forbidden': '403 Forbidden',
+    'not-found': '404 Not Found',
+    'internal-error': '500 Internal Server Error',
+    'request-canceled-or-timeout': 'Request canceled or timeout'
   }
 } 
