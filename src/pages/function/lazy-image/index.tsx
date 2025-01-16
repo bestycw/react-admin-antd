@@ -42,6 +42,6 @@ const LazyImageDemo: React.FC = () => {
 export default LazyImageDemo;
 
 export const routeConfig = {
-  title: '图片懒加载',
+  title: 'route.function.lazy-image',
   sort: 1,
 };

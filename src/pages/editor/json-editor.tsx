@@ -395,7 +395,7 @@ const JsonEditor: React.FC = () => {
 export default JsonEditor;
 
 export const routeConfig = {
-  title: 'JSON 编辑器',
+  title: 'route.editor.json',
   icon: <CodeOutlined />,
   layout: true,
   

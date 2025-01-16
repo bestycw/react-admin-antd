@@ -4,7 +4,7 @@ import { Card, Steps, Form, Input, Button, Select, Result, message } from 'antd'
 import type { RouteConfig } from '@/types/route';
 
 export const routeConfig: RouteConfig = {
-    title: '分步表单',
+    title: 'route.form.step',
     // icon: <FormOutlined />,
     layout: true,
     

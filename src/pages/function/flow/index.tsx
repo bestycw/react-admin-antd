@@ -268,6 +268,6 @@ const FlowDemo: React.FC = () => {
 export default FlowDemo;
 
 export const routeConfig = {
-  title: '流程图',
+  title: 'route.function.flow',
   layout: true,
 }; 

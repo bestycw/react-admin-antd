@@ -288,6 +288,6 @@ const EditableTable: React.FC = () => {
 export default EditableTable;
 
 export const routeConfig = {
-  title: '可编辑表格',
+  title: 'route.table.editable',
   sort: 2,
 }; 

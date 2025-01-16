@@ -276,7 +276,7 @@ const NetworkBasic: React.FC = () => {
 export default NetworkBasic;
 
 export const routeConfig: RouteConfig = {
-  title: '基础网络',
+  title: 'route.network.basic',
   icon: <ApiOutlined />,
   layout: true,
   

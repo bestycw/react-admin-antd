@@ -173,7 +173,7 @@ const CodeEditorPage: React.FC = () => {
 export default CodeEditorPage
 
 export const routeConfig = {
-  title: '代码编辑器',
+  title: 'route.editor.code',
   icon: <CodeOutlined />,
   layout: true,
   

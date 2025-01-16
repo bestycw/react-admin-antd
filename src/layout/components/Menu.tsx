@@ -5,7 +5,7 @@ import { useStore } from '@/store';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { ItemType, MenuItemType } from 'antd/es/menu/interface';
-// import React from 'react';
+import { useTranslation } from 'react-i18next'
 
 interface IProps extends MenuProps {
     type?: string;
@@ -17,7 +17,7 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     const { mode } = props;
     const navigate = useNavigate();
     const location = useLocation();
-    // console.log('Menu Init')
+    const { t } = useTranslation()
     // 只在路径真正改变时更新选中状态
     useEffect(() => {
         const currentPath = location.pathname;
@@ -30,9 +30,13 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     const findRootMenuItem = (items: any[], path: string): any => {
         for (const item of items) {
             // 如果当前项就是目标路径
+            if(item.label){
+                item.label = t(`${item.label}`)
+             }
             if (item.key === path) {
                 return item;
             }
+        
             // 检查一级子菜单
             if (item.children?.length) {
                 const found = item.children.find((child: any) => {
@@ -97,11 +101,34 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
         const currentPath = MenuStore.selectedKeys[0];
         const parentKey = getParentKey(currentPath);
 
+        // 转换菜单项，添加国际化支持
+        const translateMenuItem = (item: any) => {
+            if (!item) return null;
+            
+            // 如果是字符串，直接返回
+            if (typeof item === 'string') return item;
+
+            // 复制一个新对象，避免修改原对象
+            const newItem = { ...item };
+            
+            // 翻译标题
+            if (newItem.label) {
+                newItem.label = t(`${newItem.label}`)
+            }
+            
+            // 递归处理子菜单
+            if (newItem.children?.length) {
+                newItem.children = newItem.children.map(translateMenuItem);
+            }
+            
+            return newItem;
+        };
+
         if (ConfigStore.getComponentPosition('MENU') === 'MIX') {
             if (mode === 'horizontal') {
                 return menuItems.map(item => ({
                     key: item.key,
-                    label: item.label,
+                    label: t(`${item.label}`),
                     icon: item.icon,
                     className: parentKey === item.key ? 'ant-menu-item-selected' : ''
                 }));
@@ -112,21 +139,22 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
                 if (!currentRoot) return []; // 如果没找到，返回空数组
 
                 // 返回根菜单项的所有子菜单
-                return currentRoot.children || [currentRoot];
+                const items = currentRoot.children || [currentRoot];
+                return items.map(translateMenuItem);
             }
         }
 
         // 垂直布局（顶部导航）
         if (ConfigStore.getComponentPosition('MENU')  === 'IN_HEADER') {
-            return mode === 'horizontal' ? menuItems : [];
+            return mode === 'horizontal' ? menuItems.map(translateMenuItem) : [];
         }
 
         // 水平布局（侧边导航）
         if (ConfigStore.getComponentPosition('MENU')  === 'IN_SIDEBAR') {
-            return mode === 'inline' ? menuItems : [];
+            return mode === 'inline' ? menuItems.map(translateMenuItem) : [];
         }
 
-        return menuItems;
+        return menuItems.map(translateMenuItem);
     };
     const MenuOptions = mode === 'inline' && !collapsed ? {
         openKeys: MenuStore.openKeys,

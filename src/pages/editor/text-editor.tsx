@@ -45,7 +45,7 @@ const EditorPage: React.FC = () => {
 export default EditorPage
 
 export const routeConfig = {
-  title: '富文本编辑器',
+  title: 'route.editor.rich',
   icon: <FileTextOutlined />,
   layout: true,
   

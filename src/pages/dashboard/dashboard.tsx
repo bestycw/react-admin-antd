@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { Card, Row, Col, Statistic, Progress, List, Button, Timeline, Tag, Tooltip, Alert, Badge } from 'antd';
-// import type { Dayjs } from 'dayjs';
+import i18next from 'i18next';
 import { 
   ArrowUpOutlined, ArrowDownOutlined, UserOutlined, ShoppingCartOutlined, 
   FileTextOutlined, TeamOutlined, ReloadOutlined,
@@ -11,7 +11,7 @@ import {
 import { Area, Pie } from '@ant-design/plots';
 import { RouteConfig } from '@/types/route';
 export const routeConfig: RouteConfig = {
-    title: '首页',
+    title: 'route.dashboard',
     icon: <HomeOutlined />,
     layout: true,
     

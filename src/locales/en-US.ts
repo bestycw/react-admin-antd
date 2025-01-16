@@ -23,7 +23,7 @@ export default {
     captchaRequired: 'Please input verification code!',
     captchaError: 'Invalid verification code',
     rememberMe: 'Remember me for 7 days',
-    forgotPassword: 'Forgot Password?',
+    forgotPassword: 'Forgot',
     loginButton: 'Login',
     scanQrcode: 'Scan QR Code',
     loginSuccess: 'Login successful!',
@@ -37,7 +37,19 @@ export default {
     language: {
       zh: '简体中文',
       en: 'English'
-    }
+    },
+    actions: {
+      expand: 'Expand',
+      collapse: 'Collapse'
+    },
+    notification: 'Notification',
+    search: 'Search',
+    fullscreen: 'Fullscreen',
+    exitFullscreen: 'Exit Fullscreen',
+    languageSwitch: 'Switch Language',
+    settings: 'Settings',
+    yes: 'Yes',
+    no: 'No'
   },
   messages: {
     error: {
@@ -181,5 +193,70 @@ export default {
       lastDelivery: 'Last Delivery',
       deliveryStatus: 'Delivery Status'
     }
+  },
+  user: {
+    profile: 'Profile',
+    logout: 'Logout',
+    defaultName: 'User'
+  },
+  route: {
+    dashboard: 'Dashboard',
+    
+    table: 'Table',
+    'table.basic': 'Basic Table',
+    'table.advanced': 'Advanced Table',
+    'table.draggable': 'Draggable Table',
+    'table.tree': 'Tree Table',
+    'table.editable': 'Editable Table',
+    'table.adaptive': 'Adaptive Table',
+    'table.virtual': 'Virtual Scroll Table',
+    'table.draggable.row': 'Row Draggable',
+    'table.draggable.column': 'Column Draggable',
+    
+    form: 'Form',
+    'form.basic': 'Basic Form',
+    'form.step': 'Step Form',
+    'form.search': 'Search Form',
+    'form.advanced': 'Advanced Form',
+    
+    editor: 'Editor',
+    'editor.code': 'Code Editor',
+    'editor.rich': 'Rich Text',
+    'editor.image': 'Image Editor', 
+    'editor.json': 'JSON Editor',
+    
+    function: 'Function',
+    'function.lazy-image': 'Lazy Image',
+    'function.btn-permission': 'Button Permission',
+    'function.flow': 'Flow Chart',
+    'function.carousel': 'Carousel',
+    'function.loading': 'Loading',
+    'function.split': 'Split Panel',
+    'function.waterfall': 'Waterfall',
+    'function.draggable': 'Draggable',
+    'function.charts': 'Charts',
+    'function.split-panel': 'Split Panel',
+    system: 'System',
+    'system.user': 'User Management',
+    'system.role': 'Role Management',
+    'system.menu': 'Menu Management',
+    'system.dept': 'Department Management',
+    
+    network: 'Network',
+    'network.basic': 'Basic Network',
+    'network.advanced': 'Advanced Network',
+    
+    profile: 'Profile',
+    'profile.basic': 'Basic Profile',
+    'profile.advanced': 'Advanced Profile',
+    
+    error: 'Error',
+    'error.403': '403',
+    'error.404': '404',
+    'error.500': '500',
+    
+    auth: 'Auth',
+    'auth.login': 'Login',
+    'auth.register': 'Register'
   }
 } 

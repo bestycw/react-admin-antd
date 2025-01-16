@@ -1,7 +1,7 @@
 import { ToolOutlined } from "@ant-design/icons";
 
 export const routeConfig = {
-  title: '功能组件',
+  title: 'route.function',
   icon: <ToolOutlined />,
   layout: true,
   

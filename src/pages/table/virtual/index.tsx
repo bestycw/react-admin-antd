@@ -52,6 +52,6 @@ const VirtualTable: React.FC = () => {
 export default VirtualTable;
 
 export const routeConfig = {
-  title: '虚拟滚动',
+  title: 'route.table.virtual',
   sort: 5,
 }; 

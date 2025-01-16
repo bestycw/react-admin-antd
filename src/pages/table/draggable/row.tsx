@@ -172,6 +172,6 @@ const DraggableTable: React.FC = () => {
 export default DraggableTable;
 
 export const routeConfig = {
-  title: '行拖拽',
+  title: 'route.table.draggable.row',
   sort: 3,
 }; 

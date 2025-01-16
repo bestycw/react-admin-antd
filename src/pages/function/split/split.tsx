@@ -130,7 +130,7 @@ const SplitDemo: React.FC = () => {
 export default SplitDemo;
 
 export const routeConfig = {
-  title: 'Split 面板',
+  title: 'route.function.split-panel',
   // icon: <BorderHorizontalOutlined />,
   layout: true,
   

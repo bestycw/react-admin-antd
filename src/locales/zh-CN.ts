@@ -41,18 +41,18 @@ export default {
       zh: '简体中文',
       en: 'English'
     },
+    actions: {
+      expand: '展开',
+      collapse: '收起'
+    },
+    notification: '通知',
+    search: '搜索',
+    fullscreen: '全屏显示',
+    exitFullscreen: '退出全屏',
+    languageSwitch: '切换语言',
+    settings: '系统设置',
     yes: '确定',
-    no: '取消',
-    confirm: '确认',
-    cancel: '取消',
-    delete: '删除',
-    edit: '编辑',
-    save: '保存',
-    loading: '加载中...',
-    success: '操作成功',
-    failed: '操作失败',
-    unknown: '未知',
-    more: '更多'
+    no: '取消'
   },
   messages: {
     error: {
@@ -223,5 +223,98 @@ export default {
       lastDelivery: '最后推送',
       deliveryStatus: '推送状态'
     }
+  },
+  user: {
+    profile: '个人信息',
+    logout: '退出登录',
+    defaultName: '用户',
+    actions: {
+      notification: {
+        title: '通知中心',
+        unread: '{count} 条未读消息'
+      },
+      search: {
+        title: '全局搜索',
+        placeholder: '搜索...'
+      },
+      settings: {
+        title: '系统设置',
+        theme: '主题设置',
+        language: '语言设置',
+        other: '其他设置'
+      }
+    }
+  },
+  route: {
+    // 仪表盘
+    dashboard: '仪表盘',
+    
+    // 表格页面
+    table: '表格页',
+    'table.basic': '基础表格',
+    'table.advanced': '高级表格',
+    'table.draggable': '拖拽表格',
+    'table.tree': '树形表格',
+    'table.editable': '可编辑表格',
+    'table.adaptive': '自适应表格',
+    // 'table.draggable': '拖拽表格',
+    'table.virtual': '虚拟滚动表格',
+    'table.draggable.row': '行拖拽',
+    'table.draggable.column': '列拖拽',
+    
+    // 表单页面
+    form: '表单页',
+    'form.basic': '基础表单',
+    'form.step': '分步表单',
+    'form.search': '搜索表单',
+    'form.advanced': '高级表单',
+    
+    // 编辑器
+    editor: '编辑器',
+    'editor.code': '代码编辑器',
+    'editor.rich': '富文本',
+    'editor.image': '图片编辑器',
+    'editor.json': 'JSON编辑器',
+    
+    // 功能
+    function: '功能',
+    'function.lazy-image': '图片懒加载',
+    'function.btn-permission': '按钮权限',
+    'function.flow': '流程图',
+    'function.carousel': '轮播图',
+    'function.loading': '加载动画',
+    'function.split': '分割面板',
+    'function.waterfall': '瀑布流',
+    'function.draggable': '拖拽',
+    'function.charts': '图表',
+    'function.split-panel': '分割面板',
+
+    // 系统管理
+    system: '系统管理',
+    'system.user': '用户管理',
+    'system.role': '角色管理',
+    'system.menu': '菜单管理',
+    'system.dept': '部门管理',
+    
+    // 网络请求
+    network: '网络请求',
+    'network.basic': '基础网络',
+    'network.advanced': '高级网络',
+    
+    // 个人页面
+    profile: '个人页',
+    'profile.basic': '基础详情页',
+    'profile.advanced': '高级详情页',
+    
+    // 错误页面
+    error: '错误页',
+    'error.403': '403',
+    'error.404': '404',
+    'error.500': '500',
+    
+    // 认证页面
+    auth: '认证页',
+    'auth.login': '登录',
+    'auth.register': '注册'
   }
 } 

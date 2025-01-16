@@ -141,6 +141,6 @@ const AdaptiveTable: React.FC = () => {
 export default AdaptiveTable;
 
 export const routeConfig = {
-  title: '自适应内容表格',
+  title: 'route.table.adaptive',
   sort: 5,
 }; 
