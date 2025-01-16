@@ -118,6 +118,7 @@ const BasicTable: React.FC = () => {
     <Table
       columns={columns}
       dataSource={dataSource}
+      key="basic-table"
       toolbarRight={
         <Button type="primary" onClick={handleAdd}>
           新建

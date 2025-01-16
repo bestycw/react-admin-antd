@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Space, Tag, message, Modal, Form, Input } from 'antd';
+import { Button, Space, Tag, message, Modal, Form, Input, Radio } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
 import type {  TableColumnType } from '@/components/Table/types';
@@ -326,22 +326,10 @@ const TreeTable: React.FC = () => {
             label="状态"
             rules={[{ required: true, message: '请选择状态' }]}
           >
-            <Input.Group>
-              <Space>
-                <Button
-                  type={form.getFieldValue('status') === 'active' ? 'primary' : 'default'}
-                  onClick={() => form.setFieldsValue({ status: 'active' })}
-                >
-                  启用
-                </Button>
-                <Button
-                  type={form.getFieldValue('status') === 'inactive' ? 'primary' : 'default'}
-                  onClick={() => form.setFieldsValue({ status: 'inactive' })}
-                >
-                  禁用
-                </Button>
-              </Space>
-            </Input.Group>
+            <Radio.Group buttonStyle="solid">
+              <Radio.Button value="active">启用</Radio.Button>
+              <Radio.Button value="inactive">禁用</Radio.Button>
+            </Radio.Group>
           </Form.Item>
         </Form>
       </Modal>
