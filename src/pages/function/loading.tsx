@@ -40,6 +40,6 @@ const LoadingDemo: React.FC = () => {
 export default LoadingDemo;
 
 export const routeConfig = {
-  title: 'Loading效果',
+  title: 'route.function.loading',
   sort: 2,
 };

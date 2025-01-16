@@ -156,6 +156,6 @@ const DraggableColumnTable: React.FC = () => {
 export default DraggableColumnTable;
 
 export const routeConfig = {
-  title: '列拖拽',
+  title: 'route.table.draggable.column',
   sort: 4,
 }; 

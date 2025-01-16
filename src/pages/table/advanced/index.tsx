@@ -322,7 +322,7 @@ const AdvancedTable: React.FC = () => {
 export default AdvancedTable; 
 
 export const routeConfig ={
-    title: '高级表格',
+    title: 'route.table.advanced',
     
     sort:2,
 }

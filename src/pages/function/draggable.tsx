@@ -515,7 +515,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, children, className }) 
 export default DraggablePage;
 
 export const routeConfig = {
-  title: '拖拽排序',
+  title: 'route.function.draggable',
   // icon: <MenuOutlined />,
   layout: true,
   

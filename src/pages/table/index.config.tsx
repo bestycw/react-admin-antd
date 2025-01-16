@@ -3,7 +3,7 @@ import type { RouteConfig } from '@/types/route'
 // import React from 'react'
 
 export const routeConfig: RouteConfig = {
-    title: '表格管理',
+    title: 'route.table',
     icon: <TableOutlined />,
     layout: true,
     

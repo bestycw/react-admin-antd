@@ -78,6 +78,6 @@ const CarouselPage: React.FC = () => {
 export default CarouselPage;
 
 export const routeConfig = {
-  title: '轮播图',
+  title: 'route.function.carousel',
   layout: true,
 }; 

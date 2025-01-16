@@ -1,7 +1,7 @@
 import { EditOutlined } from "@ant-design/icons";
 
 export const routeConfig = {
-    title: '编辑器',
+    title: 'route.editor',
     icon: <EditOutlined />,
     layout: true,
     

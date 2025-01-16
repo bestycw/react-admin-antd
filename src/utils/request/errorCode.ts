@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 export const ErrorCode = {
   SUCCESS: 200,
   BAD_REQUEST: 400,
@@ -12,11 +13,11 @@ export interface ErrorMessage {
 }
 
 export const DefaultErrorMessages: ErrorMessage = {
-  [ErrorCode.BAD_REQUEST]: '请求参数错误',
-  [ErrorCode.UNAUTHORIZED]: '账号密码错误，请重新登录',
-  [ErrorCode.FORBIDDEN]: '拒绝访问',
-  [ErrorCode.NOT_FOUND]: '请求错误，未找到该资源',
-  [ErrorCode.INTERNAL_ERROR]: '服务器错误',
+  [ErrorCode.BAD_REQUEST]: t('network.bad-request'),
+  [ErrorCode.UNAUTHORIZED]: t('network.unauthorized'),
+  [ErrorCode.FORBIDDEN]: t('network.forbidden'),
+  [ErrorCode.NOT_FOUND]: t('network.not-found'),
+  [ErrorCode.INTERNAL_ERROR]: t('network.internal-error'),
 };
 
 export const handleErrorMessage = (status: number): string => {

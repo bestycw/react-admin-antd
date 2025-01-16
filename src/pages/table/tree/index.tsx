@@ -352,6 +352,6 @@ const TreeTable: React.FC = () => {
 export default TreeTable;
 
 export const routeConfig = {
-  title: '树形表格',
+  title: 'route.table.tree',
   sort: 4,
 }; 

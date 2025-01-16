@@ -4,7 +4,7 @@ import { message } from 'antd';
 import { ErrorCode, handleErrorMessage } from '@/utils/request/errorCode';
 import authStorage from '../storage/authStorage';
 import { TIME } from '@/config/constants';
-
+import { t } from 'i18next';
 export class AxiosRequest extends BaseRequest {
   private instance: AxiosInstance;
 
@@ -204,13 +204,13 @@ export class AxiosRequest extends BaseRequest {
 
   protected handleError(error: any) {
     if (error.name === 'AbortError' || error.name === 'CanceledError' || error.code === 'ECONNABORTED') {
-      return Promise.reject(new Error('请求已取消或超时'));
+      return Promise.reject(new Error(t('network.request-canceled-or-timeout')));
     }
     if (error.response) {
       const status = error.response.status;
       message.error(handleErrorMessage(status));
     } else {
-      message.error('网络错误，请检查网络连接');
+      message.error(t('network.network-error'));
     }
     return Promise.reject(error);
   }

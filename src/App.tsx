@@ -13,9 +13,6 @@ import { deepClone } from './utils/json'
 const App = observer(() => {
     const { UserStore, MenuStore, ConfigStore } = useStore()
     let renderRoutes = routes
-
-    console.log(' app init')
-
     if (authService.isAuthenticated()) {
         //TODO 需要优化，不能每次都重新过滤路由, 应该在用户信息更新时过滤
         renderRoutes = UserStore.filterRoutesByRoles(deepClone(routes))

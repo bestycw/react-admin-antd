@@ -270,7 +270,7 @@ const UserManagement: React.FC = () => {
 export default UserManagement;
 
 export const routeConfig = {
-  title: '用户管理',
+  title: 'route.system.user',
   sort: 2,
   roles: ['admin'],
 }; 

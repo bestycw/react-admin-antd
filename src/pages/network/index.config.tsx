@@ -1,7 +1,7 @@
 import { GlobalOutlined } from '@ant-design/icons';
 
 export const routeConfig = {
-    title: '网络请求',
+    title: 'route.network',
     icon: <GlobalOutlined />,
     layout: true,
     

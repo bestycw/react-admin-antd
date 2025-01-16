@@ -1,0 +1,60 @@
+.virtual-table-container {
+  height: 100%;
+  padding: 24px;
+  background: #fff;
+
+  .virtual-table-tabs {
+    height: 100%;
+    
+    .ant-tabs-content {
+      height: 100%;
+      
+      .ant-tabs-tabpane {
+        height: 100%;
+      }
+    }
+  }
+
+  .virtual-table {
+    height: calc(100vh - 300px);
+    
+    .ant-table-container {
+      border: 1px solid #f0f0f0;
+      border-radius: 8px;
+    }
+
+    .ant-table-body {
+      max-height: calc(100vh - 380px) !important;
+    }
+  }
+
+  .virtual-table-transform {
+    height: calc(100vh - 300px);
+    
+    .virtual-table-content {
+      height: 100% !important;
+      border: 1px solid #f0f0f0;
+      border-radius: 8px;
+      overflow: hidden;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+        
+        &:hover {
+          background: #555;
+        }
+      }
+    }
+  }
+} 

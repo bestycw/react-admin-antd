@@ -269,6 +269,6 @@ const ChartsPage: React.FC = () => {
 export default ChartsPage;
 
 export const routeConfig = {
-  title: '图表展示',
+  title: 'route.function.charts',
   layout: true,
 }; 

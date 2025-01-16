@@ -136,7 +136,7 @@ const BasicTable: React.FC = () => {
 export default BasicTable; 
 
 export const routeConfig ={
-    title: '基础表格',
+    title: 'route.table.basic',
     
     sort:1,
 }

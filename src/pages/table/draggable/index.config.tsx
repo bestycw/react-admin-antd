@@ -3,7 +3,7 @@ import type { RouteConfig } from '@/types/route'
 // import React from 'react'
 
 export const routeConfig: RouteConfig = {
-    title: '拖拽排序',
+    title: 'route.table.draggable',
     // icon: <TableOutlined />,
     layout: true,
     
