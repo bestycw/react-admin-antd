@@ -211,6 +211,13 @@ class MenuStore {
     resetTags() {
         this.visitedTags = [];
     }
+
+    // 强制更新菜单
+    forceUpdateMenu() {
+        // 通过重新设置菜单列表来触发更新
+        const currentMenuList = [...this.menuList];
+        this.setMenuList(currentMenuList);
+    }
 }
 
 export default new MenuStore()
