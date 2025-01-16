@@ -17,7 +17,8 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
     const { mode } = props;
     const navigate = useNavigate();
     const location = useLocation();
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation();
+
     // 只在路径真正改变时更新选中状态
     useEffect(() => {
         const currentPath = location.pathname;
@@ -26,17 +27,18 @@ const Menu = observer(({ collapsed = false, ...props }: IProps) => {
         }
     }, [location.pathname]);
 
+    // 在语言变化时强制更新菜单
+    useEffect(() => {
+        // 强制重新渲染菜单
+        MenuStore.forceUpdateMenu();
+    }, [i18n.language]);
+
     // 递归查找当前路径所在的根菜单项
     const findRootMenuItem = (items: any[], path: string): any => {
         for (const item of items) {
-            // 如果当前项就是目标路径
-            if(item.label){
-                item.label = t(`${item.label}`)
-             }
             if (item.key === path) {
                 return item;
             }
-        
             // 检查一级子菜单
             if (item.children?.length) {
                 const found = item.children.find((child: any) => {
