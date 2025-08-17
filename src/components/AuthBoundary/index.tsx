@@ -35,11 +35,17 @@ const AuthBoundary: React.FC<React.PropsWithChildren> = observer((props) => {
 
     // 获取当前路由配置
     const currentRoute = findRouteByPath(UserStore.allRoutes, location.pathname);
-
+    
     // 如果找到路由配置且有重定向属性，则进行重定向
     if (currentRoute?.redirect) {
         return <Navigate to={currentRoute.redirect} replace={true} />;
     }
+
+    // 检查路由权限 - 如果路由被隐藏（没有权限），跳转到403页面
+    if (currentRoute?.meta?.hidden) {
+        return <Navigate to="/error/403" replace={true} />;
+    }
+
     // 用户已登录且有权限，渲染子组件
     return <>{children}</>;
 });
